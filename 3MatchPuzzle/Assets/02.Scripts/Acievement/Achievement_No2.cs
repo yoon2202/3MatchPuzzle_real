@@ -12,7 +12,6 @@ public class Achievement_No2 : AchievementsCheck
 
     void Start()
     {
-        Debug.Log(CurrentCount);
     }
 
     public override void DotCheck(GameObject gameObject)
