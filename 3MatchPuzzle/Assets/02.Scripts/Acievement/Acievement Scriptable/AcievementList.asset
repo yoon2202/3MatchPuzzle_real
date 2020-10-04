@@ -12,4 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb4c313987577249b28f7abf14802cc, type: 3}
   m_Name: AcievementList
   m_EditorClassIdentifier: 
-  AcievementScriptables: []
+  AcievementScriptables:
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}
+  - {fileID: 11400000, guid: 560278efbf5cee545a220eccc2df8b84, type: 2}

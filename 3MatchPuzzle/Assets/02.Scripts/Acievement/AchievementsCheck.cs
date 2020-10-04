@@ -1,23 +1,24 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public abstract class AchievementsCheck : MonoBehaviour
+public class AchievementsCheck : MonoBehaviour
 {
-
-    // ---------- 오브젝트 부착 ----------
-    protected Text AchievementsTitle;
-    protected Text AchievementsContent;
-    protected Text RewardContent;
-    protected Button RewardButton;
-
-
-    public abstract void DotCheck(GameObject gameObject);
-    
-    public virtual void SettingUI()
+    public static AchievementsCheck instance = null;
+    public AcievementList acievementList;
+    void Awake()
     {
-        AchievementsTitle = transform.GetChild(0).GetChild(0).GetComponent<Text>();
-        AchievementsContent = transform.GetChild(0).GetChild(1).GetComponent<Text>();
-        RewardContent = transform.GetChild(0).GetChild(2).GetChild(0).GetComponent<Text>();
-        RewardButton = transform.GetChild(0).GetChild(2).GetChild(1).GetComponent<Button>();
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
     }
+  
+
+
 }
+
