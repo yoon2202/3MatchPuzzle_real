@@ -17,8 +17,11 @@ public class AchievementsCheck : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
     }
-  
 
+    public void Checkfunction()
+    {
+
+    }
 
 }
 

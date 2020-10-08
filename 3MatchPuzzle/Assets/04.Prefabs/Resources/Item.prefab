@@ -495,7 +495,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 615.79, y: 44.9}
+  m_AnchoredPosition: {x: 615.79, y: 0}
   m_SizeDelta: {x: 0, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &619061724641840720
@@ -661,7 +661,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 619061725310617267}
-  - component: {fileID: 619061725310617264}
+  - component: {fileID: 1456147037}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -689,7 +689,7 @@ RectTransform:
   m_AnchoredPosition: {x: 74, y: -175}
   m_SizeDelta: {x: 100, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &619061725310617264
+--- !u!114 &1456147037
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -698,11 +698,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 619061725310617266}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b80e41fa777448a41871c10d0b123f9b, type: 3}
+  m_Script: {fileID: 11500000, guid: 82c4932897309424292ceaf296491a16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   AchievementsTitle: {fileID: 0}
   AchievementsContent: {fileID: 0}
   RewardContent: {fileID: 0}
   RewardButton: {fileID: 0}
-  order: 0
