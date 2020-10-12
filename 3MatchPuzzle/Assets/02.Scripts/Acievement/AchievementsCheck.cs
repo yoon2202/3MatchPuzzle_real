@@ -18,8 +18,10 @@ public class AchievementsCheck : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void Checkfunction()
+    public void Checkfunction(Dot dot )
     {
+        if (dot.SpecialBlockCheck())
+            acievementList.AcievementScriptables[1].CurrentCount++;
 
     }
 

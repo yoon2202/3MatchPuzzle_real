@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class StageManager : MonoBehaviour
 {
@@ -82,7 +83,10 @@ public class StageManager : MonoBehaviour
         StageName.text = "Theme " + ((ActivatedChapterIndex / 5) + 1).ToString() + " Chapter " + ((ActivatedChapterIndex % 5)+1).ToString();
     }
 
-
+   public void Startbtn()
+    {
+        SceneManager.LoadScene(1);
+    }
 
     //int temp = i; // Closure 문제때문에 복사해서 사용한다.
 }

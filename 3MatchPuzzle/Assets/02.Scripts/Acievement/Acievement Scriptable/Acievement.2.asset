@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5f07abe1343473418f39cb0268f8a32, type: 3}
-  m_Name: Acievement.1
+  m_Name: Acievement.2
   m_EditorClassIdentifier: 
   AchievementsLevel: 0
-  AchievementsTitle: "\uCF58\uD06C\uB9AC\uD2B8\uBD80\uD130 \uCC44\uC6CC\uBCF4\uC790"
-  state: 1
+  AchievementsTitle: "\uC77C\uBC18\uBE14\uB85D \uC5C6\uC560\uAE30"
+  state: 2
   MaxCount: 5
   CurrentCount: 0
-  rewordType: 2
+  rewordType: 0
   RewordCount: 250

@@ -423,4 +423,11 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         else
             return false;
     }
+
+    private void OnDestroy()
+    {
+        AchievementsCheck.instance.Checkfunction(this);
+        Debug.Log(name + "가 파괴됨!");
+
+    }
 }
