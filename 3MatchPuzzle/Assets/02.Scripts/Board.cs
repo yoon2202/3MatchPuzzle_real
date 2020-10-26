@@ -49,6 +49,7 @@ public class Board : MonoBehaviour
     private List<GameObject> Create_dots = new List<GameObject>();
     private GameObject Previous_Bellow;
     private GameObject Previous_Left;
+    private int[,] TileSpace = new int[9,9];
 
     public Dot currentDot;
     private FindMatches findMatches;
@@ -75,10 +76,10 @@ public class Board : MonoBehaviour
             {
                 if (world.levels[level] != null)
                 {
-                    width = world.levels[level].width;
-                    height = world.levels[level].height;
+                    width = 9;
+                    height = 9;
                     dots = world.levels[level].dots;
-                    boardLayout = world.levels[level].boardLayout;
+                    //boardLayout = world.levels[level].boardLayout;
                 }
             }
         }
@@ -147,6 +148,17 @@ public class Board : MonoBehaviour
             }
         }
     }
+    public void SettingTiles()
+    {
+        for (int i = 0; i < 9; i++)
+        {
+            for(int j=0; j<9; j++)
+            {
+                TileSpace[i, j] = world.levels[level].Tile[9 * 8 - i + j];
+                Debug.Log(i + "/" + j + "=" + TileSpace[i, j]);
+            }
+        }
+    }
 
     void InitList()
     {
@@ -157,10 +169,11 @@ public class Board : MonoBehaviour
     }
     void Setup()
     {
-        GenerateBlankSpaces();
-        GenerateBreakableTiles();
-        GenerateLockTiles();
-        GenerateConcreteTiles();
+        SettingTiles();
+        //GenerateBlankSpaces();
+        //GenerateBreakableTiles();
+        //GenerateLockTiles();
+        //GenerateConcreteTiles();
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
@@ -168,10 +181,6 @@ public class Board : MonoBehaviour
                 if (!blankSpaces[i, j] && !concreteTiles[i, j])
                 {
                     Vector2 tempPosition = new Vector2(i, j + offSet);
-                    //GameObject backgroundTile = Instantiate(tilePrefabs, tempPosition, Quaternion.identity);
-                    //backgroundTile.transform.parent = this.transform;
-                    //backgroundTile.name = "(" + i + "," + j + ")";
-
                     if (i > 0 && allDots[i - 1, j] != null)
                         Previous_Left = previous_Obj(allDots[i - 1, j]);
                     if (j > 0 && allDots[i, j - 1] != null)

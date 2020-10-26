@@ -5,17 +5,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Level", menuName = "Level")]
 public class Level : ScriptableObject
 {
-    [Header("Board Dimensions")]
-    public int width;
-    public int height;
+    [HideInInspector]
+    public int[] Tile = new int[81];
 
-    [Header("Starting Tiles")]
-    public TileType[] boardLayout;
-
-    [Header("Available Dots")]
+    [Header("사용 가능한 일반블록")]
     public GameObject[] dots;
-
-
 
     [Header("스테이지 목표 설정")]
     public EndGameRequirements endGameRequirements;
