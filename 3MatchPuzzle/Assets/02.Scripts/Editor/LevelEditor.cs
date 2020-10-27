@@ -9,8 +9,6 @@ public class LevelEditor : Editor
     private void OnEnable()
     {
         level = target as Level;
-        for (int i = 0; i < level.Tile.Length; i++)
-            level.Tile[i] = 0;
     }
 
     public override void OnInspectorGUI()

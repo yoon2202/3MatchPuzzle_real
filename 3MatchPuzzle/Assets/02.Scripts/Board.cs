@@ -154,7 +154,7 @@ public class Board : MonoBehaviour
         {
             for(int j=0; j<9; j++)
             {
-                TileSpace[i, j] = world.levels[level].Tile[9 * 8 - i + j];
+                TileSpace[i, j] = world.levels[level].Tile[(8-j)*9 + i];
                 Debug.Log(i + "/" + j + "=" + TileSpace[i, j]);
             }
         }
