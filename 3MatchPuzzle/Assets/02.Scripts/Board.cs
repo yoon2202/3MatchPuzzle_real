@@ -155,7 +155,6 @@ public class Board : MonoBehaviour
             for(int j=0; j<9; j++)
             {
                 TileSpace[i, j] = world.levels[level].Tile[(8-j)*9 + i];
-                Debug.Log(i + "/" + j + "=" + TileSpace[i, j]);
             }
         }
     }
@@ -180,7 +179,7 @@ public class Board : MonoBehaviour
             {
                 if (!blankSpaces[i, j] && !concreteTiles[i, j])
                 {
-                    Vector2 tempPosition = new Vector2(i, j + offSet);
+                    Vector2 tempPosition = new Vector2(i, j);
                     if (i > 0 && allDots[i - 1, j] != null)
                         Previous_Left = previous_Obj(allDots[i - 1, j]);
                     if (j > 0 && allDots[i, j - 1] != null)
@@ -438,7 +437,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                if (!blankSpaces[i, j] && allDots[i, j] == null && !concreteTiles[i, j]) // 빈공간, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
+                if (!blankSpaces[i, j] && allDots[i, j] == null && !concreteTiles[i, j]) // 빈공간이 아니고, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
                 {
                     for (int k = j + 1; k < height; k++) // 해당 열 위에서 아래로 공간 반복
                     {

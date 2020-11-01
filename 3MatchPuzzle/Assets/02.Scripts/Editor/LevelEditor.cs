@@ -31,12 +31,14 @@ public class LevelEditor : Editor
 
         EditorGUILayout.LabelField("------타일 세팅-------");
         EditorGUILayout.LabelField("0. 일반 블록");
-        EditorGUILayout.LabelField("1. 콘크리트 블록");
-        EditorGUILayout.LabelField("2. 고압분사기(세로)");
-        EditorGUILayout.LabelField("3. 고압분사기(가로)");
-        EditorGUILayout.LabelField("4. 먼지블록");
-        EditorGUILayout.LabelField("5. 십자나무 꽃 블록");
-        EditorGUILayout.LabelField("6. 시든 꽃");
-        EditorGUILayout.LabelField("7. 생명의 민들레");
+        EditorGUILayout.LabelField("1. 공백");
+        EditorGUILayout.LabelField("2. 콘크리트 블록");
+        EditorGUILayout.LabelField("3. 고압분사기(세로)");
+        EditorGUILayout.LabelField("4. 고압분사기(가로)");
+        EditorGUILayout.LabelField("5. 먼지블록");
+        EditorGUILayout.LabelField("6. 십자나무 꽃 블록");
+        EditorGUILayout.LabelField("7. 시든 꽃");
+        EditorGUILayout.LabelField("8. 생명의 민들레");
+
     }
 }
