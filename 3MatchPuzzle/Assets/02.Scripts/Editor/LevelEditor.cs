@@ -18,15 +18,18 @@ public class LevelEditor : Editor
         base.OnInspectorGUI();
         EditorGUILayout.LabelField("----------------------------");
         int index = 0;
-        for (int i = 0; i < 9; i++)
+        if (level !=null && level.Tile.Length > 0)
         {
-            GUILayout.BeginHorizontal();
-            for (int j = 0; j < 9; j++)
+            for (int i = 0; i < 9; i++)
             {
-                level.Tile[index] = EditorGUILayout.IntField(level.Tile[index], bStyle, GUILayout.Width(20), GUILayout.Height(20));
-                index++;
+                GUILayout.BeginHorizontal();
+                for (int j = 0; j < 9; j++)
+                {
+                    level.Tile[index] = EditorGUILayout.IntField(level.Tile[index], bStyle, GUILayout.Width(20), GUILayout.Height(20));
+                    index++;
+                }
+                GUILayout.EndHorizontal();
             }
-            GUILayout.EndHorizontal();
         }
 
         EditorGUILayout.LabelField("------타일 세팅-------");

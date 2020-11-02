@@ -178,8 +178,6 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     {
         otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
 
-        if (board.lockTiles[column, row] == null && board.lockTiles[column + (int)direction.x, row + (int)direction.y] == null)
-        {
             if (otherDot != null && Cannotmove(otherDot.GetComponent<Dot>()))  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
             {
                 otherDot.GetComponent<Dot>().column += -1 * (int)direction.x;
@@ -190,9 +188,6 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             }
             else
                 board.currentState = GameState.move;
-        }
-        else
-            board.currentState = GameState.move;
 
     }
 

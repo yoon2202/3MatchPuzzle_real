@@ -49,7 +49,6 @@ public class FindMatches : MonoBehaviour
     {
         currentMatches = currentMatches.Union(GetColumnPieces(dot.column)).ToList();
         board.SpecialDestroy();
-        board.BombColumn(dot.column);
         //currentMatches.Union(GetColumnPieces(dot.column));
         //board.BombColumn(dot.column);
     }
@@ -58,7 +57,6 @@ public class FindMatches : MonoBehaviour
     {
         currentMatches = currentMatches.Union(GetRowPieces(dot.row)).ToList();
         board.SpecialDestroy();
-        board.BombRow(dot.row);
     }
 
     private void AddToListAndMatch(GameObject dot)
