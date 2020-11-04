@@ -7,18 +7,6 @@ public enum GameState
     wait, move, win, lose, pause
 }
 
-public enum TileKind
-{
-    Breakable, Blank, Normal, Lock, Concrete, Slime
-}
-[System.Serializable]
-public class TileType
-{
-    public int x;
-    public int y;
-    public TileKind tileKind;
-}
-
 public class Board : MonoBehaviour
 {
     [Header("Scriptable Object Stuff")]
@@ -31,18 +19,16 @@ public class Board : MonoBehaviour
     public int height;
     public int offSet;
 
-    [Header("맵 세팅 프리팹")]
+    [Header("블록")]
     public GameObject tilePrefabs;
     public GameObject breakableTilePrefabs;
-    public GameObject lockTilePrefabs;
     public GameObject concreteTilePrefabs;
     public GameObject[] dots;
     public GameObject destroyEffect;
 
     [Header("Layout")]
-    public TileType[] boardLayout;
     private bool[,] blankSpaces;
-    private BackGroundTile[,] breakableTiles;
+    private BackGroundTile[,] concreteTiles;
     public GameObject[,] allDots;
     private List<GameObject> Create_dots = new List<GameObject>();
     private GameObject Previous_Bellow;
@@ -89,6 +75,7 @@ public class Board : MonoBehaviour
         scoreManager = FindObjectOfType<ScoreManager>();
         findMatches = FindObjectOfType<FindMatches>();
         blankSpaces = new bool[width, height];
+        concreteTiles = new BackGroundTile[width, height];
         allDots = new GameObject[width, height];
 
         InitList();
@@ -96,19 +83,6 @@ public class Board : MonoBehaviour
 
     }
     #region 초기 세팅 함수모음
-
-    public void GenerateBreakableTiles()
-    {
-        for (int i = 0; i < boardLayout.Length; i++)
-        {
-            if (boardLayout[i].tileKind == TileKind.Breakable)
-            {
-                Vector2 tempPosition = new Vector2(boardLayout[i].x, boardLayout[i].y);
-                GameObject tile = Instantiate(breakableTilePrefabs, tempPosition, Quaternion.identity);
-                breakableTiles[boardLayout[i].x, boardLayout[i].y] = tile.GetComponent<BackGroundTile>();
-            }
-        }
-    }
 
     void InitList()
     {
@@ -132,6 +106,11 @@ public class Board : MonoBehaviour
                     case 1:
                         blankSpaces[i, j] = true;
                         break;
+                    case 2:
+                        Vector2 tempPosition =  new Vector2(i, j);
+                        GameObject tile = Instantiate(concreteTilePrefabs, tempPosition, Quaternion.identity);
+                        concreteTiles[i,j] = tile.GetComponent<BackGroundTile>();
+                        break;                     
                 }
             }
         }
@@ -192,45 +171,45 @@ public class Board : MonoBehaviour
     #endregion
 
     #region 방해타일 데미지입히는 함수
-    //private void DamageConcrete(int column, int row) // 콘크리트 타일
-    //{
-    //    if (column > 0)
-    //    {
-    //        if (concreteTiles[column - 1, row])
-    //        {
-    //            concreteTiles[column - 1, row].TakeDamage(1);
-    //            if (concreteTiles[column - 1, row].hitPoints <= 0)
-    //                concreteTiles[column - 1, row] = null;
-    //        }
-    //    }
-    //    if (column < width - 1)
-    //    {
-    //        if (concreteTiles[column + 1, row])
-    //        {
-    //            concreteTiles[column + 1, row].TakeDamage(1);
-    //            if (concreteTiles[column + 1, row].hitPoints <= 0)
-    //                concreteTiles[column + 1, row] = null;
-    //        }
-    //    }
-    //    if (row > 0)
-    //    {
-    //        if (concreteTiles[column, row - 1])
-    //        {
-    //            concreteTiles[column, row - 1].TakeDamage(1);
-    //            if (concreteTiles[column, row - 1].hitPoints <= 0)
-    //                concreteTiles[column, row - 1] = null;
-    //        }
-    //    }
-    //    if (row < height - 1)
-    //    {
-    //        if (concreteTiles[column, row + 1])
-    //        {
-    //            concreteTiles[column, row + 1].TakeDamage(1);
-    //            if (concreteTiles[column, row + 1].hitPoints <= 0)
-    //                concreteTiles[column, row + 1] = null;
-    //        }
-    //    }
-    //}
+    private void DamageConcrete(int column, int row) // 콘크리트 타일
+    {
+        if (column > 0)
+        {
+            if (concreteTiles[column - 1, row])
+            {
+                concreteTiles[column - 1, row].TakeDamage(1);
+                if (concreteTiles[column - 1, row].hitPoints <= 0)
+                    concreteTiles[column - 1, row] = null;
+            }
+        }
+        if (column < width - 1)
+        {
+            if (concreteTiles[column + 1, row])
+            {
+                concreteTiles[column + 1, row].TakeDamage(1);
+                if (concreteTiles[column + 1, row].hitPoints <= 0)
+                    concreteTiles[column + 1, row] = null;
+            }
+        }
+        if (row > 0)
+        {
+            if (concreteTiles[column, row - 1])
+            {
+                concreteTiles[column, row - 1].TakeDamage(1);
+                if (concreteTiles[column, row - 1].hitPoints <= 0)
+                    concreteTiles[column, row - 1] = null;
+            }
+        }
+        if (row < height - 1)
+        {
+            if (concreteTiles[column, row + 1])
+            {
+                concreteTiles[column, row + 1].TakeDamage(1);
+                if (concreteTiles[column, row + 1].hitPoints <= 0)
+                    concreteTiles[column, row + 1] = null;
+            }
+        }
+    }
 
     private void DamageAcorn(int column, int row) // 도토리 타일
     {
@@ -328,11 +307,9 @@ public class Board : MonoBehaviour
         if (allDots[column, row].GetComponent<Dot>().isMatched)
         {
 
-            //DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
+            DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
             DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
 
-
-            //findMatches.currentMatches.Remove(allDots[column, row]);
 
             if (goalManager != null)
             {
@@ -344,6 +321,7 @@ public class Board : MonoBehaviour
             //{
             //    soundManager.PlayRandomDestroyNoise();
             //}
+
             GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
             Destroy(destroyEffect_, 2.0f);
             Destroy(allDots[column, row]);
@@ -376,7 +354,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                if (!blankSpaces[i, j] && allDots[i, j] == null) // 빈공간이 아니고, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
+                if (!blankSpaces[i, j] && allDots[i, j] == null && !concreteTiles[i,j]) // 빈공간이 아니고, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
                 {
                     for (int k = j + 1; k < height; k++) // 해당 열 위에서 아래로 공간 반복
                     {
@@ -425,12 +403,11 @@ public class Board : MonoBehaviour
 
     private void RefillBoard() // 보드에 리필해주는 함수
     {
-        //Debug.Log("RefillBoard");
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                if (allDots[i, j] == null && !blankSpaces[i, j])
+                if (allDots[i, j] == null && !blankSpaces[i, j] && !concreteTiles[i, j])
                 {
                     Vector2 tempPosition = new Vector2(i, j + offSet);
                     int dotToUse = Random.Range(0, dots.Length);
@@ -446,7 +423,6 @@ public class Board : MonoBehaviour
 
     private bool MatchesOnboard() //여기 파인드 매치와 뒤 반복문에 대한 시간차를 둔다.
     {
-        //Debug.Log("MatchesOnboard");
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
