@@ -73,7 +73,7 @@ public class FindMatches : MonoBehaviour
         AddToListAndMatch(dot3);
     }
 
-    private IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
+    public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
     {
         //Debug.Log("FindAllMatchesCo");
         yield return new WaitForSeconds(0.1f);

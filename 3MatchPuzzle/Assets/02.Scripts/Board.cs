@@ -302,6 +302,25 @@ public class Board : MonoBehaviour
         }
     }
 
+    public void DestroyMatches(bool isMove, bool Special)
+    {
+        if (findMatches.currentMatches.Count > 3 && isMove) // 직접 블록을 움직였을때, 4,5 매치 판단
+            CheckToMakeBombs();
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (allDots[i, j] != null)
+                    DestroyMatchesAt(i, j);
+            }
+        }
+        if (Special == false) //직접 매치 & 특수블록으로 인한 파괴가 아닌경우
+            findMatches.RandomCreateBombs(); // 랜덤 확률로 특수, 선택 블록 생성
+        Debug.Log("매치된 갯수     " + findMatches.currentMatches.Count);
+        findMatches.currentMatches.Clear();
+        StartCoroutine(DecreaseRowCo2()); // 행 내리기
+    }
+
     private void DestroyMatchesAt(int column, int row)
     {
         if (allDots[column, row].GetComponent<Dot>().isMatched)
@@ -330,24 +349,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void DestroyMatches(bool isMove, bool Special)
-    {
-        if (findMatches.currentMatches.Count > 3 && isMove) // 직접 블록을 움직였을때, 4,5 매치 판단
-            CheckToMakeBombs();
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                if (allDots[i, j] != null)
-                    DestroyMatchesAt(i, j);
-            }
-        }
-        if (Special == false) //직접 매치 & 특수블록으로 인한 파괴가 아닌경우
-            findMatches.RandomCreateBombs(); // 랜덤 확률로 특수, 선택 블록 생성
-        Debug.Log("매치된 갯수     " + findMatches.currentMatches.Count);
-        findMatches.currentMatches.Clear();
-        StartCoroutine(DecreaseRowCo2()); // 행 내리기
-    }
+
     private IEnumerator DecreaseRowCo2() // 행을 밑으로 내리는 함수
     {
         for (int i = 0; i < width; i++)
@@ -377,9 +379,9 @@ public class Board : MonoBehaviour
         //Debug.Log("FillBoardCo");
         yield return new WaitForSeconds(refillDelay * 0.5f);
         RefillBoard();
-        yield return null;
-        findMatches.FIndAllMathces();
-        yield return new WaitForSeconds(refillDelay * 0.4f);
+
+        yield return StartCoroutine(findMatches.FindAllMatchesCo());
+
         while (MatchesOnboard()) //채워진 곳에 대해 매치에 대한 부분 검사
         {
             //yield return null;

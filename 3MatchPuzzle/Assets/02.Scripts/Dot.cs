@@ -222,8 +222,8 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
 
     public IEnumerator CheckMoveCo()
     {
-        findMatches.FIndAllMathces();
-        yield return new WaitForSeconds(.2f);
+        yield return StartCoroutine(findMatches.FindAllMatchesCo());
+
         if (otherDot != null)
         {
             if (!isMatched && !otherDot.GetComponent<Dot>().isMatched)
@@ -256,7 +256,6 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
 
                 findMatches.Bird_AcornTree_Check();
             }
-            //otherDot = null;
         }
 
     }
