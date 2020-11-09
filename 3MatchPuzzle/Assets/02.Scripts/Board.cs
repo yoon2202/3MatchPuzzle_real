@@ -364,6 +364,7 @@ public class Board : MonoBehaviour
                         {
                             allDots[i, k].GetComponent<Dot>().row = j;
                             allDots[i, k] = null;
+                            yield return null;
                             break;
                         }
                     }

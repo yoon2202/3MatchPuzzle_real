@@ -84,7 +84,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         if (Mathf.Abs(targetX - transform.position.x) > .1)  // 행, 열이 바뀌는순간 배열상태에서 업데이트가 진행되고 매치된것들을 찾은다음에 Destroy 함수가 이루어진다.
         {
             tempPosition = new Vector2(targetX, transform.position.y);
-            transform.position = Vector2.Lerp(transform.position, tempPosition, .3f);
+            transform.position = Vector2.Lerp(transform.position, tempPosition, .2f);
             if (board.allDots[column, row] != this.gameObject)
             {
                 board.allDots[column, row] = this.gameObject;
@@ -100,7 +100,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         if (Mathf.Abs(targetY - transform.position.y) > .1)
         {
             tempPosition = new Vector2(transform.position.x, targetY);
-            transform.position = Vector2.Lerp(transform.position, tempPosition, .3f);
+            transform.position = Vector2.Lerp(transform.position, tempPosition, .2f);
             if (board.allDots[column, row] != this.gameObject)
             {
                 board.allDots[column, row] = this.gameObject;

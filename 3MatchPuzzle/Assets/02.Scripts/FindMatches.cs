@@ -75,8 +75,7 @@ public class FindMatches : MonoBehaviour
 
     public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
     {
-        //Debug.Log("FindAllMatchesCo");
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.2f);
         for (int i = 0; i < board.width; i++)
         {
             for (int j = 0; j < board.height; j++)
