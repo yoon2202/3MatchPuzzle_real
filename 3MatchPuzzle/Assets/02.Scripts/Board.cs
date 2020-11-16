@@ -73,7 +73,7 @@ public class Board : MonoBehaviour
         goalManager = FindObjectOfType<GoalManager>();
         soundManager = FindObjectOfType<SoundManager>();
         scoreManager = FindObjectOfType<ScoreManager>();
-        findMatches = FindObjectOfType<FindMatches>();
+        findMatches = FindMatches.Instance;
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
         allDots = new GameObject[width, height];
@@ -249,7 +249,7 @@ public class Board : MonoBehaviour
     #endregion
     private int ColumnOrRow() // 매치된 블록들에 대한 4,5 매치 판단
     {
-        List<GameObject> matchCopy = findMatches.currentMatches as List<GameObject>;
+        List<GameObject> matchCopy = findMatches.currentMatches;
 
         for (int i = 0; i < matchCopy.Count; i++)
         {
@@ -316,7 +316,7 @@ public class Board : MonoBehaviour
         }
         if (Special == false) //직접 매치 & 특수블록으로 인한 파괴가 아닌경우
             findMatches.RandomCreateBombs(); // 랜덤 확률로 특수, 선택 블록 생성
-        Debug.Log("매치된 갯수     " + findMatches.currentMatches.Count);
+        //Debug.Log("매치된 갯수     " + findMatches.currentMatches.Count);
         findMatches.currentMatches.Clear();
         StartCoroutine(DecreaseRowCo2()); // 행 내리기
     }
@@ -349,14 +349,14 @@ public class Board : MonoBehaviour
         }
     }
 
-
     private IEnumerator DecreaseRowCo2() // 행을 밑으로 내리는 함수
     {
+        yield return new WaitForSeconds(0.1f);
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                if (!blankSpaces[i, j] && allDots[i, j] == null && !concreteTiles[i,j]) // 빈공간이 아니고, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
+                if (!blankSpaces[i, j] && allDots[i, j] == null && !concreteTiles[i, j]) // 빈공간이 아니고, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
                 {
                     for (int k = j + 1; k < height; k++) // 해당 열 위에서 아래로 공간 반복
                     {
@@ -386,12 +386,10 @@ public class Board : MonoBehaviour
             DestroyMatches(false, false);
             yield break;
         }
-        //findMatches.currentMatches.Clear();
         currentDot = null;
 
         if (IsDeadlocked())
         {
-            //Debug.Log("DeadLocked!!");
             ShuffleBoard();
         }
         yield return new WaitForSeconds(refillDelay * 0.4f);

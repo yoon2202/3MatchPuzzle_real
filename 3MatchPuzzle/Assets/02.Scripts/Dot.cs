@@ -70,7 +70,6 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
 
     }
 
-    // Update is called once per frame
     void Update()
     {
 
@@ -80,12 +79,11 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         if (Mathf.Abs(targetX - transform.position.x) > .1)  // 행, 열이 바뀌는순간 배열상태에서 업데이트가 진행되고 매치된것들을 찾은다음에 Destroy 함수가 이루어진다.
         {
             tempPosition = new Vector2(targetX, transform.position.y);
-            transform.position = Vector2.Lerp(transform.position, tempPosition, .2f);
+            transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
             if (board.allDots[column, row] != this.gameObject)
             {
                 board.allDots[column, row] = this.gameObject;
             }
-
         }
         else
         {      
@@ -93,10 +91,11 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             transform.position = tempPosition;
             this.gameObject.name = "(" + column + "," + row + ")";  
         }
+
         if (Mathf.Abs(targetY - transform.position.y) > .1)
         {
             tempPosition = new Vector2(transform.position.x, targetY);
-            transform.position = Vector2.Lerp(transform.position, tempPosition, .2f);
+            transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
             if (board.allDots[column, row] != this.gameObject)
             {
                 board.allDots[column, row] = this.gameObject;
@@ -116,10 +115,10 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         if (hintManager != null)
             hintManager.DestroyHint();
 
-        if(isColumnBomb)
+        #region 선택형 특수블록
+        if (isColumnBomb)
         {
             findMatches.isColmnBomb(this);
-            //board.DestroyMatches(false,true);
             return;
         }
         else if(isRowBomb)
@@ -139,6 +138,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         {
             findMatches.AcornBoom_Skill(GetComponent<Dot>());
         }
+        #endregion
 
         if (board.currentState == GameState.move && Cannotmove(GetComponent<Dot>()))
             firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -245,7 +245,9 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
                         endManager.DecreaseCounterValue();
                     }
                 }
+
                 board.DestroyMatches(true,true);
+
                 int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.
                 if (Createpercent < 1)
                     findMatches.RandomCreateHinder(3);
@@ -381,6 +383,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         GameObject arrow = Instantiate(SlingShotTarget, transform.position, Quaternion.identity);
         arrow.transform.parent = this.transform;
     } // 새총 과녁 생성
+
     public bool SpecialBlockCheck() // 특수/방해 블록 체크
     {
         if (isAcorn || isColumnBomb || isDiagonal || isRowBomb || isCrossArrow || isBird || isAcornTree || isStalkTree || isSlingShot || isAxe || isAcornBoom)
