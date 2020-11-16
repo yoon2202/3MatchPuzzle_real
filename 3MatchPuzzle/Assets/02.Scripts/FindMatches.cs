@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class FindMatches : MonoBehaviour
+public class FindMatches : Singleton<FindMatches>
 {
     private Board board;
     public List<GameObject> currentMatches = new List<GameObject>();

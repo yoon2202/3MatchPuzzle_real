@@ -66,11 +66,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         endManager = FindObjectOfType<EndManager>();
         hintManager = FindObjectOfType<HintManager>();
         board = FindObjectOfType<Board>();
-        findMatches = FindObjectOfType<FindMatches>();
-        //targetX = (int)transform.position.x;
-        //targetY = (int)transform.position.y;
-        //row = targetY;
-        //column = targetX;
+        findMatches = FindMatches.Instance; 
 
     }
 

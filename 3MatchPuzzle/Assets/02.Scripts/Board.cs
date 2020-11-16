@@ -364,7 +364,6 @@ public class Board : MonoBehaviour
                         {
                             allDots[i, k].GetComponent<Dot>().row = j;
                             allDots[i, k] = null;
-                            yield return null;
                             break;
                         }
                     }
@@ -377,12 +376,9 @@ public class Board : MonoBehaviour
 
     private IEnumerator FillBoardCo() // 보드 리필함수 -> 매치 확인 함수 -> 데드락 확인 함수 관려 코루틴
     {
-        //Debug.Log("FillBoardCo");
+        yield return StartCoroutine(RefillBoard());
         yield return new WaitForSeconds(refillDelay * 0.5f);
-        RefillBoard();
-
         yield return StartCoroutine(findMatches.FindAllMatchesCo());
-
         while (MatchesOnboard()) //채워진 곳에 대해 매치에 대한 부분 검사
         {
             //yield return null;
@@ -403,8 +399,7 @@ public class Board : MonoBehaviour
         streakValue = 1;
     }
 
-
-    private void RefillBoard() // 보드에 리필해주는 함수
+    IEnumerator RefillBoard() // 보드에 리필해주는 함수
     {
         for (int i = 0; i < width; i++)
         {
@@ -418,8 +413,8 @@ public class Board : MonoBehaviour
                     allDots[i, j] = piece;
                     piece.GetComponent<Dot>().row = j;
                     piece.GetComponent<Dot>().column = i;
+                    yield return null;
                 }
-
             }
         }
     }
@@ -454,7 +449,6 @@ public class Board : MonoBehaviour
             }
         }
         findMatches.currentMatches.Clear();
-
 
         StartCoroutine(DecreaseRowCo2()); // 행 내리기
     }
