@@ -6,8 +6,6 @@ public class ObjectPool : MonoBehaviour
 {
     public static ObjectPool Instance;
 
-    public GameObject poolingObjectPrefabs;
-
     private Queue<GameObject> poolingObjectQueue = new Queue<GameObject>();
 
     private void Awake()
@@ -16,43 +14,39 @@ public class ObjectPool : MonoBehaviour
         //Initialize(10);
     }
 
-   GameObject CreatenewObject()
+    public static void EnqueueObject(GameObject dot)
     {
-        var newObj = Instantiate(poolingObjectPrefabs, transform);
-        newObj.SetActive(false);
-        return newObj;
+        Instance.poolingObjectQueue.Enqueue(dot);
     }
 
-    void Initialize(int count)
-    {
-        for(int i = 0; i < count; i++)
-        {
-            poolingObjectQueue.Enqueue(CreatenewObject());
-        }
-    }
+    //void Initialize(int count)
+    //{
+    //    for(int i = 0; i < count; i++)
+    //    {
+    //        poolingObjectQueue.Enqueue(CreatenewObject());
+    //    }
+    //}
 
     public static GameObject GetObject()
     {
-        if(Instance.poolingObjectQueue.Count>0)
-        {
             var obj = Instance.poolingObjectQueue.Dequeue();
             obj.transform.SetParent(null);
-            obj.gameObject.SetActive(true);
+            obj.SetActive(true);
             return obj;
-        }
-        else
-        {
-            var newobj = Instance.CreatenewObject();
-            newobj.transform.SetParent(null);
-            newobj.gameObject.SetActive(true);
-            return newobj;
-        }
+        //else
+        //{
+        //    var newobj = Instance.CreatenewObject();
+        //    newobj.transform.SetParent(null);
+        //    newobj.gameObject.SetActive(true);
+        //    return newobj;
+        //}
     }
 
     public static void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
         obj.transform.SetParent(Instance.transform);
+        obj.transform.localPosition = Vector3.zero;
         Instance.poolingObjectQueue.Enqueue(obj);
     }
 }

@@ -140,11 +140,10 @@ public class Board : MonoBehaviour
 
         int dotTouse = Random.Range(0, Create_dots.Count);
         GameObject dot = Instantiate(Create_dots[dotTouse], tempPosition, Quaternion.identity);
+        //ObjectPool.EnqueueObject(dot.GetComponent<Dot>());
         dot.GetComponent<Dot>().row = j;
         dot.GetComponent<Dot>().column = i;
 
-        dot.transform.parent = this.transform;
-        dot.name = "(" + i + "," + j + ")";
         allDots[i, j] = dot;
 
         if (Previous_Left != null)
@@ -343,9 +342,10 @@ public class Board : MonoBehaviour
 
             GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
             Destroy(destroyEffect_, 2.0f);
-            Destroy(allDots[column, row]);
+            //Destroy(allDots[column, row]);
+            ObjectPool.ReturnObject(allDots[column, row]);
             scoreManager.IncreaseScore(basePieceValue * streakValue);
-            allDots[column, row] = null;
+            //allDots[column, row] = null;
         }
     }
 
@@ -407,7 +407,8 @@ public class Board : MonoBehaviour
                 {
                     Vector2 tempPosition = new Vector2(i, j + offSet);
                     int dotToUse = Random.Range(0, dots.Length);
-                    GameObject piece = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
+                    //GameObject piece = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
+                    GameObject piece = ObjectPool.GetObject();
                     allDots[i, j] = piece;
                     piece.GetComponent<Dot>().row = j;
                     piece.GetComponent<Dot>().column = i;
