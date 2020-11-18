@@ -326,7 +326,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 669175579}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.057099, y: 3.4253347, z: -0.49648482}
+  m_LocalPosition: {x: 4.24, y: 11.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -418,12 +418,6 @@ MonoBehaviour:
     type: 3}
   concreteTilePrefabs: {fileID: 8945728187427195647, guid: b48cda27fba43fe46b499710753c6578,
     type: 3}
-  dots:
-  - {fileID: 4219606082325596769, guid: fdd8ed749e5c27c4e80b420152951bf6, type: 3}
-  - {fileID: 7743673242273374244, guid: f5c66a726c2937b498e3d733df3991bd, type: 3}
-  - {fileID: 1522709525839090493, guid: 28e53026d5d76374ea75490cf0154990, type: 3}
-  - {fileID: 4299519779289852421, guid: 19fb27c92bcbb1f4f872a58e70b1789e, type: 3}
-  - {fileID: 1789868624564026064, guid: acdadd47fdf7e58468a7f9d71a343ed7, type: 3}
   destroyEffect: {fileID: 1828075268808171628, guid: de43c708be9a94e48bf22de580b955bd,
     type: 3}
   currentDot: {fileID: 0}

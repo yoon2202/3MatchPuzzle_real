@@ -11,7 +11,12 @@ public class ObjectPool : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        //Initialize(10);
+
+    }
+
+    private void Start()
+    {
+        Initialize(90);
     }
 
     public static void EnqueueObject(GameObject dot)
@@ -19,20 +24,32 @@ public class ObjectPool : MonoBehaviour
         Instance.poolingObjectQueue.Enqueue(dot);
     }
 
-    //void Initialize(int count)
-    //{
-    //    for(int i = 0; i < count; i++)
-    //    {
-    //        poolingObjectQueue.Enqueue(CreatenewObject());
-    //    }
-    //}
-
-    public static GameObject GetObject()
+    void Initialize(int count)
     {
-            var obj = Instance.poolingObjectQueue.Dequeue();
-            obj.transform.SetParent(null);
-            obj.SetActive(true);
-            return obj;
+        for (int i = 0; i < count; i++)
+        {
+            poolingObjectQueue.Enqueue(CreatenewObject());
+        }
+    }
+
+    GameObject CreatenewObject()
+    {
+        int dotToUse = Random.Range(0, Board.dots.Length);
+        GameObject piece = Instantiate(Board.dots[dotToUse], transform);
+        piece.SetActive(false);
+        return piece;
+    }
+
+    public static GameObject GetObject(int i, int j,int offset)
+    {
+        Vector2 tempPosition = new Vector2(i, j + offset);
+        var obj = Instance.poolingObjectQueue.Dequeue();
+        obj.transform.SetParent(null);
+        obj.transform.position = tempPosition;
+        obj.GetComponent<Dot>().row = j;
+        obj.GetComponent<Dot>().column = i;
+        obj.SetActive(true);
+        return obj;
         //else
         //{
         //    var newobj = Instance.CreatenewObject();

@@ -70,6 +70,12 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
 
     }
 
+    private void OnEnable()
+    {
+        targetX = column;
+        targetY = row;
+    }
+
     void Update()
     {
 
@@ -417,10 +423,8 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             return false;
     }
 
-    //private void OnDestroy()
-    //{
-    //    AchievementsCheck.instance.Checkfunction(this);
-    //    Debug.Log(name + "가 파괴됨!");
-
-    //}
+    private void OnDestroy()
+    {
+        isMatched = false;
+    }
 }

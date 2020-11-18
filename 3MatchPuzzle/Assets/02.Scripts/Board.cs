@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
     public GameObject tilePrefabs;
     public GameObject breakableTilePrefabs;
     public GameObject concreteTilePrefabs;
-    public GameObject[] dots;
+    public static GameObject[] dots;
     public GameObject destroyEffect;
 
     [Header("Layout")]
@@ -345,7 +345,7 @@ public class Board : MonoBehaviour
             //Destroy(allDots[column, row]);
             ObjectPool.ReturnObject(allDots[column, row]);
             scoreManager.IncreaseScore(basePieceValue * streakValue);
-            //allDots[column, row] = null;
+            allDots[column, row] = null;
         }
     }
 
@@ -405,13 +405,10 @@ public class Board : MonoBehaviour
             {
                 if (allDots[i, j] == null && !blankSpaces[i, j] && !concreteTiles[i, j])
                 {
-                    Vector2 tempPosition = new Vector2(i, j + offSet);
-                    int dotToUse = Random.Range(0, dots.Length);
+                    //int dotToUse = Random.Range(0, dots.Length);
                     //GameObject piece = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
-                    GameObject piece = ObjectPool.GetObject();
+                    GameObject piece = ObjectPool.GetObject(i,j,offSet);
                     allDots[i, j] = piece;
-                    piece.GetComponent<Dot>().row = j;
-                    piece.GetComponent<Dot>().column = i;
                     yield return null;
                 }
             }
