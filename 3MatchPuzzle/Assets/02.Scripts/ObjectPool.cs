@@ -7,6 +7,7 @@ public class ObjectPool : MonoBehaviour
     public static ObjectPool Instance;
 
     private Queue<GameObject> poolingObjectQueue = new Queue<GameObject>();
+    private List<GameObject> TempStorage = new List<GameObject>();
 
     private void Awake()
     {
@@ -16,7 +17,7 @@ public class ObjectPool : MonoBehaviour
 
     private void Start()
     {
-        Initialize(90);
+        Initialize(10);
     }
 
     public static void EnqueueObject(GameObject dot)
@@ -50,13 +51,6 @@ public class ObjectPool : MonoBehaviour
         obj.GetComponent<Dot>().column = i;
         obj.SetActive(true);
         return obj;
-        //else
-        //{
-        //    var newobj = Instance.CreatenewObject();
-        //    newobj.transform.SetParent(null);
-        //    newobj.gameObject.SetActive(true);
-        //    return newobj;
-        //}
     }
 
     public static void ReturnObject(GameObject obj)
@@ -65,5 +59,6 @@ public class ObjectPool : MonoBehaviour
         obj.transform.SetParent(Instance.transform);
         obj.transform.localPosition = Vector3.zero;
         Instance.poolingObjectQueue.Enqueue(obj);
+        Instance.TempStorage.Add(obj);
     }
 }

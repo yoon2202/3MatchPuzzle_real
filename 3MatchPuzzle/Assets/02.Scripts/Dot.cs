@@ -423,7 +423,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             return false;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         isMatched = false;
     }
