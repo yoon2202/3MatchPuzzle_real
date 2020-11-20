@@ -12,12 +12,11 @@ public class ObjectPool : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-
     }
 
     private void Start()
     {
-        Initialize(10);
+        Initialize(50);
     }
 
     public static void EnqueueObject(GameObject dot)
@@ -56,9 +55,47 @@ public class ObjectPool : MonoBehaviour
     public static void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
-        obj.transform.SetParent(Instance.transform);
-        obj.transform.localPosition = Vector3.zero;
-        Instance.poolingObjectQueue.Enqueue(obj);
         Instance.TempStorage.Add(obj);
+        Debug.Log(Instance.TempStorage.Count);
+        Instance.ShuffleObject();
     }
+    void ShuffleObject()
+    {
+        if(TempStorage.Count > 20)
+        {
+            ShuffleList(TempStorage);
+
+            for(int i =0; i< TempStorage.Count; i ++)
+            {
+                Instance.poolingObjectQueue.Enqueue(TempStorage[i]);
+                TempStorage[i].transform.SetParent(Instance.transform);
+                TempStorage[i].transform.localPosition = Vector3.zero;
+            }
+            TempStorage.Clear();
+        }
+    }
+
+    void ShuffleList<T>(List<T> list)
+    {
+        int random1;
+        int random2;
+
+        T tmp;
+
+        var i = 0;
+        while (i < 3)
+        { 
+        for (int index = 0; index < list.Count; ++index)
+        {
+            random1 = Random.Range(0, list.Count);
+            random2 = Random.Range(0, list.Count);
+
+            tmp = list[random1];
+            list[random1] = list[random2];
+            list[random2] = tmp;
+        }
+            i++;
+        }
+    }
+
 }

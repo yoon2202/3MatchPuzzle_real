@@ -29,7 +29,7 @@ public class Board : MonoBehaviour
     [Header("Layout")]
     private bool[,] blankSpaces;
     private BackGroundTile[,] concreteTiles;
-    public GameObject[,] allDots;
+    public Dot[,] allDots;
     private List<GameObject> Create_dots = new List<GameObject>();
     private GameObject Previous_Bellow;
     private GameObject Previous_Left;
@@ -76,7 +76,7 @@ public class Board : MonoBehaviour
         findMatches = FindMatches.Instance;
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
-        allDots = new GameObject[width, height];
+        allDots = new Dot[width, height];
 
         InitList();
         Setup();
@@ -125,9 +125,9 @@ public class Board : MonoBehaviour
     {
         Vector2 tempPosition = new Vector2(i, j);
         if (i > 0 && allDots[i - 1, j] != null)
-            Previous_Left = previous_Obj(allDots[i - 1, j]);
+            Previous_Left = previous_Obj(allDots[i - 1, j].gameObject);
         if (j > 0 && allDots[i, j - 1] != null)
-            Previous_Bellow = previous_Obj(allDots[i, j - 1]);
+            Previous_Bellow = previous_Obj(allDots[i, j - 1].gameObject);
 
         if (Previous_Left != null)
         {
@@ -139,10 +139,11 @@ public class Board : MonoBehaviour
         }
 
         int dotTouse = Random.Range(0, Create_dots.Count);
-        GameObject dot = Instantiate(Create_dots[dotTouse], tempPosition, Quaternion.identity);
-        //ObjectPool.EnqueueObject(dot.GetComponent<Dot>());
-        dot.GetComponent<Dot>().row = j;
-        dot.GetComponent<Dot>().column = i;
+        GameObject dotObj = Instantiate(Create_dots[dotTouse], tempPosition, Quaternion.identity);
+        Dot dot = dotObj.GetComponent<Dot>();
+
+        dot.row = j;
+        dot.column = i;
 
         allDots[i, j] = dot;
 
@@ -248,7 +249,7 @@ public class Board : MonoBehaviour
     #endregion
     private int ColumnOrRow() // 매치된 블록들에 대한 4,5 매치 판단
     {
-        List<GameObject> matchCopy = findMatches.currentMatches;
+        List<Dot> matchCopy = findMatches.currentMatches;
 
         for (int i = 0; i < matchCopy.Count; i++)
         {
@@ -322,7 +323,7 @@ public class Board : MonoBehaviour
 
     private void DestroyMatchesAt(int column, int row)
     {
-        if (allDots[column, row].GetComponent<Dot>().isMatched)
+        if (allDots[column, row].isMatched)
         {
 
             DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
@@ -338,12 +339,13 @@ public class Board : MonoBehaviour
             //if(soundManager != null)
             //{
             //    soundManager.PlayRandomDestroyNoise();
+
             //}
 
             GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
             Destroy(destroyEffect_, 2.0f);
             //Destroy(allDots[column, row]);
-            ObjectPool.ReturnObject(allDots[column, row]);
+            ObjectPool.ReturnObject(allDots[column, row].gameObject);
             scoreManager.IncreaseScore(basePieceValue * streakValue);
             allDots[column, row] = null;
         }
@@ -408,7 +410,7 @@ public class Board : MonoBehaviour
                     //int dotToUse = Random.Range(0, dots.Length);
                     //GameObject piece = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
                     GameObject piece = ObjectPool.GetObject(i,j,offSet);
-                    allDots[i, j] = piece;
+                    allDots[i, j] = piece.GetComponent<Dot>();
                     yield return null;
                 }
             }
@@ -431,7 +433,7 @@ public class Board : MonoBehaviour
         return false;
     }
 
-    public void SpecialDestroy()
+    public void SpecialDestroy() // 특수 블록, 선택블록에 대한 폭파
     {
         for (int i = 0; i < findMatches.currentMatches.Count; i++)
         {
@@ -439,9 +441,9 @@ public class Board : MonoBehaviour
             {
                 GameObject destroyEffect_ = Instantiate(destroyEffect, findMatches.currentMatches[i].transform.position, Quaternion.identity);
                 Destroy(destroyEffect_, 2.0f);
-                Destroy(findMatches.currentMatches[i]);
                 scoreManager.IncreaseScore(basePieceValue * streakValue);
-                allDots[findMatches.currentMatches[i].GetComponent<Dot>().column, findMatches.currentMatches[i].GetComponent<Dot>().row] = null;
+                ObjectPool.ReturnObject(allDots[findMatches.currentMatches[i].column, findMatches.currentMatches[i].row].gameObject);
+                allDots[findMatches.currentMatches[i].column, findMatches.currentMatches[i].row] = null;
             }
         }
         findMatches.currentMatches.Clear();
@@ -454,7 +456,7 @@ public class Board : MonoBehaviour
     {
         if (allDots[column + (int)direction.x, row + (int)direction.y] != null)
         {
-            GameObject holder = allDots[column + (int)direction.x, row + (int)direction.y] as GameObject;
+            Dot holder = allDots[column + (int)direction.x, row + (int)direction.y];
             allDots[column + (int)direction.x, row + (int)direction.y] = allDots[column, row];
             allDots[column, row] = holder;
         }
@@ -537,7 +539,7 @@ public class Board : MonoBehaviour
             {
                 if (allDots[i, j] != null)
                 {
-                    newBoard.Add(allDots[i, j]);
+                    newBoard.Add(allDots[i, j].gameObject);
                 }
             }
         }
@@ -549,9 +551,9 @@ public class Board : MonoBehaviour
                 if (!blankSpaces[i, j]) // 빈 공간 혹은 콘크리트 타일이 아닌경우
                 {
                     if (i > 0 && allDots[i - 1, j] != null) // 왼쪽 
-                        Previous_Left = previous_Obj(allDots[i - 1, j]);
+                        Previous_Left = previous_Obj(allDots[i - 1, j].gameObject);
                     if (j > 0 && allDots[i, j - 1] != null) // 밑에
-                        Previous_Bellow = previous_Obj(allDots[i, j - 1]);
+                        Previous_Bellow = previous_Obj(allDots[i, j - 1].gameObject);
 
                     if (Previous_Left != null)
                     {
@@ -576,7 +578,7 @@ public class Board : MonoBehaviour
                             piece = newBoard[z].GetComponent<Dot>();
                             piece.column = i;
                             piece.row = j;
-                            allDots[i, j] = newBoard[z];
+                            allDots[i, j] = piece;
                             newBoard.Remove(newBoard[z]);
                             IsSuccess = true;
                             break;
@@ -587,7 +589,8 @@ public class Board : MonoBehaviour
                     {
                         //Debug.Log("실패");
                         int dotTouse2 = Random.Range(0, Create_dots.Count);
-                        GameObject dot = Instantiate(Create_dots[dotTouse2], new Vector2(i, j), Quaternion.identity);
+                        GameObject dotObj = Instantiate(Create_dots[dotTouse2], new Vector2(i, j), Quaternion.identity);
+                        Dot dot = dotObj.GetComponent<Dot>();
                         dot.GetComponent<Dot>().row = j;
                         dot.GetComponent<Dot>().column = i;
 

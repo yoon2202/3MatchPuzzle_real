@@ -18,7 +18,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     private HintManager hintManager;
     private FindMatches findMatches;
     private Board board;
-    public GameObject otherDot;
+    public Dot otherDot;
     private Vector2 firstTouchPosition;
     private Vector2 finalTouchPosition;
     private Vector2 tempPosition;
@@ -86,9 +86,9 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         {
             tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
-            if (board.allDots[column, row] != this.gameObject)
+            if (board.allDots[column, row] != this)
             {
-                board.allDots[column, row] = this.gameObject;
+                board.allDots[column, row] = this;
             }
         }
         else
@@ -102,16 +102,16 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         {
             tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
-            if (board.allDots[column, row] != this.gameObject)
+            if (board.allDots[column, row] != this)
             {
-                board.allDots[column, row] = this.gameObject;
+                board.allDots[column, row] = this;
             }
         }
         else
         {        
             tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = tempPosition;
-            board.allDots[column, row] = this.gameObject;
+            board.allDots[column, row] = this;
             this.gameObject.name = "(" + column + "," + row + ")";  
         }
     }
@@ -182,8 +182,8 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
 
             if (otherDot != null && Cannotmove(otherDot.GetComponent<Dot>()))  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
             {
-                otherDot.GetComponent<Dot>().column += -1 * (int)direction.x;
-                otherDot.GetComponent<Dot>().row += -1 * (int)direction.y;
+                otherDot.column += -1 * (int)direction.x;
+                otherDot.row += -1 * (int)direction.y;
                 column += (int)direction.x;
                 row += (int)direction.y;
                 StartCoroutine(CheckMoveCo());
@@ -263,11 +263,10 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         }
 
     }
-    private void UpdateBoardReplace(GameObject a_OtherDot)
+    private void UpdateBoardReplace(Dot a_OtherDot)
     {
-        Dot other_dot = a_OtherDot.GetComponent<Dot>();
-        GameObject temp_obj = board.allDots[column, row];
-        board.allDots[other_dot.column, other_dot.row] = board.allDots[column, row];
+        Dot temp_obj = board.allDots[column, row];
+        board.allDots[a_OtherDot.column, a_OtherDot.row] = board.allDots[column, row];
         board.allDots[column, row] = temp_obj;
         Debug.Log(board.allDots[column, row].name);
     }

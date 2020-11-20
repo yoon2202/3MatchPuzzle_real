@@ -26,9 +26,9 @@ public class HintManager : MonoBehaviour
         }
     }
 
-    List<GameObject> FindAllMatches()
+    List<Dot> FindAllMatches()
     {
-        List<GameObject> possibleMoves = new List<GameObject>();
+        List<Dot> possibleMoves = new List<Dot>();
         for (int i = 0; i < board.width; i++)
         {
             for (int j = 0; j < board.height; j++)
@@ -55,9 +55,9 @@ public class HintManager : MonoBehaviour
         return possibleMoves;
     }
 
-    GameObject PickOneRandomly() // 매칭이 가능한 블록들 중에 한개를 선택한다.
+    Dot PickOneRandomly() // 매칭이 가능한 블록들 중에 한개를 선택한다.
     {
-        List<GameObject> possibleMoves = new List<GameObject>();
+        List<Dot> possibleMoves = new List<Dot>();
         possibleMoves = FindAllMatches();
         if(possibleMoves.Count >0)
         {
@@ -69,7 +69,7 @@ public class HintManager : MonoBehaviour
 
     private void MarkHint()
     {
-        GameObject move = PickOneRandomly();
+        Dot move = PickOneRandomly();
         if(move != null)
         {
             currentHint = Instantiate(hintParticle, move.transform.position, Quaternion.identity);

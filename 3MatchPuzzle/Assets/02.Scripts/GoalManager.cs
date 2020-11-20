@@ -80,9 +80,9 @@ public class GoalManager : MonoBehaviour
         }
         if (goalsCompleted >= levelGoals.Length)
         {
-            if(endGame != null)
+            //if(endGame != null)
                 // 게임 클리어시 이벤트 필요.
-            Debug.Log("미션 클리어");
+            //Debug.Log("미션 클리어");
         }
     }
 
