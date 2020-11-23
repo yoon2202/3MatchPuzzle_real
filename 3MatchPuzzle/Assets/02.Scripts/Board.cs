@@ -107,10 +107,10 @@ public class Board : MonoBehaviour
                         blankSpaces[i, j] = true;
                         break;
                     case 2:
-                        Vector2 tempPosition =  new Vector2(i, j);
+                        Vector2 tempPosition = new Vector2(i, j);
                         GameObject tile = Instantiate(concreteTilePrefabs, tempPosition, Quaternion.identity);
-                        concreteTiles[i,j] = tile.GetComponent<BackGroundTile>();
-                        break;                     
+                        concreteTiles[i, j] = tile.GetComponent<BackGroundTile>();
+                        break;
                 }
             }
         }
@@ -239,11 +239,11 @@ public class Board : MonoBehaviour
         }
         if (row < height - 1)
         {
-                if (allDots[column, row + 1])
-                {
-                    if (allDots[column, row + 1].GetComponent<Dot>().isAcorn)
-                        Destroy(allDots[column, row + 1]);
-                }
+            if (allDots[column, row + 1])
+            {
+                if (allDots[column, row + 1].GetComponent<Dot>().isAcorn)
+                    Destroy(allDots[column, row + 1]);
+            }
         }
     }
     #endregion
@@ -254,9 +254,6 @@ public class Board : MonoBehaviour
         for (int i = 0; i < matchCopy.Count; i++)
         {
             Dot thisDot = matchCopy[i].GetComponent<Dot>();
-
-            int column = thisDot.column;
-            int row = thisDot.row;
             int columnMatch = 0;
             int rowMatch = 0;
 
@@ -306,18 +303,60 @@ public class Board : MonoBehaviour
     {
         if (findMatches.currentMatches.Count > 3 && isMove) // 직접 블록을 움직였을때, 4,5 매치 판단
             CheckToMakeBombs();
-        for (int i = 0; i < width; i++)
+
+        for (int i = 0; i < findMatches.currentMatches.Count; i++)
         {
-            for (int j = 0; j < height; j++)
+            var column = findMatches.currentMatches[i].column;
+            var row = findMatches.currentMatches[i].row;
+
+            if (findMatches.currentMatches[i] != null)
             {
-                if (allDots[i, j] != null)
-                    DestroyMatchesAt(i, j);
+                DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
+                DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
+
+                if (goalManager != null)
+                {
+                    goalManager.CompareGoal(allDots[column, row].tag.ToString());
+                    goalManager.UpdateGoals();
+                }
+
+                //if(soundManager != null)
+                //{
+                //    soundManager.PlayRandomDestroyNoise();
+
+                //}
+
+                GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
+                Destroy(destroyEffect_, 2.0f);
+                //Destroy(allDots[column, row]);
+                ObjectPool.ReturnObject(allDots[column, row].gameObject);
+                scoreManager.IncreaseScore(basePieceValue * streakValue);
+                allDots[column, row] = null;
             }
         }
+
         if (Special == false) //직접 매치 & 특수블록으로 인한 파괴가 아닌경우
             findMatches.RandomCreateBombs(); // 랜덤 확률로 특수, 선택 블록 생성
-        //Debug.Log("매치된 갯수     " + findMatches.currentMatches.Count);
+
         findMatches.currentMatches.Clear();
+        StartCoroutine(DecreaseRowCo2()); // 행 내리기
+    }
+
+    public void SpecialDestroy() // 특수 블록, 선택블록에 대한 폭파
+    {
+        for (int i = 0; i < findMatches.currentMatches.Count; i++)
+        {
+            if (findMatches.currentMatches[i] != null)
+            {
+                GameObject destroyEffect_ = Instantiate(destroyEffect, findMatches.currentMatches[i].transform.position, Quaternion.identity);
+                Destroy(destroyEffect_, 2.0f);
+                scoreManager.IncreaseScore(basePieceValue * streakValue);
+                ObjectPool.ReturnObject(allDots[findMatches.currentMatches[i].column, findMatches.currentMatches[i].row].gameObject);
+                allDots[findMatches.currentMatches[i].column, findMatches.currentMatches[i].row] = null;
+            }
+        }
+        findMatches.currentMatches.Clear();
+
         StartCoroutine(DecreaseRowCo2()); // 행 내리기
     }
 
@@ -381,13 +420,14 @@ public class Board : MonoBehaviour
         yield return StartCoroutine(RefillBoard());
         yield return new WaitForSeconds(refillDelay * 0.5f);
         yield return StartCoroutine(findMatches.FindAllMatchesCo());
-        while (MatchesOnboard()) //채워진 곳에 대해 매치에 대한 부분 검사
+
+        if (findMatches.currentMatches.Count > 0)
         {
-            //yield return null;
             streakValue += 1;
             DestroyMatches(false, false);
             yield break;
         }
+
         currentDot = null;
 
         if (IsDeadlocked())
@@ -409,46 +449,12 @@ public class Board : MonoBehaviour
                 {
                     //int dotToUse = Random.Range(0, dots.Length);
                     //GameObject piece = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
-                    GameObject piece = ObjectPool.GetObject(i,j,offSet);
+                    GameObject piece = ObjectPool.GetObject(i, j, offSet);
                     allDots[i, j] = piece.GetComponent<Dot>();
                     yield return null;
                 }
             }
         }
-    }
-
-    private bool MatchesOnboard() //여기 파인드 매치와 뒤 반복문에 대한 시간차를 둔다.
-    {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                if (allDots[i, j] != null)
-                {
-                    if (allDots[i, j].GetComponent<Dot>().isMatched)
-                        return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void SpecialDestroy() // 특수 블록, 선택블록에 대한 폭파
-    {
-        for (int i = 0; i < findMatches.currentMatches.Count; i++)
-        {
-            if (findMatches.currentMatches[i] != null)
-            {
-                GameObject destroyEffect_ = Instantiate(destroyEffect, findMatches.currentMatches[i].transform.position, Quaternion.identity);
-                Destroy(destroyEffect_, 2.0f);
-                scoreManager.IncreaseScore(basePieceValue * streakValue);
-                ObjectPool.ReturnObject(allDots[findMatches.currentMatches[i].column, findMatches.currentMatches[i].row].gameObject);
-                allDots[findMatches.currentMatches[i].column, findMatches.currentMatches[i].row] = null;
-            }
-        }
-        findMatches.currentMatches.Clear();
-
-        StartCoroutine(DecreaseRowCo2()); // 행 내리기
     }
 
     #region 데드락 함수 모음

@@ -22,12 +22,11 @@ public class FindMatches : Singleton<FindMatches>
         List<Dot> currentDots = new List<Dot>();
 
         if (dot1.isCrossArrow)
-            currentDots.Union(GetCrossPieces(dot1.column, dot1.row));
+            currentDots = currentDots.Union(GetCrossPieces(dot1.column, dot1.row)).ToList();
         if (dot2.isCrossArrow)
-            currentDots.Union(GetCrossPieces(dot2.column, dot2.row));
+            currentDots = currentDots.Union(GetCrossPieces(dot2.column, dot2.row)).ToList();
         if (dot3.isCrossArrow)
-            currentDots.Union(GetCrossPieces(dot3.column, dot3.row));
-
+            currentDots = currentDots.Union(GetCrossPieces(dot3.column, dot3.row)).ToList();
         return currentDots;
     }
 
@@ -36,11 +35,11 @@ public class FindMatches : Singleton<FindMatches>
         List<Dot> currentDots = new List<Dot>();
 
         if (dot1.isDiagonal)
-            currentDots.Union(GetdiagonalPieces(dot1.column, dot1.row));
+            currentDots = currentDots.Union(GetdiagonalPieces(dot1.column, dot1.row)).ToList();
         if (dot2.isDiagonal)
-            currentDots.Union(GetdiagonalPieces(dot2.column, dot2.row));
+            currentDots = currentDots.Union(GetdiagonalPieces(dot2.column, dot2.row)).ToList();
         if (dot3.isDiagonal)
-            currentDots.Union(GetdiagonalPieces(dot3.column, dot3.row));
+            currentDots = currentDots.Union(GetdiagonalPieces(dot3.column, dot3.row)).ToList();
 
         return currentDots;
     }
@@ -63,7 +62,6 @@ public class FindMatches : Singleton<FindMatches>
     {
         if (!currentMatches.Contains(dot))         // Match된 Dot들을 리스트에 포함시킨다.
             currentMatches.Add(dot);
-        dot.isMatched = true;
     }
 
     private void GetNearbyPieces(Dot dot1, Dot dot2, Dot dot3)
@@ -93,11 +91,11 @@ public class FindMatches : Singleton<FindMatches>
                             {
                                 if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
                                 {
-                                    currentMatches.Union(isCrossBomb(leftDot, currentDot, rightDot));
+                                    currentMatches  = currentMatches.Union(isCrossBomb(leftDot, currentDot, rightDot)).ToList();
 
-                                    currentMatches.Union(isDiagonalBomb(leftDot, currentDot, rightDot));
+                                    currentMatches = currentMatches.Union(isDiagonalBomb(leftDot, currentDot, rightDot)).ToList();
 
-                                    GetNearbyPieces(leftDot.GetComponent<Dot>(), currentDot.GetComponent<Dot>(), rightDot.GetComponent<Dot>());
+                                    GetNearbyPieces(leftDot, currentDot, rightDot);
                                 }
                             }
                         }
@@ -113,9 +111,9 @@ public class FindMatches : Singleton<FindMatches>
                             {
                                 if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
                                 {
-                                    currentMatches.Union(isCrossBomb(upDot, currentDot, downDot));
+                                    currentMatches = currentMatches.Union(isCrossBomb(upDot, currentDot, downDot)).ToList();
 
-                                    currentMatches.Union(isDiagonalBomb(upDot, currentDot, downDot));
+                                    currentMatches = currentMatches.Union(isDiagonalBomb(upDot, currentDot, downDot)).ToList();
 
                                     GetNearbyPieces(upDot, currentDot, downDot);
                                 }
@@ -127,19 +125,106 @@ public class FindMatches : Singleton<FindMatches>
             }
         }
     }
+
+    public void CheckBombs() // currentDot은 움직인 개체
+    {
+        if (board.currentDot != null)
+        {
+            if (board.currentDot.isMatched) //움직인 개체가 매치상태이면?
+            {
+                board.currentDot.isMatched = false;
+
+                int typeOfBomb = Random.Range(0, 100);
+                if (typeOfBomb < 99)
+                {
+                    //board.currentDot.MakematchingBomb();
+                    board.currentDot.SelectmatchingBomb();
+                }
+            }
+            else if (board.currentDot.otherDot != null)
+            {
+                Dot otherDot = board.currentDot.otherDot;
+
+                if (otherDot.isMatched) // 움직여진 개체가 매치상태이면?
+                {
+                    otherDot.isMatched = false;
+
+                    int typeOfBomb = Random.Range(0, 100);
+                    if (typeOfBomb < 99)
+                    {
+                        //board.currentDot.MakematchingBomb();
+                        board.currentDot.SelectmatchingBomb();
+                    }
+                }
+            }
+        }
+    }
+    #region 랜덤생성
+    public void RandomCreateBombs() // 매치형, 선택형 블록 랜덤 생성
+    {
+        Dot[,] currentdots = board.allDots;
+        var i = 0;
+        int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.
+
+        while (i < 10)
+        {
+            int RandomXPick = Random.Range(0, currentdots.GetLength(0));
+            int RandomYPick = Random.Range(0, currentdots.GetLength(1));
+            if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
+            {
+                if (currentdots[RandomXPick, RandomYPick].SpecialBlockCheck()) // 선택된 블록이 특수블록을 갖고있는지 확인
+                {
+                    int typeOfBomb = Random.Range(0, 2);  // 랜덤 생성되는 특수, 선택 블록의 확률 계산
+                    if (typeOfBomb == 1)
+                        currentdots[RandomXPick, RandomYPick].MakematchingBomb();
+                    else
+                        currentdots[RandomXPick, RandomYPick].SelectmatchingBomb();
+
+                    Debug.LogError("생성");
+                    return;
+                }
+            }
+            i++;
+        }
+    }
+
+    public void RandomCreateHinder(int num) // num -> 0: 참새 1: 도토리나무 2: 엮인줄기나무 3: 랜덤
+    {
+        Dot[,] currentdots = board.allDots;
+        var i = 0;
+        var Acornnum = 0;
+        while (i < 15)
+        {
+            int RandomXPick = Random.Range(0, currentdots.GetLength(0));
+            int RandomYPick = Random.Range(0, currentdots.GetLength(1));
+            if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
+            {
+                if (currentdots[RandomXPick, RandomYPick].SpecialBlockCheck()) // 선택된 블록이 특수블록을 갖고있는지 확인
+                {
+                    currentdots[RandomXPick, RandomYPick].CreateHinderBlock(num, true);
+
+                    if (num != 4) // 도토리 블록이 아닌 경우
+                        return;
+                    else
+                        Acornnum++;
+                }
+            }
+            if (Acornnum == 4)
+                return;
+            i++;
+        }
+    }
+    #endregion
     #region 특수블록 매칭 함수
     List<Dot> GetCrossPieces(int column, int row) // 십자가형 매칭
     {
         List<Dot> dots = new List<Dot>();
-
-        board.allDots[column, row].isMatched = true;
 
         if (0 < column)
         {
             if (board.allDots[column - 1, row] != null) //왼쪽
             {
                 dots.Add(board.allDots[column - 1, row]);
-                board.allDots[column - 1, row].isMatched = true;
             }
         }
 
@@ -148,7 +233,6 @@ public class FindMatches : Singleton<FindMatches>
             if (board.allDots[column + 1, row] != null) //오른쪽
             {
                 dots.Add(board.allDots[column + 1, row]);
-                board.allDots[column + 1, row].isMatched = true;
             }
         }
         if (board.height - 1 > row)
@@ -156,7 +240,6 @@ public class FindMatches : Singleton<FindMatches>
             if (board.allDots[column, row + 1] != null) //위쪽
             {
                 dots.Add(board.allDots[column, row + 1]);
-                board.allDots[column, row + 1].isMatched = true;
             }
         }
 
@@ -165,24 +248,19 @@ public class FindMatches : Singleton<FindMatches>
             if (board.allDots[column, row - 1] != null) //아래쪽
             {
                 dots.Add(board.allDots[column, row - 1]);
-                board.allDots[column, row - 1].isMatched = true;
             }
         }
-        dots.Clear();
         return dots;
     }
     List<Dot> GetdiagonalPieces(int column, int row)// X형 매칭
     {
         List<Dot> dots = new List<Dot>();
 
-        board.allDots[column, row].isMatched = true; // 기존에 4개의 매치가 된경우 매치형 특수효과를 위해 false시킨것을 다시 true로 수정
-
         if (0 < column && board.height - 1 > row)
         {
             if (board.allDots[column - 1, row + 1] != null) // 왼쪽 위 대각선
             {
                 dots.Add(board.allDots[column - 1, row + 1]);
-                board.allDots[column - 1, row + 1].isMatched = true;
             }
         }
 
@@ -191,7 +269,6 @@ public class FindMatches : Singleton<FindMatches>
             if (board.allDots[column + 1, row + 1] != null) //오른쪽 위 대각선
             {
                 dots.Add(board.allDots[column + 1, row + 1]);
-                board.allDots[column + 1, row + 1].isMatched = true;
             }
         }
         if (0 < row && 0 < column)
@@ -199,7 +276,6 @@ public class FindMatches : Singleton<FindMatches>
             if (board.allDots[column - 1, row - 1] != null) //왼쪽 아래 대각선
             {
                 dots.Add(board.allDots[column - 1, row - 1]);
-                board.allDots[column - 1, row - 1].isMatched = true;
             }
         }
 
@@ -208,7 +284,6 @@ public class FindMatches : Singleton<FindMatches>
             if (board.allDots[column + 1, row - 1] != null) //오른쪽 아래 대각선
             {
                 dots.Add(board.allDots[column + 1, row - 1]);
-                board.allDots[column + 1, row - 1].isMatched = true;
             }
         }
         return dots;
@@ -314,94 +389,7 @@ public class FindMatches : Singleton<FindMatches>
         return dots;
     }
     #endregion
-    public void CheckBombs() // currentDot은 움직인 개체
-    {
-        if (board.currentDot != null)
-        {
-            if (board.currentDot.isMatched) //움직인 개체가 매치상태이면?
-            {
-                board.currentDot.isMatched = false;
-
-                int typeOfBomb = Random.Range(0, 100);
-                if (typeOfBomb < 99)
-                {
-                    //board.currentDot.MakematchingBomb();
-                    board.currentDot.SelectmatchingBomb();
-                }
-            }
-            else if (board.currentDot.otherDot != null)
-            {
-                Dot otherDot = board.currentDot.otherDot;
-
-                if (otherDot.isMatched) // 움직여진 개체가 매치상태이면?
-                {
-                    otherDot.isMatched = false;
-
-                    int typeOfBomb = Random.Range(0, 100);
-                    if (typeOfBomb < 99)
-                    {
-                        //board.currentDot.MakematchingBomb();
-                        board.currentDot.SelectmatchingBomb();
-                    }
-                }
-            }
-        }
-    }
-    public void RandomCreateBombs() // 매치형, 선택형 블록 랜덤 생성
-    {
-        Dot[,] currentdots = board.allDots;
-        var i = 0;
-        int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.
-
-        while (i < 10)
-        {
-            int RandomXPick = Random.Range(0, currentdots.GetLength(0));
-            int RandomYPick = Random.Range(0, currentdots.GetLength(1));
-            if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
-            {
-                if (currentdots[RandomXPick, RandomYPick].SpecialBlockCheck()) // 선택된 블록이 특수블록을 갖고있는지 확인
-                {
-                    int typeOfBomb = Random.Range(0, 2);  // 랜덤 생성되는 특수, 선택 블록의 확률 계산
-                    if (typeOfBomb == 1)
-                        currentdots[RandomXPick, RandomYPick].MakematchingBomb();
-                    else
-                        currentdots[RandomXPick, RandomYPick].SelectmatchingBomb();
-
-                    Debug.LogError("생성");
-                    return;
-                }
-            }
-            i++;
-        }
-    }
-
-    public void RandomCreateHinder(int num) // num -> 0: 참새 1: 도토리나무 2: 엮인줄기나무 3: 랜덤
-    {
-        Dot[,] currentdots = board.allDots;
-        var i = 0;
-        var Acornnum = 0;
-        while (i < 15)
-        {
-            int RandomXPick = Random.Range(0, currentdots.GetLength(0));
-            int RandomYPick = Random.Range(0, currentdots.GetLength(1));
-            if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
-            {
-                if (currentdots[RandomXPick, RandomYPick].SpecialBlockCheck()) // 선택된 블록이 특수블록을 갖고있는지 확인
-                {
-                    currentdots[RandomXPick, RandomYPick].CreateHinderBlock(num, true);
-
-                    if (num != 4) // 도토리 블록이 아닌 경우
-                        return;
-                    else
-                        Acornnum++;
-                }
-            }
-            if (Acornnum == 4)
-                return;
-            i++;
-        }
-    }
-
+    #region 특수스킬
     public void Bird_AcornTree_Check() // 참새 블록 체크 후 생성
     {
         var BirdCount = 0;
@@ -561,7 +549,7 @@ public class FindMatches : Singleton<FindMatches>
         board.SpecialDestroy();
     }
 
-    public void SlingShot_Skill(int colunm,int row) // 새총 발동
+    public void SlingShot_Skill(int colunm, int row) // 새총 발동
     {
         List<Dot> dots = new List<Dot>();
         var num = 0;
@@ -652,6 +640,7 @@ public class FindMatches : Singleton<FindMatches>
         board.currentState = GameState.move;
         yield return null;
     }
+    #endregion
 
     public void Shuffle<T>(IList<T> list)
     {

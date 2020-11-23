@@ -86,15 +86,16 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         {
             tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
-            if (board.allDots[column, row] != this)
-            {
-                board.allDots[column, row] = this;
-            }
+            //if (board.allDots[column, row] != this)
+            //{
+            //    board.allDots[column, row] = this;
+            //}
         }
         else
         {      
             tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = tempPosition;
+            board.allDots[column, row] = this;
             this.gameObject.name = "(" + column + "," + row + ")";  
         }
 
@@ -102,10 +103,10 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         {
             tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
-            if (board.allDots[column, row] != this)
-            {
-                board.allDots[column, row] = this;
-            }
+            //if (board.allDots[column, row] != this)
+            //{
+            //    board.allDots[column, row] = this;
+            //}
         }
         else
         {        
@@ -228,7 +229,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
 
         if (otherDot != null)
         {
-            if (!isMatched && !otherDot.GetComponent<Dot>().isMatched)
+            if (!findMatches.currentMatches.Contains(this) && !findMatches.currentMatches.Contains(otherDot))
             {
                 temp_Row = otherDot.GetComponent<Dot>().row;
                 temp_Column = otherDot.GetComponent<Dot>().column;
