@@ -6,6 +6,29 @@ public enum GameState
 {
     wait, move, win, lose, pause
 }
+/// <summary>
+/// 매치형 블록 리스트
+/// </summary>
+public enum Matchblock
+{
+    None,CrossMatch,DiagonalMatch
+}
+/// <summary>
+/// 선택형 블록 리스트
+/// </summary>
+public enum Selectblock
+{
+    None,ColumnBomb,RowBomb,SlingShot,Axe,AcornBoom
+}
+/// <summary>
+/// 방해형 블록 리스트
+/// </summary>
+public enum Obstructionblock
+{
+    None,Acorn,AcornTree,StalkTree,Spreader,Bird
+}
+
+
 
 public class Board : MonoBehaviour
 {
@@ -362,32 +385,31 @@ public class Board : MonoBehaviour
 
     private void DestroyMatchesAt(int column, int row)
     {
-        if (allDots[column, row].isMatched)
-        {
+        //if (allDots[column, row].isMatched)
+        //{
 
-            DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
-            DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
+        //    DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
+        //    DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
 
 
-            if (goalManager != null)
-            {
-                goalManager.CompareGoal(allDots[column, row].tag.ToString());
-                goalManager.UpdateGoals();
-            }
+        //    if (goalManager != null)
+        //    {
+        //        goalManager.CompareGoal(allDots[column, row].tag.ToString());
+        //        goalManager.UpdateGoals();
+        //    }
 
-            //if(soundManager != null)
-            //{
-            //    soundManager.PlayRandomDestroyNoise();
+        //    //if(soundManager != null)
+        //    //{
+        //    //    soundManager.PlayRandomDestroyNoise();
 
-            //}
+        //    //}
 
-            GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
-            Destroy(destroyEffect_, 2.0f);
-            //Destroy(allDots[column, row]);
-            ObjectPool.ReturnObject(allDots[column, row].gameObject);
-            scoreManager.IncreaseScore(basePieceValue * streakValue);
-            allDots[column, row] = null;
-        }
+        //    GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
+        //    Destroy(destroyEffect_, 2.0f);
+        //    //Destroy(allDots[column, row]);
+        //    ObjectPool.ReturnObject(allDots[column, row].gameObject);
+        //    scoreManager.IncreaseScore(basePieceValue * streakValue);
+        //    allDots[column, row] = null;
     }
 
     private IEnumerator DecreaseRowCo2() // 행을 밑으로 내리는 함수

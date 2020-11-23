@@ -130,9 +130,9 @@ public class FindMatches : Singleton<FindMatches>
     {
         if (board.currentDot != null)
         {
-            if (board.currentDot.isMatched) //움직인 개체가 매치상태이면?
+            if (currentMatches.Contains(board.currentDot)) //움직인 개체가 매치상태이면?
             {
-                board.currentDot.isMatched = false;
+                currentMatches.Remove(board.currentDot);
 
                 int typeOfBomb = Random.Range(0, 100);
                 if (typeOfBomb < 99)
@@ -143,11 +143,9 @@ public class FindMatches : Singleton<FindMatches>
             }
             else if (board.currentDot.otherDot != null)
             {
-                Dot otherDot = board.currentDot.otherDot;
-
-                if (otherDot.isMatched) // 움직여진 개체가 매치상태이면?
+                if (currentMatches.Contains(board.currentDot.otherDot)) // 움직여진 개체가 매치상태이면?
                 {
-                    otherDot.isMatched = false;
+                    currentMatches.Remove(board.currentDot.otherDot);
 
                     int typeOfBomb = Random.Range(0, 100);
                     if (typeOfBomb < 99)

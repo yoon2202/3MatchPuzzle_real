@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
+public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     [Header("Board Variables")]
     public int column;
@@ -12,7 +12,6 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     public int temp_Row;
     public int targetX;
     public int targetY;
-    public bool isMatched = false;
 
     private EndManager endManager;
     private HintManager hintManager;
@@ -26,6 +25,13 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     public float swipeResist = 1f;
 
     [Header("Bool Type = 특수블록")]
+    [HideInInspector]
+    public Selectblock selectblock = Selectblock.None;
+    [HideInInspector]
+    public Matchblock matchblock = Matchblock.None;
+    [HideInInspector]
+    public Obstructionblock obstructionblock = Obstructionblock.None;
+
     // 가로 세로 가위
     public bool isColumnBomb;
     public bool isRowBomb;
@@ -47,26 +53,22 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     public bool isBird;
 
 
-    [Header("특수블록 이미지")]
-    public Sprite ColumnBomb;
-    public Sprite RowBomb;
-    public Sprite Acorn;
-    public Sprite AcornTree;
-    public Sprite StalkTree;
-    public Sprite Bird;
-    public Sprite SlingShot;
-    public Sprite Axe;
-    public Sprite AcornBoom;
+    [Header("특수/방해블록 이미지")]
+    public Sprite[] MatchImg;
+    public Sprite[] SelectImg;
+    public Sprite[] Obstruction;
+    private Sprite DotSprite; 
 
 
 
 
     void Start()
     {
+        DotSprite = GetComponent<SpriteRenderer>().sprite;
         endManager = FindObjectOfType<EndManager>();
         hintManager = FindObjectOfType<HintManager>();
         board = FindObjectOfType<Board>();
-        findMatches = FindMatches.Instance; 
+        findMatches = FindMatches.Instance;
 
     }
 
@@ -92,11 +94,11 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             //}
         }
         else
-        {      
+        {
             tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = tempPosition;
             board.allDots[column, row] = this;
-            this.gameObject.name = "(" + column + "," + row + ")";  
+            this.gameObject.name = "(" + column + "," + row + ")";
         }
 
         if (Mathf.Abs(targetY - transform.position.y) > .1)
@@ -109,11 +111,11 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             //}
         }
         else
-        {        
+        {
             tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = tempPosition;
             board.allDots[column, row] = this;
-            this.gameObject.name = "(" + column + "," + row + ")";  
+            this.gameObject.name = "(" + column + "," + row + ")";
         }
     }
 
@@ -128,20 +130,20 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             findMatches.isColmnBomb(this);
             return;
         }
-        else if(isRowBomb)
+        else if (isRowBomb)
         {
             findMatches.isRowBomb(this);
             return;
         }
-        else if(isSlingShot)
-        {   
-            findMatches.SlingShot_Skill(column,row);
-        }
-        else if(isAxe)
+        else if (isSlingShot)
         {
-            findMatches.Axe_Skill(column,row);
+            findMatches.SlingShot_Skill(column, row);
         }
-        else if(isAcornBoom)
+        else if (isAxe)
+        {
+            findMatches.Axe_Skill(column, row);
+        }
+        else if (isAcornBoom)
         {
             findMatches.AcornBoom_Skill(GetComponent<Dot>());
         }
@@ -172,7 +174,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             board.currentState = GameState.wait;
             swipeAngle = Mathf.Atan2(finalTouchPosition.y - firstTouchPosition.y, finalTouchPosition.x - firstTouchPosition.x) * 180 / Mathf.PI;
             MoviePieces();
-            board.currentDot = this;    
+            board.currentDot = this;
         }
         else
             board.currentState = GameState.move;
@@ -181,16 +183,16 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     {
         otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
 
-            if (otherDot != null && Cannotmove(otherDot.GetComponent<Dot>()))  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
-            {
-                otherDot.column += -1 * (int)direction.x;
-                otherDot.row += -1 * (int)direction.y;
-                column += (int)direction.x;
-                row += (int)direction.y;
-                StartCoroutine(CheckMoveCo());
-            }
-            else
-                board.currentState = GameState.move;
+        if (otherDot != null && Cannotmove(otherDot.GetComponent<Dot>()))  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
+        {
+            otherDot.column += -1 * (int)direction.x;
+            otherDot.row += -1 * (int)direction.y;
+            column += (int)direction.x;
+            row += (int)direction.y;
+            StartCoroutine(CheckMoveCo());
+        }
+        else
+            board.currentState = GameState.move;
 
     }
 
@@ -245,7 +247,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             }
             else
             {
-               if(endManager != null)
+                if (endManager != null)
                 {
                     if (endManager.requirements.gameType == GameType.Odd)
                     {
@@ -253,7 +255,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
                     }
                 }
 
-                board.DestroyMatches(true,true);
+                board.DestroyMatches(true, true);
 
                 int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.
                 if (Createpercent < 1)
@@ -275,13 +277,13 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     public void MakematchingBomb() // 매치형 특수블록 생성
     {
         int Rannum = Random.Range(0, 2);
-        if(Rannum == 0) // 크로스
+        if (Rannum == 0) // 크로스
         {
             isCrossArrow = true;
             GameObject arrow = Instantiate(CrossArrow, transform.position, Quaternion.identity);
             arrow.transform.parent = this.transform;
         }
-        else if(Rannum ==1)
+        else if (Rannum == 1)
         {
             isDiagonal = true;
             GameObject arrow = Instantiate(diagonalArrow, transform.position, Quaternion.identity);
@@ -291,54 +293,32 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
 
     public void SelectmatchingBomb()// 선택형 특수블록 생성
     {
-        int Rannum = Random.Range(0, 5);
+        int Rannum = Random.Range(1, 6);
+        selectblock = (Selectblock)Rannum;
         GetComponent<SpriteRenderer>().color = Color.white;
-        if (Rannum == 0) // Column
-        {
-            isColumnBomb = true;
-            GetComponent<SpriteRenderer>().sprite = ColumnBomb;
-        }
-        else if (Rannum == 1) // Row
-        {
-            isRowBomb = true;
-            GetComponent<SpriteRenderer>().sprite = RowBomb;
-        }
-        else if(Rannum == 2) // Axe
-        {
-            isAxe = true;
-            GetComponent<SpriteRenderer>().sprite = Axe;
-        }
-        else if (Rannum == 3) // SlingShot
-        {
-            isSlingShot = true;
-            GetComponent<SpriteRenderer>().sprite = SlingShot;
-        }
-        else if (Rannum == 4) // AcornBoom
-        {
-            isAcornBoom = true;
-            GetComponent<SpriteRenderer>().sprite = AcornBoom;
-        }
-    } 
+        DotSprite = SelectImg[Rannum - 1];
+    }
 
     public void CreateHinderBlock(int i, bool Spreader) // 방해블록 생성
     {
         GetComponent<SpriteRenderer>().color = Color.white;
+        //obstructionblock = 
         if (i == 0) // 참새
         {
             isBird = true;
-            GetComponent<SpriteRenderer>().sprite = Bird;
+            //GetComponent<SpriteRenderer>().sprite = Bird;
         }
         else if (i == 1) // 도토리나무
         {
             if (findMatches.AcornTree_Exist())
             {
                 int Rannum = Random.Range(0, 3);
-                CreateHinderBlock(Rannum,true);
+                CreateHinderBlock(Rannum, true);
             }
             else
             {
                 isAcornTree = true;
-                GetComponent<SpriteRenderer>().sprite = AcornTree;
+                //GetComponent<SpriteRenderer>().sprite = AcornTree;
             }
         }
         else if (i == 2) // 엮인줄기나무
@@ -352,19 +332,19 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
             }
             else
             {
-                if(isCrossArrow || isDiagonal) // 매치형 블록일 경우
+                if (isCrossArrow || isDiagonal) // 매치형 블록일 경우
                 {
                     this.isCrossArrow = false;
                     this.isDiagonal = false;
                     Destroy(this.transform.GetChild(0));
                 }
-                else if(isColumnBomb || isRowBomb) // 선택형 블록일 경우
+                else if (isColumnBomb || isRowBomb) // 선택형 블록일 경우
                 {
                     int Radnum = Random.Range(0, board.world.levels[board.level].dots.Length);
-                    GameObject dot =  board.world.levels[board.level].dots[Radnum];
+                    GameObject dot = board.world.levels[board.level].dots[Radnum];
                     this.tag = dot.tag;
                     this.GetComponent<SpriteRenderer>().sprite = dot.GetComponent<SpriteRenderer>().sprite;
-                } 
+                }
                 else // 일반 블록일 경우
                 {
                     GameObject StalkTree_ = Instantiate(StalkTree_obj, transform.position, Quaternion.identity);
@@ -375,12 +355,12 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         else if (i == 3) // 랜덤
         {
             int Rannum = Random.Range(0, 3);
-            CreateHinderBlock(Rannum,true);
+            CreateHinderBlock(Rannum, true);
         }
-        else if(i ==4)
+        else if (i == 4)
         {
             isAcorn = true;
-            GetComponent<SpriteRenderer>().sprite = Acorn;
+            //GetComponent<SpriteRenderer>().sprite = Acorn;
         }
     }
 
@@ -410,7 +390,7 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         if (isBird || isAcornTree || isStalkTree || isAcorn)
             return true;
         else
-            return false;                    
+            return false;
     }
 
     public bool noMatchBlock() // 직접 매치가 안되는 블록 체크
@@ -421,10 +401,5 @@ public class Dot : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
         }
         else
             return false;
-    }
-
-    private void OnDisable()
-    {
-        isMatched = false;
     }
 }
