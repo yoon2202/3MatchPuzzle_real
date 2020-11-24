@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
@@ -57,7 +58,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public Sprite[] MatchImg;
     public Sprite[] SelectImg;
     public Sprite[] Obstruction;
-    private Sprite DotSprite; 
+    private Sprite DotSprite;
 
 
 
@@ -302,66 +303,56 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void CreateHinderBlock(int i, bool Spreader) // 방해블록 생성
     {
         GetComponent<SpriteRenderer>().color = Color.white;
-        //obstructionblock = 
-        if (i == 0) // 참새
+        obstructionblock = (Obstructionblock)(i + 1);
+
+        switch(obstructionblock)
         {
-            isBird = true;
-            //GetComponent<SpriteRenderer>().sprite = Bird;
-        }
-        else if (i == 1) // 도토리나무
-        {
-            if (findMatches.AcornTree_Exist())
-            {
+            case Obstructionblock.None:
                 int Rannum = Random.Range(0, 3);
                 CreateHinderBlock(Rannum, true);
-            }
-            else
-            {
-                isAcornTree = true;
-                //GetComponent<SpriteRenderer>().sprite = AcornTree;
-            }
-        }
-        else if (i == 2) // 엮인줄기나무
-        {
-            isStalkTree = true;
-            if (Spreader == true) //초기 엮인 블록 생성자
-            {
-                isSpreader = true;
-                GameObject StalkTree_ = Instantiate(StalkTree_obj, transform.position, Quaternion.identity);
-                StalkTree_.transform.parent = this.transform;
-            }
-            else
-            {
-                if (isCrossArrow || isDiagonal) // 매치형 블록일 경우
+                break;
+            case Obstructionblock.Bird:
+                break;
+            case Obstructionblock.AcornTree:
+                if (findMatches.AcornTree_Exist())
                 {
-                    this.isCrossArrow = false;
-                    this.isDiagonal = false;
-                    Destroy(this.transform.GetChild(0));
+                    obstructionblock = Obstructionblock.None;
+                    int Rannum2 = Random.Range(0, 3);
+                    CreateHinderBlock(Rannum2, true);
                 }
-                else if (isColumnBomb || isRowBomb) // 선택형 블록일 경우
+                break;
+            case Obstructionblock.StalkTree:
+                if (Spreader == true) //초기 엮인 블록 생성자
                 {
-                    int Radnum = Random.Range(0, board.world.levels[board.level].dots.Length);
-                    GameObject dot = board.world.levels[board.level].dots[Radnum];
-                    this.tag = dot.tag;
-                    this.GetComponent<SpriteRenderer>().sprite = dot.GetComponent<SpriteRenderer>().sprite;
-                }
-                else // 일반 블록일 경우
-                {
+                    isSpreader = true;
                     GameObject StalkTree_ = Instantiate(StalkTree_obj, transform.position, Quaternion.identity);
                     StalkTree_.transform.parent = this.transform;
                 }
-            }
-        }
-        else if (i == 3) // 랜덤
-        {
-            int Rannum = Random.Range(0, 3);
-            CreateHinderBlock(Rannum, true);
-        }
-        else if (i == 4)
-        {
-            isAcorn = true;
-            //GetComponent<SpriteRenderer>().sprite = Acorn;
-        }
+                else
+                {
+                    if (matchblock != Matchblock.None) // 매치형 블록일 경우
+                    {
+                        matchblock = Matchblock.None;
+                        Destroy(this.transform.GetChild(0));
+                    }
+                    else if (selectblock == Selectblock.ColumnBomb || selectblock == Selectblock.RowBomb) // 선택형 블록일 경우
+                    {
+                        int Radnum = Random.Range(0, board.world.levels[board.level].dots.Length);
+                        GameObject dot = board.world.levels[board.level].dots[Radnum];
+                        this.tag = dot.tag;
+                        this.GetComponent<SpriteRenderer>().sprite = dot.GetComponent<SpriteRenderer>().sprite;
+                    }
+                    else // 일반 블록일 경우
+                    {
+                        GameObject StalkTree_ = Instantiate(StalkTree_obj, transform.position, Quaternion.identity);
+                        StalkTree_.transform.parent = this.transform;
+                    }
+                }
+                break;
+            case Obstructionblock.Acorn:
+                obstructionblock = Obstructionblock.Acorn;
+                break;
+        }       
     }
 
     public void SlingShot_Target()

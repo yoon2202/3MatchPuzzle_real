@@ -186,7 +186,7 @@ public class FindMatches : Singleton<FindMatches>
         }
     }
 
-    public void RandomCreateHinder(int num) // num -> 0: 참새 1: 도토리나무 2: 엮인줄기나무 3: 랜덤
+    public void RandomCreateHinder(int num) // num -> 0: 참새 1: 도토리나무 2: 엮인줄기나무 3: 랜덤 4: 도토리
     {
         Dot[,] currentdots = board.allDots;
         var i = 0;

@@ -22,10 +22,11 @@ public enum Selectblock
 }
 /// <summary>
 /// 방해형 블록 리스트
+///  0: 참새 1: 도토리나무 2: 엮인줄기나무 3: 랜덤 4: 도토리
 /// </summary>
 public enum Obstructionblock
 {
-    None,Acorn,AcornTree,StalkTree,Spreader,Bird
+    None,Bird,AcornTree,StalkTree,Acorn
 }
 
 
