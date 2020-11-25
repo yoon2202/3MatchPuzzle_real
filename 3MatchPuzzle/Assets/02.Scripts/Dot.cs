@@ -303,7 +303,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void CreateHinderBlock(int i, bool Spreader) // 방해블록 생성
     {
         GetComponent<SpriteRenderer>().color = Color.white;
-        obstructionblock = (Obstructionblock)(i + 1);
+        obstructionblock = (Obstructionblock)(i);
 
         switch(obstructionblock)
         {
@@ -350,7 +350,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 }
                 break;
             case Obstructionblock.Acorn:
-                obstructionblock = Obstructionblock.Acorn;
                 break;
         }       
     }
