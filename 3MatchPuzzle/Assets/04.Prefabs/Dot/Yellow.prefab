@@ -72,8 +72,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d6b8b44af9b89a049bd43fbae553e874, type: 3}
-  m_Color: {r: 0.7764706, g: 0.7490196, b: 0.047058824, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 97e60fe6f5df04e4fb5be98df02bb793, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -98,7 +98,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.33333334
+  m_Radius: 0.45
 --- !u!114 &391507458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,10 +117,12 @@ MonoBehaviour:
   temp_Row: 0
   targetX: 0
   targetY: 0
-  isMatched: 0
   otherDot: {fileID: 0}
   swipeAngle: 0
   swipeResist: 1
+  selectblock: 0
+  matchblock: 0
+  obstructionblock: 0
   isColumnBomb: 0
   isRowBomb: 0
   isSlingShot: 0
@@ -140,12 +142,6 @@ MonoBehaviour:
     type: 3}
   isSpreader: 0
   isBird: 0
-  ColumnBomb: {fileID: 21300000, guid: 603cefdcc658ddf4c83f93d58360bb18, type: 3}
-  RowBomb: {fileID: 21300000, guid: f51aac6644900454eb24a875138bf821, type: 3}
-  Acorn: {fileID: 21300000, guid: dbd894345fe3dda4a89649aa91b2e2b7, type: 3}
-  AcornTree: {fileID: 21300000, guid: 4b202c22a4038284db0b64619bb31985, type: 3}
-  StalkTree: {fileID: 21300000, guid: 759af2cbf9b1f6b4db5161ed92b855cb, type: 3}
-  Bird: {fileID: 21300000, guid: ba6083639c7bfc14daf42e1d0a9999aa, type: 3}
-  SlingShot: {fileID: 21300000, guid: b6bc26e5ed2d4ae488eeba69fd04bda1, type: 3}
-  Axe: {fileID: 21300000, guid: 497bb79fca122c0429ea1331d4bb8396, type: 3}
-  AcornBoom: {fileID: 21300000, guid: 43dad4d263f3d51489096078a6dc9f2e, type: 3}
+  MatchImg: []
+  SelectImg: []
+  Obstruction: []
