@@ -17,7 +17,7 @@ public class StageManager : MonoBehaviour
 
     void Start()
     {
-        addStageList();
+        //addStageList();
         Clickbtn[0].onClick.AddListener(() => ClickPanel("Left"));
         Clickbtn[1].onClick.AddListener(() => ClickPanel("Right"));
     }
