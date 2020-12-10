@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class UpgradeManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public ActiveList ActiveList;
+    public GameObject Item;
+    public Transform Content;
+
     void Start()
     {
-        
+        for(int i=0; i< ActiveList.activeList.Length; i++)
+        {
+          var ItemObj = Instantiate(Item, Content,false);
+
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
