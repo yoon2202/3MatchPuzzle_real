@@ -5,15 +5,19 @@ using UnityEngine;
 public class UpgradeManager : MonoBehaviour
 {
     public ActiveList ActiveList;
-    public GameObject Item;
+    public GameObject item;
     public Transform Content;
 
     void Start()
     {
-        for(int i=0; i< ActiveList.activeList.Length; i++)
+        for (int i = 0; i < ActiveList.activeList.Length; i++)
         {
-          var ItemObj = Instantiate(Item, Content,false);
-
+            GameObject ItemObj = Instantiate(item, Content, false);
+            var Item = ItemObj.GetComponent<Item>();
+            Item.name = ActiveList.activeList[i].ActiveName;
+            Item.img.sprite = ActiveList.activeList[i].Image;
+            Item.level.text = ActiveList.activeList[i].CurrentLevel.ToString();
+            Item.Price.text = ActiveList.activeList[i].Baseprice.ToString();
         }
     }
 
