@@ -6,6 +6,28 @@ using UnityEngine.UI;
 
 public class Item : MonoBehaviour
 {
+    [HideInInspector]
+    public int ItemNumber;
+
+    private int currentLevel;
+    public int CurrentLevel
+    {
+        get
+        {
+            return currentLevel;
+        }
+
+        set
+        {
+            currentLevel = value;
+
+            level.text = currentLevel.ToString();
+
+        }
+    }
+    [HideInInspector]
+    public int MaxLevel;
+
     public Image img;
     public Text itemName;
     public Text level;
@@ -13,8 +35,17 @@ public class Item : MonoBehaviour
     public Button button;
     public Text Price;
 
-    public static explicit operator Item(GameObject v)
+
+    private void Start()
     {
-        throw new NotImplementedException();
+        button.onClick.AddListener(() => ButtonEvent());
+    }
+
+    void ButtonEvent()
+    {
+        if(CurrentLevel <= MaxLevel)
+        {
+            CurrentLevel++;
+        }
     }
 }
