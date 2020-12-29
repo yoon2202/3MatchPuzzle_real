@@ -120,8 +120,7 @@ MonoBehaviour:
   otherDot: {fileID: 0}
   swipeAngle: 0
   swipeResist: 1
-  selectblock: 0
-  matchblock: 0
+  specialBlock: 0
   obstructionblock: 0
   isColumnBomb: 0
   isRowBomb: 0
@@ -142,6 +141,7 @@ MonoBehaviour:
     type: 3}
   isSpreader: 0
   isBird: 0
-  MatchImg: []
-  SelectImg: []
+  SpecialImg:
+  - {fileID: 21300000, guid: b8937d09e3d47db46bc033126f927044, type: 3}
+  - {fileID: 21300000, guid: dd4b30223186ef640827570b1fe31919, type: 3}
   Obstruction: []

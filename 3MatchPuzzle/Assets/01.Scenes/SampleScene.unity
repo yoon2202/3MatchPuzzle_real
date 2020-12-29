@@ -418,7 +418,7 @@ MonoBehaviour:
     type: 3}
   concreteTilePrefabs: {fileID: 8945728187427195647, guid: b48cda27fba43fe46b499710753c6578,
     type: 3}
-  destroyEffect: {fileID: 1828075268808171628, guid: de43c708be9a94e48bf22de580b955bd,
+  destroyEffect: {fileID: 5062197095049848332, guid: 8e2153a08d5c23a4dbdcdecba873d77c,
     type: 3}
   currentDot: {fileID: 0}
   basePieceValue: 20

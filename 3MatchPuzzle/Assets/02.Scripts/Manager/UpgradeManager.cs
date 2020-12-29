@@ -21,8 +21,8 @@ public class UpgradeManager : MonoBehaviour
             Item.Price.text = ActiveList.activeList[i].Baseprice.ToString();
 
             Item.ItemNumber = i;
-            Item.CurrentLevel = ActiveList.activeList[i].CurrentLevel;
             Item.MaxLevel = ActiveList.activeList[i].MaxLevel;
+            Item.CurrentLevel = ActiveList.activeList[i].CurrentLevel;
         }
     }
 

@@ -54,10 +54,18 @@ public class ObjectPool : MonoBehaviour
 
     public static void ReturnObject(GameObject obj)
     {
-        obj.SetActive(false);
-        Instance.TempStorage.Add(obj);
-        Debug.Log(Instance.TempStorage.Count);
-        Instance.ShuffleObject();
+        if(obj.GetComponent<Dot>().specialBlock != SpecialBlock.None)
+        {
+            Destroy(obj);
+            Instance.poolingObjectQueue.Enqueue(Instance.CreatenewObject());
+        }
+        else
+        {
+            obj.SetActive(false);
+            Instance.TempStorage.Add(obj);
+            Instance.ShuffleObject();
+        }
+
     }
     void ShuffleObject()
     {

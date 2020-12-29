@@ -6,19 +6,13 @@ public enum GameState
 {
     wait, move, win, lose, pause
 }
+
 /// <summary>
-/// 매치형 블록 리스트
+/// 스페셜 블록 리스트
 /// </summary>
-public enum Matchblock
+public enum SpecialBlock
 {
-    None,CrossMatch,DiagonalMatch
-}
-/// <summary>
-/// 선택형 블록 리스트
-/// </summary>
-public enum Selectblock
-{
-    None,ColumnBomb,RowBomb,SlingShot,Axe,AcornBoom
+    None,Cross,Multiple
 }
 /// <summary>
 /// 방해형 블록 리스트
@@ -352,15 +346,14 @@ public class Board : MonoBehaviour
 
                 GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
                 Destroy(destroyEffect_, 2.0f);
-                //Destroy(allDots[column, row]);
                 ObjectPool.ReturnObject(allDots[column, row].gameObject);
                 scoreManager.IncreaseScore(basePieceValue * streakValue);
                 allDots[column, row] = null;
             }
         }
 
-        if (Special == false) //직접 매치 & 특수블록으로 인한 파괴가 아닌경우
-            findMatches.RandomCreateBombs(); // 랜덤 확률로 특수, 선택 블록 생성
+        //if (Special == false) //직접 매치 & 특수블록으로 인한 파괴가 아닌경우
+        //    findMatches.RandomCreateBombs(); // 랜덤 확률로 특수, 선택 블록 생성
 
         findMatches.currentMatches.Clear();
         StartCoroutine(DecreaseRowCo2()); // 행 내리기

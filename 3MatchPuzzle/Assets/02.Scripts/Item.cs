@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Item : MonoBehaviour
 {
+    public ActiveList ActiveList;
+
     [HideInInspector]
     public int ItemNumber;
 
@@ -21,8 +23,13 @@ public class Item : MonoBehaviour
         {
             currentLevel = value;
 
-            level.text = currentLevel.ToString();
-
+            if (currentLevel == MaxLevel)
+                level.text = "Max";
+            else
+            {
+                level.text = currentLevel.ToString();
+            }
+            ActiveList.activeList[ItemNumber].CurrentLevel = currentLevel;
         }
     }
     [HideInInspector]
@@ -43,7 +50,7 @@ public class Item : MonoBehaviour
 
     void ButtonEvent()
     {
-        if(CurrentLevel <= MaxLevel)
+        if (CurrentLevel < MaxLevel)
         {
             CurrentLevel++;
         }
