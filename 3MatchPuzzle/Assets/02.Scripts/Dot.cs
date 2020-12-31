@@ -120,16 +120,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (hintManager != null)
             hintManager.DestroyHint();
 
-        
-        switch (specialBlock)
-        {
-            case SpecialBlock.Cross:
-                
-                break;
-            case SpecialBlock.Multiple:
-
-                break;
-        }
+        findMatches.SpecialSkill(this);
 
         if (board.currentState == GameState.move && !IsSpecialBlock())
             firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);

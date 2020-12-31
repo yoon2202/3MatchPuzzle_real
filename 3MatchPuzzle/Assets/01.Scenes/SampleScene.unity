@@ -375,6 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bae4a37cbe82c964cbad3e70f188d613, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activeList: {fileID: 11400000, guid: aa02272ae78d572448a98f99881a9996, type: 2}
   currentMatches: []
 --- !u!1 &873381039
 GameObject:
@@ -574,7 +575,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 610, y: -144.1}
+  m_AnchoredPosition: {x: 610, y: -144.09961}
   m_SizeDelta: {x: 493.8, y: 170.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &979398856
@@ -870,7 +871,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 610, y: -144.1}
+  m_AnchoredPosition: {x: 610, y: -144.09961}
   m_SizeDelta: {x: 493.8, y: 170.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1388923932

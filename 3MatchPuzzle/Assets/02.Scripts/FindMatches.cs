@@ -6,9 +6,11 @@ using System.Linq;
 public class FindMatches : Singleton<FindMatches>
 {
     private Board board;
+    public ActiveList activeList;
     public List<Dot> currentMatches = new List<Dot>();
     void Start()
     {
+
         board = FindObjectOfType<Board>();
     }
 
@@ -17,18 +19,19 @@ public class FindMatches : Singleton<FindMatches>
         StartCoroutine(FindAllMatchesCo());
     }
 
-    private List<Dot> isCrossBomb(Dot dot1, Dot dot2, Dot dot3)
-    {
-        List<Dot> currentDots = new List<Dot>();
 
-        if (dot1.specialBlock == SpecialBlock.Cross)
-            currentDots = currentDots.Union(GetCrossPieces(dot1.column, dot1.row)).ToList();
-        if (dot2.specialBlock == SpecialBlock.Cross)
-            currentDots = currentDots.Union(GetCrossPieces(dot2.column, dot2.row)).ToList();
-        if (dot3.specialBlock == SpecialBlock.Cross)
-            currentDots = currentDots.Union(GetCrossPieces(dot3.column, dot3.row)).ToList();
-        return currentDots;
-    }
+    //private List<Dot> isCrossBomb(Dot dot1, Dot dot2, Dot dot3) 
+    //{
+    //    List<Dot> currentDots = new List<Dot>();
+
+    //    if (dot1.specialBlock == SpecialBlock.Cross)
+    //        currentDots = currentDots.Union(GetCrossPieces(dot1.column, dot1.row)).ToList();
+    //    if (dot2.specialBlock == SpecialBlock.Cross)
+    //        currentDots = currentDots.Union(GetCrossPieces(dot2.column, dot2.row)).ToList();
+    //    if (dot3.specialBlock == SpecialBlock.Cross)
+    //        currentDots = currentDots.Union(GetCrossPieces(dot3.column, dot3.row)).ToList();
+    //    return currentDots;
+    //}
 
     private List<Dot> isDiagonalBomb(Dot dot1, Dot dot2, Dot dot3)
     {
@@ -55,6 +58,21 @@ public class FindMatches : Singleton<FindMatches>
     public void isRowBomb(Dot dot)
     {
         currentMatches = currentMatches.Union(GetRowPieces(dot.row)).ToList();
+        board.SpecialDestroy();
+    }
+
+    public void SpecialSkill(Dot dot)
+    {
+        switch (dot.specialBlock)
+        {
+            case SpecialBlock.Cross:
+                currentMatches = currentMatches.Union(GetCrossDots(dot.column, dot.row)).ToList();
+                break;
+            case SpecialBlock.Multiple:
+
+                break;
+        }
+
         board.SpecialDestroy();
     }
 
@@ -145,40 +163,44 @@ public class FindMatches : Singleton<FindMatches>
             }
         }
     }
-    
+
     #region 특수블록 스킬
-    List<Dot> GetCrossPieces(int column, int row) // 십자가형 매칭
+    List<Dot> GetCrossDots(int column, int row) // 십자가형 매칭
     {
         List<Dot> dots = new List<Dot>();
-
-        if (0 < column)
+        var Maxindex = activeList.activeList[0].CurrentLevel;
+        for (int CurrentIndex = 0; CurrentIndex < Maxindex; CurrentIndex++)
         {
-            if (board.allDots[column - 1, row] != null) //왼쪽
+            CurrentIndex++;
+            if (0 < column)
             {
-                dots.Add(board.allDots[column - 1, row]);
+                if (column - CurrentIndex >= 0 && board.allDots[column - CurrentIndex, row] != null) //왼쪽
+                {
+                    dots.Add(board.allDots[column - CurrentIndex, row]);
+                }
             }
-        }
 
-        if (board.width - 1 > column)
-        {
-            if (board.allDots[column + 1, row] != null) //오른쪽
+            if (board.width - 1 > column)
             {
-                dots.Add(board.allDots[column + 1, row]);
+                if (board.allDots[column + CurrentIndex, row] != null) //오른쪽
+                {
+                    dots.Add(board.allDots[column + CurrentIndex, row]);
+                }
             }
-        }
-        if (board.height - 1 > row)
-        {
-            if (board.allDots[column, row + 1] != null) //위쪽
+            if (board.height - 1 > row)
             {
-                dots.Add(board.allDots[column, row + 1]);
+                if (board.allDots[column, row + CurrentIndex] != null) //위쪽
+                {
+                    dots.Add(board.allDots[column, row + CurrentIndex]);
+                }
             }
-        }
 
-        if (0 < row)
-        {
-            if (board.allDots[column, row - 1] != null) //아래쪽
+            if (0 < row)
             {
-                dots.Add(board.allDots[column, row - 1]);
+                if (board.allDots[column, row - CurrentIndex] != null) //아래쪽
+                {
+                    dots.Add(board.allDots[column, row - CurrentIndex]);
+                }
             }
         }
         return dots;
