@@ -65,7 +65,6 @@ public class ObjectPool : MonoBehaviour
             Instance.TempStorage.Add(obj);
             Instance.ShuffleObject();
         }
-
     }
     void ShuffleObject()
     {

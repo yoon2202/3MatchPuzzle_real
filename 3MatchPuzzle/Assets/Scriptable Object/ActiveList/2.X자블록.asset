@@ -15,6 +15,6 @@ MonoBehaviour:
   ActiveName: "\uC5D1\uC2A4\uBE14\uB85D"
   Image: {fileID: 21300000, guid: cf06d2327ae0941caa4b27bf2e95758a, type: 3}
   ActiveContent: "X\uC790\uBC29\uD5A5\uC73C\uB85C \uBD84\uC0B0\uD55C\uB2E4."
-  CurrentLevel: 0
+  CurrentLevel: 1
   MaxLevel: 5
   Baseprice: 100

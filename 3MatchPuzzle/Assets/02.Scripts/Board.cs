@@ -343,10 +343,8 @@ public class Board : MonoBehaviour
                 //    soundManager.PlayRandomDestroyNoise();
 
                 //}
-
-                GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
-                Destroy(destroyEffect_, 2.0f);
                 ObjectPool.ReturnObject(allDots[column, row].gameObject);
+                DestroyEffectPool.GetObject(column, row, allDots[column, row].gameObject);
                 scoreManager.IncreaseScore(basePieceValue * streakValue);
                 allDots[column, row] = null;
             }
@@ -365,11 +363,11 @@ public class Board : MonoBehaviour
         {
             if (findMatches.currentMatches[i] != null)
             {
-                GameObject destroyEffect_ = Instantiate(destroyEffect, findMatches.currentMatches[i].transform.position, Quaternion.identity);
-                Destroy(destroyEffect_, 2.0f);
+                var Dot = findMatches.currentMatches[i];
                 scoreManager.IncreaseScore(basePieceValue * streakValue);
-                ObjectPool.ReturnObject(allDots[findMatches.currentMatches[i].column, findMatches.currentMatches[i].row].gameObject);
-                allDots[findMatches.currentMatches[i].column, findMatches.currentMatches[i].row] = null;
+                ObjectPool.ReturnObject(allDots[Dot.column, Dot.row].gameObject);
+                DestroyEffectPool.GetObject(Dot.column, Dot.row, allDots[Dot.column, Dot.row].gameObject);
+                allDots[Dot.column, Dot.row] = null;
             }
         }
         findMatches.currentMatches.Clear();
@@ -408,7 +406,7 @@ public class Board : MonoBehaviour
 
     private IEnumerator DecreaseRowCo2() // 행을 밑으로 내리는 함수
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.15f);
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
@@ -457,18 +455,24 @@ public class Board : MonoBehaviour
 
     IEnumerator RefillBoard() // 보드에 리필해주는 함수
     {
+        // 버그발생시 코루틴 멈추고 다시 실행시키도록 수정한다.
         for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < height; j++)
+            StartCoroutine(Refiilheight(i));
+        }
+        yield return null;
+    }
+
+    IEnumerator Refiilheight(int i)
+    {
+        var Delay = new WaitForSeconds(0.1f);
+        for (int j = 0; j < height; j++)
+        {
+            if (allDots[i, j] == null && !blankSpaces[i, j] && !concreteTiles[i, j])
             {
-                if (allDots[i, j] == null && !blankSpaces[i, j] && !concreteTiles[i, j])
-                {
-                    //int dotToUse = Random.Range(0, dots.Length);
-                    //GameObject piece = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
-                    GameObject piece = ObjectPool.GetObject(i, j, offSet);
-                    allDots[i, j] = piece.GetComponent<Dot>();
-                    yield return null;
-                }
+                GameObject piece = ObjectPool.GetObject(i, j, offSet);
+                allDots[i, j] = piece.GetComponent<Dot>();
+                yield return Delay;
             }
         }
     }

@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Linq;
+using DG.Tweening;
 
 public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [Header("Board Variables")]
+    [Header("현재 포지션 위치")]
     public int column;
     public int row;
-    public int temp_Column;
-    public int temp_Row;
-    public int targetX;
-    public int targetY;
+    private int temp_Column;
+    private int temp_Row;
+    private int targetX;
+    private int targetY;
 
     private EndManager endManager;
     private HintManager hintManager;
@@ -26,7 +26,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public float swipeResist = 1f;
 
     [Header("Bool Type = 특수블록")]
-    [HideInInspector]
     public SpecialBlock specialBlock = SpecialBlock.None;
     [HideInInspector]
     public Obstructionblock obstructionblock = Obstructionblock.None;
@@ -56,10 +55,11 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private SpriteRenderer DotSprite;
 
 
+
     /*
-     * +형, X형 블록 스크립타블 변수에 맞게 터트려지기
      * 4,5 매치 판단여부 다시 생각하기
-     * Destroy Effect 어떻게 해야될지 생각해보기
+     * 스테이지 진입하기
+     * 보드에서 리필되는 과정부터 코루틴 한개로만 사용하도록 해보기
      * 데이터 저장/불러오기
      * 블록들 체력 부여하기
      * 특수블록들은 어떻게 생길지 기획해보기
@@ -88,7 +88,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         targetX = column;
         targetY = row;
 
-        if (Mathf.Abs(targetX - transform.position.x) > .1)  // 행, 열이 바뀌는순간 배열상태에서 업데이트가 진행되고 매치된것들을 찾은다음에 Destroy 함수가 이루어진다.
+        if (Mathf.Abs(targetX - transform.position.x) > .05)  // 행, 열이 바뀌는순간 배열상태에서 업데이트가 진행되고 매치된것들을 찾은다음에 Destroy 함수가 이루어진다.
         {
             tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
@@ -101,7 +101,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             this.gameObject.name = "(" + column + "," + row + ")";
         }
 
-        if (Mathf.Abs(targetY - transform.position.y) > .1)
+        if (Mathf.Abs(targetY - transform.position.y) > .05)
         {
             tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);

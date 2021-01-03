@@ -33,19 +33,19 @@ public class FindMatches : Singleton<FindMatches>
     //    return currentDots;
     //}
 
-    private List<Dot> isDiagonalBomb(Dot dot1, Dot dot2, Dot dot3)
-    {
-        List<Dot> currentDots = new List<Dot>();
+    //private List<Dot> isDiagonalBomb(Dot dot1, Dot dot2, Dot dot3)
+    //{
+    //    List<Dot> currentDots = new List<Dot>();
 
-        if (dot1.specialBlock == SpecialBlock.Multiple)
-            currentDots = currentDots.Union(GetdiagonalPieces(dot1.column, dot1.row)).ToList();
-        if (dot2.specialBlock == SpecialBlock.Multiple)
-            currentDots = currentDots.Union(GetdiagonalPieces(dot2.column, dot2.row)).ToList();
-        if (dot3.specialBlock == SpecialBlock.Multiple)
-            currentDots = currentDots.Union(GetdiagonalPieces(dot3.column, dot3.row)).ToList();
+    //    if (dot1.specialBlock == SpecialBlock.Multiple)
+    //        currentDots = currentDots.Union(GetdiagonalPieces(dot1.column, dot1.row)).ToList();
+    //    if (dot2.specialBlock == SpecialBlock.Multiple)
+    //        currentDots = currentDots.Union(GetdiagonalPieces(dot2.column, dot2.row)).ToList();
+    //    if (dot3.specialBlock == SpecialBlock.Multiple)
+    //        currentDots = currentDots.Union(GetdiagonalPieces(dot3.column, dot3.row)).ToList();
 
-        return currentDots;
-    }
+    //    return currentDots;
+    //}
 
     public void isColmnBomb(Dot dot)
     {
@@ -69,10 +69,10 @@ public class FindMatches : Singleton<FindMatches>
                 currentMatches = currentMatches.Union(GetCrossDots(dot.column, dot.row)).ToList();
                 break;
             case SpecialBlock.Multiple:
-
+                currentMatches = currentMatches.Union(GetMultipleDots(dot.column, dot.row)).ToList();
                 break;
         }
-
+        //Debug.Log("test");
         board.SpecialDestroy();
     }
 
@@ -168,10 +168,10 @@ public class FindMatches : Singleton<FindMatches>
     List<Dot> GetCrossDots(int column, int row) // 십자가형 매칭
     {
         List<Dot> dots = new List<Dot>();
+        dots.Add(board.allDots[column , row]);
         var Maxindex = activeList.activeList[0].CurrentLevel;
-        for (int CurrentIndex = 0; CurrentIndex < Maxindex; CurrentIndex++)
+        for (int CurrentIndex = 1; CurrentIndex <= Maxindex; CurrentIndex++)
         {
-            CurrentIndex++;
             if (0 < column)
             {
                 if (column - CurrentIndex >= 0 && board.allDots[column - CurrentIndex, row] != null) //왼쪽
@@ -182,14 +182,14 @@ public class FindMatches : Singleton<FindMatches>
 
             if (board.width - 1 > column)
             {
-                if (board.allDots[column + CurrentIndex, row] != null) //오른쪽
+                if (column + CurrentIndex < board.width && board.allDots[column + CurrentIndex, row] != null) //오른쪽
                 {
                     dots.Add(board.allDots[column + CurrentIndex, row]);
                 }
             }
             if (board.height - 1 > row)
             {
-                if (board.allDots[column, row + CurrentIndex] != null) //위쪽
+                if (row + CurrentIndex < board.width && board.allDots[column, row + CurrentIndex] != null) //위쪽
                 {
                     dots.Add(board.allDots[column, row + CurrentIndex]);
                 }
@@ -197,46 +197,51 @@ public class FindMatches : Singleton<FindMatches>
 
             if (0 < row)
             {
-                if (board.allDots[column, row - CurrentIndex] != null) //아래쪽
+                if (row - CurrentIndex >= 0 && board.allDots[column, row - CurrentIndex] != null) //아래쪽
                 {
                     dots.Add(board.allDots[column, row - CurrentIndex]);
                 }
             }
         }
+
         return dots;
     }
-    List<Dot> GetdiagonalPieces(int column, int row)// X형 매칭
+    List<Dot> GetMultipleDots(int column, int row)// X형 매칭
     {
         List<Dot> dots = new List<Dot>();
-
-        if (0 < column && board.height - 1 > row)
+        dots.Add(board.allDots[column, row]);
+        var Maxindex = activeList.activeList[1].CurrentLevel;
+        for (int CurrentIndex = 1; CurrentIndex <= Maxindex; CurrentIndex++)
         {
-            if (board.allDots[column - 1, row + 1] != null) // 왼쪽 위 대각선
+            if (0 < column && board.height - 1 > row)
             {
-                dots.Add(board.allDots[column - 1, row + 1]);
+                if (column - CurrentIndex >= 0 && row + CurrentIndex <= board.height && board.allDots[column - CurrentIndex, row + CurrentIndex] != null) // 왼쪽 위 대각선
+                {
+                    dots.Add(board.allDots[column - CurrentIndex, row + CurrentIndex]);
+                }
             }
-        }
 
-        if (board.width - 1 > column && board.height - 1 > row)
-        {
-            if (board.allDots[column + 1, row + 1] != null) //오른쪽 위 대각선
+            if (board.width - 1 > column && board.height - 1 > row)
             {
-                dots.Add(board.allDots[column + 1, row + 1]);
+                if (column + CurrentIndex <= board.width && row + CurrentIndex <= board.height && board.allDots[column + CurrentIndex, row + CurrentIndex] != null) //오른쪽 위 대각선
+                {
+                    dots.Add(board.allDots[column + CurrentIndex, row + CurrentIndex]);
+                }
             }
-        }
-        if (0 < row && 0 < column)
-        {
-            if (board.allDots[column - 1, row - 1] != null) //왼쪽 아래 대각선
+            if (0 < row && 0 < column)
             {
-                dots.Add(board.allDots[column - 1, row - 1]);
+                if (column - CurrentIndex >= 0 && row - CurrentIndex >= 0 && board.allDots[column - CurrentIndex, row - CurrentIndex] != null) //왼쪽 아래 대각선
+                {
+                    dots.Add(board.allDots[column - CurrentIndex, row - CurrentIndex]);
+                }
             }
-        }
 
-        if (0 < row && board.width - 1 > column)
-        {
-            if (board.allDots[column + 1, row - 1] != null) //오른쪽 아래 대각선
+            if (0 < row && board.width - 1 > column)
             {
-                dots.Add(board.allDots[column + 1, row - 1]);
+                if (column + CurrentIndex <= board.width && row + CurrentIndex >= 0 && board.allDots[column + CurrentIndex, row - CurrentIndex] != null) //오른쪽 아래 대각선
+                {
+                    dots.Add(board.allDots[column + CurrentIndex, row - CurrentIndex]);
+                }
             }
         }
         return dots;
