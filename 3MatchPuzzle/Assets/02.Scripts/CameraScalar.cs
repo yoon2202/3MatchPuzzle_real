@@ -6,7 +6,7 @@ public class CameraScalar : MonoBehaviour
 {
     private Board board;
     public float cameraOffset;
-    public float aspectRatio = 0.625f;   // 가로 세로 비율 <- 10/16
+    public float aspectRatio = 0.45f;   // 가로 세로 비율 <- 10/16
     public float padding = 2; // 양쪽 사이드 빈공간 비율
     void Start()
     {

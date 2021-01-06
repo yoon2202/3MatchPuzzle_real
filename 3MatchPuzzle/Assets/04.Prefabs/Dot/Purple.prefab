@@ -72,7 +72,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 605c7fa366f450f42ad35ad867a32130, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a7bb92383a7cc1245898bdba95704a89, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -113,10 +113,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   column: 0
   row: 0
-  temp_Column: 0
-  temp_Row: 0
-  targetX: 0
-  targetY: 0
   otherDot: {fileID: 0}
   swipeAngle: 0
   swipeResist: 1
@@ -128,8 +124,6 @@ MonoBehaviour:
   SlingShotTarget: {fileID: 570968254, guid: 22e00984d771b424189ac4ecf5acadbf, type: 3}
   isAxe: 0
   isAcornBoom: 0
-  isCrossArrow: 0
-  isDiagonal: 0
   diagonalArrow: {fileID: 2340711928377865172, guid: 2cd5a8331d90eb7498f5a46cee61ca48,
     type: 3}
   CrossArrow: {fileID: 2419755647465323094, guid: a2ddfcdcb196c5a419731c3065ece5b3,
@@ -142,6 +136,6 @@ MonoBehaviour:
   isSpreader: 0
   isBird: 0
   SpecialImg:
-  - {fileID: 21300000, guid: b8937d09e3d47db46bc033126f927044, type: 3}
-  - {fileID: 21300000, guid: dd4b30223186ef640827570b1fe31919, type: 3}
+  - {fileID: 21300000, guid: 338165b9410c1de4d9264f9ccf77150d, type: 3}
+  - {fileID: 21300000, guid: a419ffa113e461f4a9197aa1c8f3caf6, type: 3}
   Obstruction: []
