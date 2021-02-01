@@ -42,7 +42,7 @@ public class ObjectPool : MonoBehaviour
 
     public static GameObject GetObject(int i, int j,int offset)
     {
-        Vector2 tempPosition = new Vector2(i, j + offset);
+        Vector2 tempPosition = new Vector2(i, offset);
         var obj = Instance.poolingObjectQueue.Dequeue();
         obj.transform.SetParent(null);
         obj.transform.position = tempPosition;

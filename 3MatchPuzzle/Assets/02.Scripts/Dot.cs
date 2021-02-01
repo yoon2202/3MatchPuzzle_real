@@ -55,11 +55,9 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private SpriteRenderer DotSprite;
 
 
-
     /*
      * 4,5 매치 판단여부 다시 생각하기
      * 스테이지 진입하기
-     * 보드에서 리필되는 과정부터 코루틴 한개로만 사용하도록 해보기
      * 데이터 저장/불러오기
      * 블록들 체력 부여하기
      * 특수블록들은 어떻게 생길지 기획해보기
@@ -76,43 +74,37 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     }
 
-    private void OnEnable()
-    {
-        targetX = column;
-        targetY = row;
-    }
-
-    void Update()
+    void FixedUpdate()
     {
 
-        targetX = column;
-        targetY = row;
+        //targetX = column;
+        //targetY = row;
 
-        if (Mathf.Abs(targetX - transform.position.x) > .05)  // 행, 열이 바뀌는순간 배열상태에서 업데이트가 진행되고 매치된것들을 찾은다음에 Destroy 함수가 이루어진다.
-        {
-            tempPosition = new Vector2(targetX, transform.position.y);
-            transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
-        }
-        else
-        {
-            tempPosition = new Vector2(targetX, transform.position.y);
-            transform.position = tempPosition;
-            board.allDots[column, row] = this;
-            this.gameObject.name = "(" + column + "," + row + ")";
-        }
+        //if (Mathf.Abs(targetX - transform.position.x) > .01)  // 행, 열이 바뀌는순간 배열상태에서 업데이트가 진행되고 매치된것들을 찾은다음에 Destroy 함수가 이루어진다.
+        //{
+        //    tempPosition = new Vector2(targetX, transform.position.y);
+        //    transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
+        //}
+        //else
+        //{
+        //    tempPosition = new Vector2(targetX, transform.position.y);
+        //    transform.position = tempPosition;
+        //    board.allDots[column, row] = this;
+        //    this.gameObject.name = "(" + column + "," + row + ")";
+        //}
 
-        if (Mathf.Abs(targetY - transform.position.y) > .05)
-        {
-            tempPosition = new Vector2(transform.position.x, targetY);
-            transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
-        }
-        else
-        {
-            tempPosition = new Vector2(transform.position.x, targetY);
-            transform.position = tempPosition;
-            board.allDots[column, row] = this;
-            this.gameObject.name = "(" + column + "," + row + ")";
-        }
+        //if (Mathf.Abs(targetY - transform.position.y) > .01)
+        //{
+        //    tempPosition = new Vector2(transform.position.x, targetY);
+        //    transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 5f);
+        //}
+        //else
+        //{
+        //    tempPosition = new Vector2(transform.position.x, targetY);
+        //    transform.position = tempPosition;
+        //    board.allDots[column, row] = this;
+        //    this.gameObject.name = "(" + column + "," + row + ")";
+        //}
     }
 
     public void OnPointerDown(PointerEventData eventData) // 선택형 매치 판별
@@ -120,7 +112,11 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (hintManager != null)
             hintManager.DestroyHint();
 
-        findMatches.SpecialSkill(this);
+        if (specialBlock != SpecialBlock.None)
+        {
+            findMatches.SpecialSkill(this);
+            return;
+        }
 
         if (board.currentState == GameState.move && !IsSpecialBlock())
             firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -155,13 +151,12 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
 
+        Vector2 otherDotPos = new Vector2(otherDot.column, otherDot.row);
+        Vector2 CurrentDotPos = new Vector2(column, row);
+
         if (otherDot != null && !otherDot.IsSpecialBlock())  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
         {
-            otherDot.column += -1 * (int)direction.x;
-            otherDot.row += -1 * (int)direction.y;
-            column += (int)direction.x;
-            row += (int)direction.y;
-            StartCoroutine(CheckMoveCo());
+            StartCoroutine(CheckMoveCo(otherDotPos, CurrentDotPos));
         }
         else
             board.currentState = GameState.move;
@@ -197,22 +192,19 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     }
 
-    public IEnumerator CheckMoveCo()
+    public IEnumerator CheckMoveCo(Vector2 otherDotPos, Vector2 CurrentDotPos)
     {
+        board.StartCoroutine(Action2D.MoveTo(this, otherDotPos, 0.15f,true));
+        board.StartCoroutine(Action2D.MoveTo(otherDot, CurrentDotPos, 0.15f));
+        yield return new WaitForSeconds(.2f);
         yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (otherDot != null)
         {
             if (!findMatches.currentMatches.Contains(this) && !findMatches.currentMatches.Contains(otherDot))
             {
-                temp_Row = otherDot.GetComponent<Dot>().row;
-                temp_Column = otherDot.GetComponent<Dot>().column;
-                otherDot.GetComponent<Dot>().row = row;
-                otherDot.GetComponent<Dot>().column = column;
-                row = temp_Row;
-                column = temp_Column;
-
-                UpdateBoardReplace(otherDot);
+                board.StartCoroutine(Action2D.MoveTo(this, CurrentDotPos, 0.15f, true));
+                board.StartCoroutine(Action2D.MoveTo(otherDot, otherDotPos, 0.15f));
                 yield return new WaitForSeconds(0.5f);
                 board.currentDot = null;
                 board.currentState = GameState.move;
@@ -226,7 +218,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                         endManager.DecreaseCounterValue();
                     }
                 }
-
                 board.DestroyMatches(true, true);
 
                 //int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.
@@ -237,12 +228,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
         }
 
-    }
-    private void UpdateBoardReplace(Dot a_OtherDot)
-    {
-        Dot temp_obj = board.allDots[column, row];
-        board.allDots[a_OtherDot.column, a_OtherDot.row] = board.allDots[column, row];
-        board.allDots[column, row] = temp_obj;
     }
     #endregion
 

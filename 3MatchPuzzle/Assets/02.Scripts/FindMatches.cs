@@ -8,6 +8,7 @@ public class FindMatches : Singleton<FindMatches>
     private Board board;
     public ActiveList activeList;
     public List<Dot> currentMatches = new List<Dot>();
+    public static Queue<Dot> MovingDot = new Queue<Dot>();
     void Start()
     {
 
@@ -63,17 +64,18 @@ public class FindMatches : Singleton<FindMatches>
 
     public void SpecialSkill(Dot dot)
     {
+        Debug.Log("1");
         switch (dot.specialBlock)
         {
             case SpecialBlock.Cross:
                 currentMatches = currentMatches.Union(GetCrossDots(dot.column, dot.row)).ToList();
+                board.SpecialDestroy();
                 break;
             case SpecialBlock.Multiple:
                 currentMatches = currentMatches.Union(GetMultipleDots(dot.column, dot.row)).ToList();
+                board.SpecialDestroy();
                 break;
         }
-        //Debug.Log("test");
-        board.SpecialDestroy();
     }
 
     private void AddToListAndMatch(Dot dot)
@@ -92,6 +94,19 @@ public class FindMatches : Singleton<FindMatches>
     public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
     {
         yield return new WaitForSeconds(0.2f);
+
+        while(true)
+        {
+            if(MovingDot.Count>0)
+            {
+                yield return null;
+            }
+            else
+            {
+                break;
+            }
+        }
+
         for (int i = 0; i < board.width; i++)
         {
             for (int j = 0; j < board.height; j++)

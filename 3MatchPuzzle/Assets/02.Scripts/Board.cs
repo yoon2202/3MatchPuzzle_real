@@ -12,7 +12,7 @@ public enum GameState
 /// </summary>
 public enum SpecialBlock
 {
-    None,Cross,Multiple
+    None, Cross, Multiple
 }
 /// <summary>
 /// 방해형 블록 리스트
@@ -20,13 +20,15 @@ public enum SpecialBlock
 /// </summary>
 public enum Obstructionblock
 {
-    None,Bird,AcornTree,StalkTree,Acorn
+    None, Bird, AcornTree, StalkTree, Acorn
 }
 
 
 
 public class Board : MonoBehaviour
 {
+    public static Board Instance;
+
     [Header("Scriptable Object Stuff")]
     public World world;
     public int level;
@@ -36,6 +38,9 @@ public class Board : MonoBehaviour
     public int width;
     public int height;
     public int offSet;
+
+    [Header("블록 떨어지는 스피드")]
+    public float[] dropSpeed;
 
     [Header("블록")]
     public GameObject tilePrefabs;
@@ -72,6 +77,8 @@ public class Board : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         if (world != null)
         {
             if (level < world.levels.Length)
@@ -271,13 +278,13 @@ public class Board : MonoBehaviour
 
         for (int i = 0; i < matchCopy.Count; i++)
         {
-            Dot thisDot = matchCopy[i].GetComponent<Dot>();
+            Dot thisDot = matchCopy[i];
             int columnMatch = 0;
             int rowMatch = 0;
 
             for (int j = 0; j < matchCopy.Count; j++) // i의 점에 대하여 
             {
-                Dot nextDot = matchCopy[j].GetComponent<Dot>();
+                Dot nextDot = matchCopy[j];
                 if (nextDot == thisDot)
                     continue;
                 if (nextDot.column == thisDot.column && nextDot.CompareTag(thisDot.tag))
@@ -305,6 +312,46 @@ public class Board : MonoBehaviour
         return 0;
     }
 
+    private int Indirectmatching()
+    {
+        List<Dot> matchCopy = findMatches.currentMatches;
+
+        for (int i = 0; i < matchCopy.Count; i++)
+        {
+            var column = matchCopy[i].column;
+            var row = matchCopy[i].row;
+            var Thistag = matchCopy[i].tag;
+
+            var columnMatch = 0;
+            var rowMatch = 0;
+
+            //가로 5줄
+
+            if (column - 2 >= 0 && allDots[column-2,row] != null && allDots[column - 2, row].CompareTag(Thistag))
+            {
+                columnMatch++;
+            }
+            if (column - 1 >= 0 && allDots[column - 1, row] != null && allDots[column - 1, row].CompareTag(Thistag))
+            {
+                columnMatch++;
+            }
+            if (column + 1 < width && allDots[column + 1, row] != null && allDots[column + 1, row].CompareTag(Thistag))
+            {
+                columnMatch++;
+            }
+            if (column + 2 < width && allDots[column + 1, row] != null && allDots[column + 1, row].CompareTag(Thistag))
+            {
+
+
+                columnMatch++;
+            }
+
+        }
+        // 만약 칼럼이 4일 경우에 +3을해보고 똑같은 Dot이 존재한다면 4매칭 취소로 한다.
+        return 0;
+
+    }
+
     private void CheckToMakeBombs() // 이건 내가 실제로 4,5매치를 한 경우
     {
         if (findMatches.currentMatches.Count > 3)
@@ -321,6 +368,7 @@ public class Board : MonoBehaviour
     {
         if (findMatches.currentMatches.Count > 3 && isMove) // 직접 블록을 움직였을때, 4,5 매치 판단
             CheckToMakeBombs();
+
 
         for (int i = 0; i < findMatches.currentMatches.Count; i++)
         {
@@ -354,7 +402,7 @@ public class Board : MonoBehaviour
         //    findMatches.RandomCreateBombs(); // 랜덤 확률로 특수, 선택 블록 생성
 
         findMatches.currentMatches.Clear();
-        StartCoroutine(DecreaseRowCo2()); // 행 내리기
+        StartCoroutine(DecreaseRowCo()); // 행 내리기
     }
 
     public void SpecialDestroy() // 특수 블록, 선택블록에 대한 폭파
@@ -371,42 +419,12 @@ public class Board : MonoBehaviour
             }
         }
         findMatches.currentMatches.Clear();
-
-        StartCoroutine(DecreaseRowCo2()); // 행 내리기
+        StartCoroutine(DecreaseRowCo()); // 행 내리기
     }
 
-    private void DestroyMatchesAt(int column, int row)
+    private IEnumerator DecreaseRowCo() // 행을 밑으로 내리는 함수
     {
-        //if (allDots[column, row].isMatched)
-        //{
-
-        //    DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
-        //    DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
-
-
-        //    if (goalManager != null)
-        //    {
-        //        goalManager.CompareGoal(allDots[column, row].tag.ToString());
-        //        goalManager.UpdateGoals();
-        //    }
-
-        //    //if(soundManager != null)
-        //    //{
-        //    //    soundManager.PlayRandomDestroyNoise();
-
-        //    //}
-
-        //    GameObject destroyEffect_ = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity);
-        //    Destroy(destroyEffect_, 2.0f);
-        //    //Destroy(allDots[column, row]);
-        //    ObjectPool.ReturnObject(allDots[column, row].gameObject);
-        //    scoreManager.IncreaseScore(basePieceValue * streakValue);
-        //    allDots[column, row] = null;
-    }
-
-    private IEnumerator DecreaseRowCo2() // 행을 밑으로 내리는 함수
-    {
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.2f);
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
@@ -417,22 +435,24 @@ public class Board : MonoBehaviour
                     {
                         if (allDots[i, k] != null)
                         {
-                            allDots[i, k].GetComponent<Dot>().row = j;
+                            StartCoroutine(Action2D.MoveTo(allDots[i, k], new Vector2(i, j), dropSpeed[k - j]));
+                            allDots[i, k].row = j;
+                            allDots[i, j] = allDots[i, k];
                             allDots[i, k] = null;
+                            yield return null;
                             break;
                         }
                     }
                 }
             }
+            StartCoroutine(Refiilheight(i));
         }
-        yield return new WaitForSeconds(refillDelay * 0.1f);
+        
         StartCoroutine(FillBoardCo());
     }
 
     private IEnumerator FillBoardCo() // 보드 리필함수 -> 매치 확인 함수 -> 데드락 확인 함수 관려 코루틴
     {
-        yield return StartCoroutine(RefillBoard());
-        yield return new WaitForSeconds(refillDelay * 0.5f);
         yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (findMatches.currentMatches.Count > 0)
@@ -453,28 +473,29 @@ public class Board : MonoBehaviour
         streakValue = 1;
     }
 
-    IEnumerator RefillBoard() // 보드에 리필해주는 함수
-    {
-        // 버그발생시 코루틴 멈추고 다시 실행시키도록 수정한다.
-        for (int i = 0; i < width; i++)
-        {
-            StartCoroutine(Refiilheight(i));
-        }
-        yield return null;
-    }
-
     IEnumerator Refiilheight(int i)
     {
         var Delay = new WaitForSeconds(0.1f);
+
         for (int j = 0; j < height; j++)
         {
             if (allDots[i, j] == null && !blankSpaces[i, j] && !concreteTiles[i, j])
             {
                 GameObject piece = ObjectPool.GetObject(i, j, offSet);
                 allDots[i, j] = piece.GetComponent<Dot>();
+                StartCoroutine(Action2D.MoveTo(allDots[i, j], new Vector2(i, j), dropSpeed[offSet-j]));
                 yield return Delay;
             }
         }
+    }
+
+
+
+    public static void SetChangeDotArray(Dot CurrentDot, Vector2 OtherDot)
+    {
+        Dot temp_obj = Instance.allDots[(int)OtherDot.x, (int)OtherDot.y];
+        Instance.allDots[(int)OtherDot.x, (int)OtherDot.y] = Instance.allDots[CurrentDot.column, CurrentDot.row];
+        Instance.allDots[CurrentDot.column, CurrentDot.row] = temp_obj;
     }
 
     #region 데드락 함수 모음
