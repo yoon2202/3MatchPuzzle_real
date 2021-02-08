@@ -9,10 +9,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     [Header("현재 포지션 위치")]
     public int column;
     public int row;
-    private int temp_Column;
-    private int temp_Row;
-    private int targetX;
-    private int targetY;
 
     private EndManager endManager;
     private HintManager hintManager;
@@ -21,7 +17,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public Dot otherDot;
     private Vector2 firstTouchPosition;
     private Vector2 finalTouchPosition;
-    private Vector2 tempPosition;
+
     public float swipeAngle = 0;
     public float swipeResist = 1f;
 
@@ -61,6 +57,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
      * 데이터 저장/불러오기
      * 블록들 체력 부여하기
      * 특수블록들은 어떻게 생길지 기획해보기
+     * 힌트 매니저 수정
      */
 
 
@@ -72,39 +69,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         board = FindObjectOfType<Board>();
         findMatches = FindMatches.Instance;
 
-    }
-
-    void FixedUpdate()
-    {
-
-        //targetX = column;
-        //targetY = row;
-
-        //if (Mathf.Abs(targetX - transform.position.x) > .01)  // 행, 열이 바뀌는순간 배열상태에서 업데이트가 진행되고 매치된것들을 찾은다음에 Destroy 함수가 이루어진다.
-        //{
-        //    tempPosition = new Vector2(targetX, transform.position.y);
-        //    transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 15f);
-        //}
-        //else
-        //{
-        //    tempPosition = new Vector2(targetX, transform.position.y);
-        //    transform.position = tempPosition;
-        //    board.allDots[column, row] = this;
-        //    this.gameObject.name = "(" + column + "," + row + ")";
-        //}
-
-        //if (Mathf.Abs(targetY - transform.position.y) > .01)
-        //{
-        //    tempPosition = new Vector2(transform.position.x, targetY);
-        //    transform.position = Vector2.Lerp(transform.position, tempPosition, Time.deltaTime * 5f);
-        //}
-        //else
-        //{
-        //    tempPosition = new Vector2(transform.position.x, targetY);
-        //    transform.position = tempPosition;
-        //    board.allDots[column, row] = this;
-        //    this.gameObject.name = "(" + column + "," + row + ")";
-        //}
     }
 
     public void OnPointerDown(PointerEventData eventData) // 선택형 매치 판별
