@@ -50,17 +50,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public Sprite[] Obstruction;
     private SpriteRenderer DotSprite;
 
-
-    /*
-     * 4,5 매치 판단여부 다시 생각하기
-     * 스테이지 진입하기
-     * 데이터 저장/불러오기
-     * 블록들 체력 부여하기
-     * 특수블록들은 어떻게 생길지 기획해보기
-     * 힌트 매니저 수정
-     */
-
-
     void Start()
     {
         DotSprite = GetComponent<SpriteRenderer>();
@@ -106,7 +95,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             board.currentState = GameState.wait;
             swipeAngle = Mathf.Atan2(finalTouchPosition.y - firstTouchPosition.y, finalTouchPosition.x - firstTouchPosition.x) * 180 / Mathf.PI;
             MoviePieces();
-            board.currentDot = this;
         }
         else
             board.currentState = GameState.move;
@@ -115,11 +103,10 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
 
-        Vector2 otherDotPos = new Vector2(otherDot.column, otherDot.row);
-        Vector2 CurrentDotPos = new Vector2(column, row);
-
         if (otherDot != null && !otherDot.IsSpecialBlock())  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
         {
+            Vector2 otherDotPos = new Vector2(otherDot.column, otherDot.row);
+            Vector2 CurrentDotPos = new Vector2(column, row);
             StartCoroutine(CheckMoveCo(otherDotPos, CurrentDotPos));
         }
         else
@@ -158,7 +145,8 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public IEnumerator CheckMoveCo(Vector2 otherDotPos, Vector2 CurrentDotPos)
     {
-        board.StartCoroutine(Action2D.MoveTo(this, otherDotPos, 0.15f,true));
+        board.currentDot = this;
+        board.StartCoroutine(Action2D.MoveTo(this, otherDotPos, 0.15f, true));
         board.StartCoroutine(Action2D.MoveTo(otherDot, CurrentDotPos, 0.15f));
         yield return new WaitForSeconds(.2f);
         yield return StartCoroutine(findMatches.FindAllMatchesCo());

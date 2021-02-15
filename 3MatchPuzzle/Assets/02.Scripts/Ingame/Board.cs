@@ -46,12 +46,15 @@ public class Board : MonoBehaviour
     public GameObject tilePrefabs;
     public GameObject breakableTilePrefabs;
     public GameObject concreteTilePrefabs;
+    public GameObject ObstructionPrefabs;
+
     public static GameObject[] dots;
     public GameObject destroyEffect;
 
-    [Header("Layout")]
+    [Header("블록 타입 집합")]
     private bool[,] blankSpaces;
     private BackGroundTile[,] concreteTiles;
+    public ObstructionDot[,] ObstructionDots;
     public Dot[,] allDots;
     private List<GameObject> Create_dots = new List<GameObject>();
     private GameObject Previous_Bellow;
@@ -101,6 +104,7 @@ public class Board : MonoBehaviour
         findMatches = FindMatches.Instance;
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
+        ObstructionDots = new ObstructionDot[width, height];
         allDots = new Dot[width, height];
 
         InitList();
@@ -122,6 +126,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
+                Vector2 tempPosition = new Vector2(i, j);
                 TileSpace[i, j] = world.levels[level].Tile[(8 - j) * 9 + i];
                 switch (TileSpace[i, j])
                 {
@@ -132,9 +137,12 @@ public class Board : MonoBehaviour
                         blankSpaces[i, j] = true;
                         break;
                     case 2:
-                        Vector2 tempPosition = new Vector2(i, j);
                         GameObject tile = Instantiate(concreteTilePrefabs, tempPosition, Quaternion.identity);
                         concreteTiles[i, j] = tile.GetComponent<BackGroundTile>();
+                        break;
+                    case 3:
+                        GameObject Obstruction = Instantiate(ObstructionPrefabs, tempPosition, Quaternion.identity);
+                        ObstructionDots[i, j] = Obstruction.GetComponent<ObstructionDot>();
                         break;
                 }
             }
@@ -143,6 +151,7 @@ public class Board : MonoBehaviour
         {
             ShuffleBoard();
         }
+
         is_complete = true;
     }
 
@@ -271,44 +280,92 @@ public class Board : MonoBehaviour
             }
         }
     }
+
+    private void DamageObstruction(int column, int row) // 콘크리트 타일
+    {
+        if (column > 0)
+        {
+            if (ObstructionDots[column - 1, row])
+            {
+                ObstructionDots[column - 1, row].TakeDamage(1);
+                if (ObstructionDots[column - 1, row].Health <= 0)
+                    ObstructionDots[column - 1, row] = null;
+            }
+        }
+        if (column < width - 1)
+        {
+            if (ObstructionDots[column + 1, row])
+            {
+                ObstructionDots[column + 1, row].TakeDamage(1);
+                if (ObstructionDots[column + 1, row].Health <= 0)
+                    ObstructionDots[column + 1, row] = null;
+            }
+        }
+        if (row > 0)
+        {
+            if (ObstructionDots[column, row - 1])
+            {
+                ObstructionDots[column, row - 1].TakeDamage(1);
+                if (ObstructionDots[column, row - 1].Health <= 0)
+                    ObstructionDots[column, row - 1] = null;
+            }
+        }
+        if (row < height - 1)
+        {
+            if (ObstructionDots[column, row + 1])
+            {
+                ObstructionDots[column, row + 1].TakeDamage(1);
+                if (ObstructionDots[column, row + 1].Health <= 0)
+                    ObstructionDots[column, row + 1] = null;
+            }
+        }
+    }
     #endregion
-    private int ColumnOrRow() // 매치된 블록들에 대한 4,5 매치 판단
+
+    #region 4,5 매치
+    private int ColumnOrRow(Dot currentMatch) // 매치된 블록들에 대한 직접 4,5 매치 판단
     {
         List<Dot> matchCopy = findMatches.currentMatches;
 
-        for (int i = 0; i < matchCopy.Count; i++)
-        {
-            Dot thisDot = matchCopy[i];
-            int columnMatch = 0;
-            int rowMatch = 0;
+        int columnMatch = 0;
+        int rowMatch = 0;
+        int diagonalMatch = 0;
 
-            for (int j = 0; j < matchCopy.Count; j++) // i의 점에 대하여 
+        for (int j = 0; j < matchCopy.Count; j++) // i의 점에 대하여 
+        {
+            Dot nextDot = matchCopy[j];
+
+            if (nextDot.column == currentMatch.column && nextDot.CompareTag(currentMatch.tag))
             {
-                Dot nextDot = matchCopy[j];
-                if (nextDot == thisDot)
-                    continue;
-                if (nextDot.column == thisDot.column && nextDot.CompareTag(thisDot.tag))
-                {
-                    columnMatch++;
-                }
-                if (nextDot.row == thisDot.row && nextDot.CompareTag(thisDot.tag))
-                {
-                    rowMatch++;
-                }
+                columnMatch++;
             }
-            if (columnMatch == 4 || rowMatch == 4) // 세로 혹은 가로 5개 매치
+            else if (nextDot.row == currentMatch.row && nextDot.CompareTag(currentMatch.tag))
             {
-                return 1;
+                rowMatch++;
             }
-            if (columnMatch == 2 && rowMatch == 2) // 가로 세로 합 5개
+            else
             {
-                return 2;
-            }
-            if (columnMatch == 3 || rowMatch == 3) // 세로 혹은 가로 4개 매치
-            {
-                return 3;
+                diagonalMatch++;
             }
         }
+
+        if (diagonalMatch > 0) // 사각형 매치시 특수블록
+        {
+            return 4;
+        }
+        if (columnMatch == 4 || rowMatch == 4) // 세로 혹은 가로 5개 매치
+        {
+            return 1;
+        }
+        if (columnMatch == 2 && rowMatch == 2) // 가로 세로 합 5개
+        {
+            return 2;
+        }
+        if (columnMatch == 3 || rowMatch == 3) // 세로 혹은 가로 4개 매치
+        {
+            return 3;
+        }
+
         return 0;
     }
 
@@ -327,7 +384,7 @@ public class Board : MonoBehaviour
 
             //가로 5줄
 
-            if (column - 2 >= 0 && allDots[column-2,row] != null && allDots[column - 2, row].CompareTag(Thistag))
+            if (column - 2 >= 0 && allDots[column - 2, row] != null && allDots[column - 2, row].CompareTag(Thistag))
             {
                 columnMatch++;
             }
@@ -352,17 +409,32 @@ public class Board : MonoBehaviour
 
     }
 
-    private void CheckToMakeBombs() // 이건 내가 실제로 4,5매치를 한 경우
+    private void CheckToMakeBombs() // 4,5매치를 한 경우
     {
         if (findMatches.currentMatches.Count > 3)
         {
-            int typeOfMatch = ColumnOrRow();
-            if (typeOfMatch != 0)
+            for (int i = 0; i < 2; i++)
             {
-                findMatches.CheckBombs();
+                int typeOfMatch = 0;
+                Dot thisDot_ = currentDot;
+
+                if (i == 1)
+                    thisDot_ = currentDot.otherDot;
+
+                typeOfMatch = ColumnOrRow(thisDot_);
+
+                if (typeOfMatch != 0)
+                {
+                    if (findMatches.currentMatches.Contains(thisDot_))
+                    {
+                        findMatches.currentMatches.Remove(thisDot_);
+                        //thisDot_.MakeSpecialBlock();
+                    }
+                }
             }
         }
     }
+    #endregion
 
     public void DestroyMatches(bool isMove, bool Special)
     {
@@ -379,6 +451,7 @@ public class Board : MonoBehaviour
             {
                 DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
                 DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
+                DamageObstruction(column, row);
 
                 if (goalManager != null)
                 {
@@ -391,6 +464,7 @@ public class Board : MonoBehaviour
                 //    soundManager.PlayRandomDestroyNoise();
 
                 //}
+
                 ObjectPool.ReturnObject(allDots[column, row].gameObject);
                 DestroyEffectPool.GetObject(column, row, allDots[column, row].gameObject);
                 scoreManager.IncreaseScore(basePieceValue * streakValue);
@@ -429,7 +503,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                if (!blankSpaces[i, j] && allDots[i, j] == null && !concreteTiles[i, j]) // 빈공간이 아니고, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
+                if (!blankSpaces[i, j] && allDots[i, j] == null && !concreteTiles[i, j] && !ObstructionDots[i,j]) // 빈공간이 아니고, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
                 {
                     for (int k = j + 1; k < height; k++) // 해당 열 위에서 아래로 공간 반복
                     {
@@ -447,7 +521,7 @@ public class Board : MonoBehaviour
             }
             StartCoroutine(Refiilheight(i));
         }
-        
+
         StartCoroutine(FillBoardCo());
     }
 
@@ -479,11 +553,11 @@ public class Board : MonoBehaviour
 
         for (int j = 0; j < height; j++)
         {
-            if (allDots[i, j] == null && !blankSpaces[i, j] && !concreteTiles[i, j])
+            if (allDots[i, j] == null && !blankSpaces[i, j] && !concreteTiles[i, j] && !ObstructionDots[i, j])
             {
                 GameObject piece = ObjectPool.GetObject(i, j, offSet);
                 allDots[i, j] = piece.GetComponent<Dot>();
-                StartCoroutine(Action2D.MoveTo(allDots[i, j], new Vector2(i, j), dropSpeed[offSet-j]));
+                StartCoroutine(Action2D.MoveTo(allDots[i, j], new Vector2(i, j), dropSpeed[offSet - j]));
                 yield return Delay;
             }
         }

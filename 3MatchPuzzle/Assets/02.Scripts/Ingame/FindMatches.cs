@@ -91,13 +91,21 @@ public class FindMatches : Singleton<FindMatches>
         AddToListAndMatch(dot3);
     }
 
+    private void GetNearbyPieces(Dot dot1, Dot dot2, Dot dot3, Dot dot4)
+    {
+        AddToListAndMatch(dot1);
+        AddToListAndMatch(dot2);
+        AddToListAndMatch(dot3);
+        AddToListAndMatch(dot4);
+    }
+
     public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
     {
         yield return new WaitForSeconds(0.2f);
 
-        while(true)
+        while (true)
         {
-            if(MovingDot.Count>0)
+            if (MovingDot.Count > 0)
             {
                 yield return null;
             }
@@ -146,44 +154,66 @@ public class FindMatches : Singleton<FindMatches>
                                 {
                                     //currentMatches = currentMatches.Union(isCrossBomb(upDot, currentDot, downDot)).ToList();
 
-                                    //currentMatches = currentMatches.Union(isDiagonalBomb(upDot, currentDot, downDot)).ToList();
-
                                     GetNearbyPieces(upDot, currentDot, downDot);
                                 }
                             }
 
                         }
                     }
+
+                    if ((i > 0 && i < board.width - 1) && j > 0 && j < board.height - 1) // 대각선 매치 확인
+                    {
+                        squareMatch(i, j, 1, 1, currentDot);
+                        squareMatch(i, j, -1, 1, currentDot);
+                        squareMatch(i, j, -1, -1, currentDot);
+                        squareMatch(i, j, 1, -1, currentDot);
+                    }
                 }
             }
         }
     }
 
-    public void CheckBombs() // 4,5매치를 통한 특수블록 생성 함수
+    private void squareMatch(int i_, int j_ ,int H, int V, Dot CurrentDot)
     {
-        if (board.currentDot != null)
+        Dot Diagonal = board.allDots[i_ + H, j_ + V];
+        Dot Horizon = board.allDots[i_ + H, j_];
+        Dot Vertical = board.allDots[i_, j_ + V];
+
+        if (Diagonal != null && Horizon != null && Vertical != null)
         {
-            if (currentMatches.Contains(board.currentDot)) //움직인 개체가 매치상태이면?
+            if (Diagonal.tag == CurrentDot.tag && Horizon.tag == CurrentDot.tag && Vertical.tag == CurrentDot.tag) // 현재 매치가 된 상태
             {
-                currentMatches.Remove(board.currentDot);
-                board.currentDot.MakeSpecialBlock();
-            }
-        }
-        else if (board.currentDot.otherDot != null)
-        {
-            if (currentMatches.Contains(board.currentDot.otherDot)) // 움직여진 개체가 매치상태이면?
-            {
-                currentMatches.Remove(board.currentDot.otherDot);
-                board.currentDot.otherDot.MakeSpecialBlock();
+                GetNearbyPieces(Diagonal, CurrentDot, Horizon, Vertical);
             }
         }
     }
+
+
+    //public void CheckBombs() // 4,5매치를 통한 특수블록 생성 함수
+    //{
+    //    if (board.currentDot != null)
+    //    {
+    //        if (currentMatches.Contains(board.currentDot)) //움직인 개체가 매치상태이면?
+    //        {
+    //            currentMatches.Remove(board.currentDot);
+    //            board.currentDot.MakeSpecialBlock();
+    //        }
+    //    }
+    //    else if (board.currentDot.otherDot != null)
+    //    {
+    //        if (currentMatches.Contains(board.currentDot.otherDot)) // 움직여진 개체가 매치상태이면?
+    //        {
+    //            currentMatches.Remove(board.currentDot.otherDot);
+    //            board.currentDot.otherDot.MakeSpecialBlock();
+    //        }
+    //    }
+    //}
 
     #region 특수블록 스킬
     List<Dot> GetCrossDots(int column, int row) // 십자가형 매칭
     {
         List<Dot> dots = new List<Dot>();
-        dots.Add(board.allDots[column , row]);
+        dots.Add(board.allDots[column, row]);
         var Maxindex = activeList.activeList[0].CurrentLevel;
         for (int CurrentIndex = 1; CurrentIndex <= Maxindex; CurrentIndex++)
         {
