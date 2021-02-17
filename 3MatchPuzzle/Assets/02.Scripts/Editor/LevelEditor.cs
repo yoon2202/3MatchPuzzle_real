@@ -5,20 +5,48 @@ using UnityEditor;
 public class LevelEditor : Editor
 {
     Level level;
+    SerializedProperty Dots;
+    SerializedProperty Blocks;
 
     private void OnEnable()
     {
         level = target as Level;
+        Dots = serializedObject.FindProperty("dots");
+        Blocks = serializedObject.FindProperty("Blocks");
     }
 
     public override void OnInspectorGUI()
     {
         GUIStyle bStyle = new GUIStyle("Button");
         bStyle.alignment = TextAnchor.MiddleCenter;
-        base.OnInspectorGUI();
-        EditorGUILayout.LabelField("----------------------------");
+        //base.OnInspectorGUI();
+
+        EditorGUILayout.PropertyField(Dots, new GUIContent("일반블록"));
+        GUILayout.Space(30);
+
+        EditorGUILayout.LabelField("---- 목표 설정 ----");
+        EditorGUI.BeginChangeCheck();
+        level.gameType = (GameType)GUILayout.Toolbar((int)level.gameType, level.returngameType());
+        EditorGUI.EndChangeCheck();
+
+        switch (level.gameType)
+        {
+            case GameType.Odd:
+                level.Score = EditorGUILayout.IntField("스코어 점수",level.Score);
+                level.Timer = EditorGUILayout.IntField("시간 제한",level.Timer);
+                break;
+            case GameType.Even:
+                EditorGUILayout.PropertyField(Blocks, new GUIContent("미션 블록 (최대 3개까지 가능)"));
+                serializedObject.ApplyModifiedProperties();
+                GUILayout.Space(10);
+                level.MoveCount = EditorGUILayout.IntField("이동횟수 제한", level.MoveCount);
+                break;
+        }
+        GUILayout.Space(10);
+
+        EditorGUILayout.LabelField("---- 레벨 디자인 ----");
         int index = 0;
-        if (level !=null && level.Tile.Length > 0)
+        if (level != null && level.Tile.Length > 0)
         {
             for (int i = 0; i < 9; i++)
             {
@@ -31,17 +59,21 @@ public class LevelEditor : Editor
                 GUILayout.EndHorizontal();
             }
         }
+        GUILayout.Space(10);
 
-        EditorGUILayout.LabelField("------타일 세팅-------");
-        EditorGUILayout.LabelField("0. 일반 블록");
+        if (GUILayout.Button("Stage Save", GUILayout.Width(200), GUILayout.Height(30)))
+        {
+            EditorUtility.SetDirty(target);
+            Debug.Log("저장 완료");
+        }
+        GUILayout.Space(10);
+
+        EditorGUILayout.LabelField("------블록 목록-------");
+        EditorGUILayout.LabelField("0. 기본 블록");
         EditorGUILayout.LabelField("1. 공백");
         EditorGUILayout.LabelField("2. 콘크리트 블록");
         EditorGUILayout.LabelField("3. 고압분사기(세로)");
         EditorGUILayout.LabelField("4. 고압분사기(가로)");
-        EditorGUILayout.LabelField("5. 먼지블록");
-        EditorGUILayout.LabelField("6. 십자나무 꽃 블록");
-        EditorGUILayout.LabelField("7. 시든 꽃");
-        EditorGUILayout.LabelField("8. 생명의 민들레");
 
     }
 }

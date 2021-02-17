@@ -85,7 +85,7 @@ public class StageManager : MonoBehaviour
 
    public void Startbtn()
     {
-        SceneManager.LoadScene(1);
+        LoadingSceneController.LoadScene("Ingame");
     }
 
     //int temp = i; // Closure 문제때문에 복사해서 사용한다.

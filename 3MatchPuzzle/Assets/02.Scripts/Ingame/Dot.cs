@@ -163,13 +163,13 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
             else
             {
-                if (endManager != null)
-                {
-                    if (endManager.requirements.gameType == GameType.Odd)
-                    {
-                        endManager.DecreaseCounterValue();
-                    }
-                }
+                //if (endManager != null)
+                //{
+                //    if (endManager.requirements.gameType == GameType.Odd)
+                //    {
+                //        endManager.DecreaseCounterValue();
+                //    }
+                //}
                 board.DestroyMatches(true, true);
 
                 //int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.
