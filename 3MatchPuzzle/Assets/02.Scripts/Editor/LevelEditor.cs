@@ -27,7 +27,7 @@ public class LevelEditor : Editor
         EditorGUILayout.LabelField("---- 목표 설정 ----");
         EditorGUI.BeginChangeCheck();
         level.gameType = (GameType)GUILayout.Toolbar((int)level.gameType, level.returngameType());
-        EditorGUI.EndChangeCheck();
+        if(EditorGUI.EndChangeCheck()) GUI.FocusControl(null);
 
         switch (level.gameType)
         {

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1984271272}
   m_Layer: 0
   m_Name: Teal
-  m_TagString: Indigo
+  m_TagString: Teal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

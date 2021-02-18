@@ -4,15 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Green
-  - Indigo
   - Orange
-  - Red
   - Yellow
-  - Breakable
-  - Blue
   - Purple
   - Pink
+  - Black
+  - Teal
   layers:
   - Default
   - TransparentFX
