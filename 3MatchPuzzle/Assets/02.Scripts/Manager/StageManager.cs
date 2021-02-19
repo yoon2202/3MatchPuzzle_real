@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
 
@@ -14,12 +12,20 @@ public class StageManager : MonoBehaviour
     private Button StageReady;
 
     [SerializeField]
-    private GameObject StageReadyUI; 
+    private GameObject StageReadyUI;
+
+    [SerializeField]
+    private Button StageStart;
+
+    [SerializeField]
+    private Button StageUIClose;
 
 
     void Start()
     {
         StageReady.onClick.AddListener(() => StageReadyUI.SetActive(true));
+        StageStart.onClick.AddListener(() => Startbtn());
+        StageUIClose.onClick.AddListener(() => StageReadyUI.SetActive(false));
     }
 
 
