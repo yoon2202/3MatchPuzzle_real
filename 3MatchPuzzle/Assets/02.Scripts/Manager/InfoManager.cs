@@ -12,6 +12,11 @@ public class InfoManager : Singleton<InfoManager>
 
     public Dictionary<string, Sprite> SpriteTable = new Dictionary<string, Sprite>();
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
+
     void Start()
     {
         Init_SpriteTable();
@@ -25,7 +30,7 @@ public class InfoManager : Singleton<InfoManager>
 
     public static Level ReturnCurrentStage()
     {
-        return Instance.LevelList.levels[Instance.resource.CurrentLevel];
+        return Instance.LevelList.levels[Instance.resource.CurrentLevel-1];
     }
 
     public static Sprite ReturnMissionSprite(string Tag)

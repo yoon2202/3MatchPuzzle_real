@@ -1,98 +1,116 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-[System.Serializable]
-public class BlankGoal
-{
-   public int numberNeeded;
-    public int numberCollected;
-    public Sprite goalSprite;
-    public string matchValue;
-}
+using UnityEngine.UI;
+using System.Linq;
 
 
 public class GoalManager : MonoBehaviour
 {
-    public BlankGoal[] levelGoals;
-    public List<GoalPanel> currentGoals = new List<GoalPanel>();
-    public GameObject goalPrefabs;
-    public GameObject goalIntroParent;
-    public GameObject goalGameParent;
+    private GameType gameType;
+
+    private int timeMoveCount;
+    public int TimeMoveCount
+    {
+        get => timeMoveCount;
+        set
+        {
+            timeMoveCount = value;
+            _TimeMoveCountUpate.Invoke(timeMoveCount);
+
+            if (timeMoveCount <= 0) { Debug.Log("Game Over!!"); }
+
+        }
+    }
+
+    private List<MissionBlockInfo> MissionBlocksInfo = new List<MissionBlockInfo>();
+
+    private int MissionScore;
+
+    private int currentScore = 0;
+    public int CurrentScore
+    {
+        get => currentScore;
+        set
+        {
+            currentScore = value;
+            _ScoreUpate.Invoke(currentScore);
+        }
+    }
+
+    public delegate void TimeMoveCountUpdate(int count);
+    public event TimeMoveCountUpdate _TimeMoveCountUpate;
+
+    public delegate void ScoreUpdate(int Score);
+    public event ScoreUpdate _ScoreUpate;
+
+
     private EndManager endGame;
-    private Board board;
 
     void Start()
     {
-        board = FindObjectOfType<Board>();
         endGame = FindObjectOfType<EndManager>();
-        GetGoals();
-        SetUpIntroGoals();
     }
-    void GetGoals()
+
+    // 스테이지 타입, 스코어, 시간 초기화
+    public void Set_InitGame(Level level)
     {
-        if(board != null)
-        {
-            if(board.world != null)
-            {
-                if(board.world.levels[board.level] != null)
-                {
-                    levelGoals = board.world.levels[board.level].levelGoals;
-                }
-            }
-        }
+        gameType = level.gameType;
+        MissionScore = level.Score;
+
+        if (GameType.Odd == gameType)
+            TimeMoveCount = level.Timer;
+        else if (GameType.Even == gameType)
+            TimeMoveCount = level.MoveCount;
+
     }
-    void SetUpIntroGoals()
+
+
+    //게임 시작시에 미션 블록 정보 생성
+    public void Add_MissionBlockInfo(MissionBlocks missionBlock, Text missionUI, GameObject CompleteUI)
     {
-        for(int i = 0;  i < levelGoals.Length; i++)
-        {
-            //GameObject goal = Instantiate(goalPrefabs, goalIntroParent.transform.position, Quaternion.identity);
-            //goal.transform.SetParent(goalIntroParent.transform);
-
-            //GoalPanel panel = goal.GetComponent<GoalPanel>();
-            //panel.thisSprite = levelGoals[i].goalSprite;
-            //panel.thisString = "0/" + levelGoals[i].numberNeeded;
-
-            GameObject gameGoal = Instantiate(goalPrefabs, goalGameParent.transform.position, Quaternion.identity);
-            gameGoal.transform.SetParent(goalGameParent.transform,false);
-            GoalPanel panel = gameGoal.GetComponent<GoalPanel>();
-            currentGoals.Add(panel);
-            panel.thisSprite = levelGoals[i].goalSprite;
-
-            panel.thisString = "0/" + levelGoals[i].numberNeeded;
-        }
+        MissionBlocksInfo.Add(new MissionBlockInfo(missionBlock.BlockCount, missionBlock.Block.tag, missionUI, CompleteUI));
     }
 
-    // Update is called once per frame
-    public void UpdateGoals()
+
+
+
+    #region 홀수 스테이지 업데이트 함수
+    public void Update_CurrentScore(int score)
     {
-        int goalsCompleted = 0;
-        for (int i = 0; i < levelGoals.Length; i++)
-        {
-            currentGoals[i].thisText.text = levelGoals[i].numberCollected + "/" + levelGoals[i].numberNeeded;
-
-            if (levelGoals[i].numberCollected >= levelGoals[i].numberNeeded)
-            {
-                goalsCompleted++;
-                currentGoals[i].thisText.text = levelGoals[i].numberNeeded + "/" + levelGoals[i].numberNeeded;
-
-            }
-        }
-        if (goalsCompleted >= levelGoals.Length)
-        {
-            //if(endGame != null)
-                // 게임 클리어시 이벤트 필요.
-            //Debug.Log("미션 클리어");
-        }
+        CurrentScore += score;
     }
 
-    public void CompareGoal(string goalToCompare)  // 게임 목표에 있는 tag인 지 확인후 갯수를 업데이트시킨다.
+    IEnumerator time_CountDown()
     {
-        for(int i = 0; i< levelGoals.Length; i ++)
+        var ws = new WaitForSeconds(1.0f);
+
+        while (TimeMoveCount > 0)
         {
-            if (goalToCompare == levelGoals[i].matchValue)
-                levelGoals[i].numberCollected++;
+            TimeMoveCount--;
+            yield return ws;
         }
     }
-    
+    #endregion
+
+    #region 짝수 스테이지 업데이트 함수
+    public void UpdateGoals(string tag)
+    {
+
+        var Selects = MissionBlocksInfo.Where(x => x.tagName.CompareTo(tag) == 0);
+
+        foreach (var Select in Selects)
+        {
+            Select.UpdateMissionBlock(1);
+        }
+
+        var Complete = MissionBlocksInfo.Count(x => x.numberCollected >= x.numberNeeded);
+    }
+
+    public void Update_CurrentTimeMoveCount()
+    {
+        if (GameType.Even == gameType)
+            TimeMoveCount--;
+    }
+    #endregion
 }

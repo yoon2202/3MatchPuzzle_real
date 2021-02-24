@@ -12,15 +12,13 @@ public class Level : ScriptableObject
 *     보스 스테이지 : 홀수 + 짝수 접목시켜서.. 아직 미정
 */
 
-    public int[] Tile;
+    public int[] Tile = new int[81];
     public GameObject[] dots;
     public GameType gameType;
     public int Score = 0;
     public int Timer = 0;
     public MissionBlocks[] Blocks;
     public int MoveCount = 0;
-
-    public BlankGoal[] levelGoals;
 
     /// <summary>
     /// 게임 타입 이름들 반환하는 함수

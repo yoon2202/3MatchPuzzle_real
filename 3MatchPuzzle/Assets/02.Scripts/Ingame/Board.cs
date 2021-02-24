@@ -29,18 +29,22 @@ public class Board : MonoBehaviour
 {
     public static Board Instance;
 
-    [Header("Scriptable Object Stuff")]
-    public World world;
-    public int level;
-
     public GameState currentState = GameState.move;
-    [Header("Board Dimensions")]
-    public int width;
-    public int height;
-    public int offSet;
+
+    [HideInInspector]
+    public int width = 9;
+
+    [HideInInspector]
+    public int height = 9;
+
+    [HideInInspector]
+    public int offSet = 9;
 
     [Header("블록 떨어지는 스피드")]
     public float[] dropSpeed;
+
+    [HideInInspector]
+    public Level CurrentLevel;
 
     [Header("블록")]
     public GameObject tilePrefabs;
@@ -63,10 +67,11 @@ public class Board : MonoBehaviour
 
     public Dot currentDot;
     private FindMatches findMatches;
+
     //--------- Score---------
     public int basePieceValue = 20;
     private int streakValue = 1;
-    private ScoreManager scoreManager;
+
     private SoundManager soundManager;
     private GoalManager goalManager;
 
@@ -78,29 +83,18 @@ public class Board : MonoBehaviour
     private float refillDelay = 1f;
     public bool is_complete;
 
+
     private void Awake()
     {
         Instance = this;
-
-        if (world != null)
-        {
-            if (level < world.levels.Length)
-            {
-                if (world.levels[level] != null)
-                {
-                    width = 9;
-                    height = 9;
-                    dots = world.levels[level].dots;
-                }
-            }
-        }
+        CurrentLevel = InfoManager.ReturnCurrentStage();
+        dots = CurrentLevel.dots;
     }
     void Start()
     {
 
         goalManager = FindObjectOfType<GoalManager>();
         soundManager = FindObjectOfType<SoundManager>();
-        scoreManager = FindObjectOfType<ScoreManager>();
         findMatches = FindMatches.Instance;
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
@@ -127,7 +121,7 @@ public class Board : MonoBehaviour
             for (int j = 0; j < height; j++)
             {
                 Vector2 tempPosition = new Vector2(i, j);
-                TileSpace[i, j] = world.levels[level].Tile[(8 - j) * 9 + i];
+                TileSpace[i, j] = InfoManager.ReturnCurrentStage().Tile[(8 - j) * 9 + i];
                 switch (TileSpace[i, j])
                 {
                     case 0:
@@ -453,21 +447,18 @@ public class Board : MonoBehaviour
                 DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
                 DamageObstruction(column, row);
 
+
+                ObjectPool.ReturnObject(allDots[column, row].gameObject);               
+                DestroyEffectPool.GetObject(column, row, allDots[column, row].gameObject);
+
                 if (goalManager != null)
                 {
-                    goalManager.CompareGoal(allDots[column, row].tag.ToString());
-                    goalManager.UpdateGoals();
+                    //goalManager.CompareGoal(allDots[column, row].tag.ToString());
+                    goalManager.Update_CurrentScore(basePieceValue * streakValue);
+                    goalManager.UpdateGoals(allDots[column, row].tag);
                 }
+                // 스코어 점수에 따라 달라지도록 구현
 
-                //if(soundManager != null)
-                //{
-                //    soundManager.PlayRandomDestroyNoise();
-
-                //}
-
-                ObjectPool.ReturnObject(allDots[column, row].gameObject);
-                DestroyEffectPool.GetObject(column, row, allDots[column, row].gameObject);
-                scoreManager.IncreaseScore(basePieceValue * streakValue);
                 allDots[column, row] = null;
             }
         }
@@ -486,7 +477,6 @@ public class Board : MonoBehaviour
             if (findMatches.currentMatches[i] != null)
             {
                 var Dot = findMatches.currentMatches[i];
-                scoreManager.IncreaseScore(basePieceValue * streakValue);
                 ObjectPool.ReturnObject(allDots[Dot.column, Dot.row].gameObject);
                 DestroyEffectPool.GetObject(Dot.column, Dot.row, allDots[Dot.column, Dot.row].gameObject);
                 allDots[Dot.column, Dot.row] = null;

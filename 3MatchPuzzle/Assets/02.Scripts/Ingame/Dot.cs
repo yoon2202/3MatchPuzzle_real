@@ -10,9 +10,9 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public int column;
     public int row;
 
-    private EndManager endManager;
     private HintManager hintManager;
     private FindMatches findMatches;
+    private GoalManager goalManager;
     private Board board;
     public Dot otherDot;
     private Vector2 firstTouchPosition;
@@ -53,7 +53,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     void Start()
     {
         DotSprite = GetComponent<SpriteRenderer>();
-        endManager = FindObjectOfType<EndManager>();
+        goalManager = FindObjectOfType<GoalManager>();
         hintManager = FindObjectOfType<HintManager>();
         board = FindObjectOfType<Board>();
         findMatches = FindMatches.Instance;
@@ -163,13 +163,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
             else
             {
-                //if (endManager != null)
-                //{
-                //    if (endManager.requirements.gameType == GameType.Odd)
-                //    {
-                //        endManager.DecreaseCounterValue();
-                //    }
-                //}
+                goalManager.Update_CurrentTimeMoveCount();
                 board.DestroyMatches(true, true);
 
                 //int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.

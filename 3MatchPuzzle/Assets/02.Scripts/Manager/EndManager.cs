@@ -17,24 +17,10 @@ public class EndManager : MonoBehaviour
     void Start()
     {
         board = FindObjectOfType<Board>();
-        SetgameType();
         //SetupGame();
     }
 
-    void SetgameType()
-    {
-        if (board.world != null)
-        {
-            if (board.level < board.world.levels.Length)
-            {
-                if (board.world.levels[board.level] != null)
-                {
-                    //requirements = board.world.levels[board.level].endGameRequirements;
-                }
-            }
-        }
-    }
-
+  
     //void SetupGame() // 게임 세팅할때 활용
     //{
     //    //currentCounterValue = requirements.counterValue;

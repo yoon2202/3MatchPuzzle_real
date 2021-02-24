@@ -19,8 +19,8 @@ public class BackGroundTile : MonoBehaviour
         {
             if(goalManager != null)
             {
-                goalManager.CompareGoal(this.gameObject.name);
-                goalManager.UpdateGoals();
+                //goalManager.CompareGoal(this.gameObject.name);
+                //goalManager.UpdateGoals();
             }
             Destroy(this.gameObject);
         }
