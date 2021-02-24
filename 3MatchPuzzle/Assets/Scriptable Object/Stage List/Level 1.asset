@@ -27,4 +27,4 @@ MonoBehaviour:
     BlockCount: 10
   - Block: {fileID: 4299519779289852421, guid: 19fb27c92bcbb1f4f872a58e70b1789e, type: 3}
     BlockCount: 15
-  MoveCount: 0
+  MoveCount: 15
