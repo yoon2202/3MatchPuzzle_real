@@ -55,8 +55,9 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         DotSprite = GetComponent<SpriteRenderer>();
         goalManager = FindObjectOfType<GoalManager>();
         hintManager = FindObjectOfType<HintManager>();
+        findMatches = FindObjectOfType<FindMatches>();
         board = FindObjectOfType<Board>();
-        findMatches = FindMatches.Instance;
+
 
     }
 

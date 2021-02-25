@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class FindMatches : Singleton<FindMatches>
+public class FindMatches : MonoBehaviour
 {
     private Board board;
     public ActiveList activeList;
@@ -102,7 +102,7 @@ public class FindMatches : Singleton<FindMatches>
     public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
     {
         yield return new WaitForSeconds(0.2f);
-
+        board.b_matching = true;
         while (true)
         {
             if (MovingDot.Count > 0)

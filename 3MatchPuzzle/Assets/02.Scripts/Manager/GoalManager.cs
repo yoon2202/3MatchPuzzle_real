@@ -25,7 +25,8 @@ public class GoalManager : MonoBehaviour
 
     private List<MissionBlockInfo> MissionBlocksInfo = new List<MissionBlockInfo>();
 
-    private int MissionScore;
+    [HideInInspector]
+    public int MissionScore;
 
     private int currentScore = 0;
     public int CurrentScore
@@ -44,13 +45,6 @@ public class GoalManager : MonoBehaviour
     public delegate void ScoreUpdate(int Score);
     public event ScoreUpdate _ScoreUpate;
 
-
-    private EndManager endGame;
-
-    void Start()
-    {
-        endGame = FindObjectOfType<EndManager>();
-    }
 
     // 스테이지 타입, 스코어, 시간 초기화
     public void Set_InitGame(Level level)
@@ -73,15 +67,19 @@ public class GoalManager : MonoBehaviour
     }
 
 
-
-
     #region 홀수 스테이지 업데이트 함수
     public void Update_CurrentScore(int score)
     {
         CurrentScore += score;
     }
 
-    IEnumerator time_CountDown()
+    public void Time_CountDown()
+    {
+        if(GameType.Odd == gameType)
+            StartCoroutine("time_CountDown_Co");
+    }
+
+    IEnumerator time_CountDown_Co()
     {
         var ws = new WaitForSeconds(1.0f);
 

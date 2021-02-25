@@ -81,8 +81,11 @@ public class Board : MonoBehaviour
     public int StalkTreeLimitingMove = 0;
 
     private float refillDelay = 1f;
-    public bool is_complete;
 
+    [HideInInspector]
+    public bool b_matching = false;
+    [HideInInspector]
+    public bool b_PlayStart = false;
 
     private void Awake()
     {
@@ -92,10 +95,9 @@ public class Board : MonoBehaviour
     }
     void Start()
     {
-
         goalManager = FindObjectOfType<GoalManager>();
         soundManager = FindObjectOfType<SoundManager>();
-        findMatches = FindMatches.Instance;
+        findMatches = FindObjectOfType<FindMatches>();
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
         ObstructionDots = new ObstructionDot[width, height];
@@ -146,7 +148,6 @@ public class Board : MonoBehaviour
             ShuffleBoard();
         }
 
-        is_complete = true;
     }
 
     void NormalType(int i, int j)
@@ -453,7 +454,6 @@ public class Board : MonoBehaviour
 
                 if (goalManager != null)
                 {
-                    //goalManager.CompareGoal(allDots[column, row].tag.ToString());
                     goalManager.Update_CurrentScore(basePieceValue * streakValue);
                     goalManager.UpdateGoals(allDots[column, row].tag);
                 }
@@ -533,6 +533,7 @@ public class Board : MonoBehaviour
             ShuffleBoard();
         }
         yield return new WaitForSeconds(refillDelay * 0.4f);
+        b_matching = false;
         currentState = GameState.move;
         streakValue = 1;
     }
