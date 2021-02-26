@@ -100,20 +100,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         else
             board.currentState = GameState.move;
     }
-    void MovePiecesActual(Vector2 direction) // 바꾸는 Dot 
-    {
-        otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
-
-        if (otherDot != null && !otherDot.IsSpecialBlock())  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
-        {
-            Vector2 otherDotPos = new Vector2(otherDot.column, otherDot.row);
-            Vector2 CurrentDotPos = new Vector2(column, row);
-            StartCoroutine(CheckMoveCo(otherDotPos, CurrentDotPos));
-        }
-        else
-            board.currentState = GameState.move;
-
-    }
 
     void MoviePieces()
     {
@@ -141,7 +127,20 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             board.currentState = GameState.move;
         }
+    }
 
+    void MovePiecesActual(Vector2 direction) // 바꾸는 Dot 
+    {
+        otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
+
+        if (otherDot != null && !otherDot.IsSpecialBlock())  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
+        {
+            Vector2 otherDotPos = new Vector2(otherDot.column, otherDot.row);
+            Vector2 CurrentDotPos = new Vector2(column, row);
+            StartCoroutine(CheckMoveCo(otherDotPos, CurrentDotPos));
+        }
+        else
+            board.currentState = GameState.move;
     }
 
     public IEnumerator CheckMoveCo(Vector2 otherDotPos, Vector2 CurrentDotPos)
@@ -166,12 +165,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             {
                 goalManager.Update_CurrentTimeMoveCount();
                 board.DestroyMatches(true, true);
-
-                //int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.
-                //if (Createpercent < 1)
-                //    findMatches.RandomCreateHinder(3);
-
-                //findMatches.Bird_AcornTree_Check();
             }
         }
 

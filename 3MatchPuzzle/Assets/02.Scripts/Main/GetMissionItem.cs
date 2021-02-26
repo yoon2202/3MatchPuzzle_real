@@ -20,14 +20,15 @@ public class GetMissionItem : MonoBehaviour
     private void Start()
     {
         if(CurrentStageText != null)
-            CurrentStageText.text = "Stage " + InfoManager.ReturnStageCount();
+            CurrentStageText.text = string.Format("Stage {0}", InfoManager.ReturnStageCount());
 
         CurrentStage = InfoManager.ReturnCurrentStage();
 
         switch (CurrentStage.gameType)
         {
             case GameType.Odd:
-                MissionScoreUI.text = CurrentStage.Score.ToString();
+
+                MissionScoreUI.text = string.Format("Score {0}", CurrentStage.Score);
                 MissionScoreUI.gameObject.SetActive(true);
                 break;
             case GameType.Even:

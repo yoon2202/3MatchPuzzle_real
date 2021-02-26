@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GameState
-{
-    wait, move, win, lose, pause
-}
+
 
 /// <summary>
 /// 스페셜 블록 리스트

@@ -7,7 +7,8 @@ using System.Linq;
 
 public class GoalManager : MonoBehaviour
 {
-    private GameType gameType;
+    [HideInInspector]
+    public GameType gameType;
 
     private int timeMoveCount;
     public int TimeMoveCount
@@ -16,17 +17,20 @@ public class GoalManager : MonoBehaviour
         set
         {
             timeMoveCount = value;
-            _TimeMoveCountUpate.Invoke(timeMoveCount);
 
-            if (timeMoveCount <= 0) { Debug.Log("Game Over!!"); }
+            if (timeMoveCount >= 0)
+            {
+                _TimeMoveCountUpate.Invoke(timeMoveCount);
 
+                if (timeMoveCount == 0)
+                    b_TimeOver = true;
+            }
         }
     }
 
     private List<MissionBlockInfo> MissionBlocksInfo = new List<MissionBlockInfo>();
 
-    [HideInInspector]
-    public int MissionScore;
+    private int MissionScore;
 
     private int currentScore = 0;
     public int CurrentScore
@@ -38,6 +42,12 @@ public class GoalManager : MonoBehaviour
             _ScoreUpate.Invoke(currentScore);
         }
     }
+
+    [HideInInspector]
+    public bool b_MissionComplete = false;
+
+    [HideInInspector]
+    public bool b_TimeOver = false;
 
     public delegate void TimeMoveCountUpdate(int count);
     public event TimeMoveCountUpdate _TimeMoveCountUpate;
@@ -67,10 +77,14 @@ public class GoalManager : MonoBehaviour
     }
 
 
-    #region 홀수 스테이지 업데이트 함수
+    #region 홀수 스테이지
     public void Update_CurrentScore(int score)
     {
         CurrentScore += score;
+
+        if (GameType.Odd == gameType)
+            b_MissionComplete = CompareScore();
+
     }
 
     public void Time_CountDown()
@@ -83,17 +97,34 @@ public class GoalManager : MonoBehaviour
     {
         var ws = new WaitForSeconds(1.0f);
 
-        while (TimeMoveCount > 0)
+        while (true)
         {
             TimeMoveCount--;
             yield return ws;
         }
     }
+
+    public void Time_CountDown_Stop()
+    {
+        StopCoroutine("time_CountDown_Co");
+    }
+
+
+    private bool CompareScore()
+    {
+        if (MissionScore > CurrentScore)
+            return false;
+        else
+            return true;
+
+    }
     #endregion
 
-    #region 짝수 스테이지 업데이트 함수
+    #region 짝수 스테이지
     public void UpdateGoals(string tag)
     {
+        if (GameType.Even != gameType)
+            return;
 
         var Selects = MissionBlocksInfo.Where(x => x.tagName.CompareTo(tag) == 0);
 
@@ -103,6 +134,8 @@ public class GoalManager : MonoBehaviour
         }
 
         var Complete = MissionBlocksInfo.Count(x => x.numberCollected >= x.numberNeeded);
+
+        b_MissionComplete = CompareBlockCount(Complete);
     }
 
     public void Update_CurrentTimeMoveCount()
@@ -110,5 +143,14 @@ public class GoalManager : MonoBehaviour
         if (GameType.Even == gameType)
             TimeMoveCount--;
     }
+
+    private bool CompareBlockCount(int Complete)
+    {
+        if (MissionBlocksInfo.Count == Complete)
+            return true;
+        else
+            return false;
+    }
+
     #endregion
 }

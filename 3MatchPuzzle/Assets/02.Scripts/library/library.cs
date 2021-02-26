@@ -45,4 +45,9 @@ public class MissionBlockInfo
     }
 
 }
+
+public enum GameState
+{
+    wait, move, end, pause
+}
 #endregion

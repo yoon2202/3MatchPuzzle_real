@@ -71,8 +71,9 @@ public class ObjectPool : MonoBehaviour
         if(TempStorage.Count > 20)
         {
             ShuffleList(TempStorage);
-
-            for(int i =0; i< TempStorage.Count; i ++)
+            ShuffleList(TempStorage);
+            
+            for (int i =0; i< TempStorage.Count; i ++)
             {
                 Instance.poolingObjectQueue.Enqueue(TempStorage[i]);
                 TempStorage[i].transform.SetParent(Instance.transform);

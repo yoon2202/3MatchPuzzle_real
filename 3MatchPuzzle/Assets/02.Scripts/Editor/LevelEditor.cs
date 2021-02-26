@@ -22,6 +22,7 @@ public class LevelEditor : Editor
         //base.OnInspectorGUI();
 
         EditorGUILayout.PropertyField(Dots, new GUIContent("일반블록"));
+        serializedObject.ApplyModifiedProperties();
         GUILayout.Space(30);
 
         EditorGUILayout.LabelField("---- 목표 설정 ----");
