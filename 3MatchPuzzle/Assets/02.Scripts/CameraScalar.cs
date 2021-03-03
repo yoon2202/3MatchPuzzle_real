@@ -13,13 +13,13 @@ public class CameraScalar : MonoBehaviour
         board = FindObjectOfType<Board>();
         if(board != null)
         {
-            RepositionCamera(board.width-1, board.height-1);
+            RepositionCamera(board.width-1, 6);
         }
     }
 
     void RepositionCamera(float x, float y)
     {
-        Vector3 tempPosition = new Vector3(x / 2, y / 2, cameraOffset);
+        Vector3 tempPosition = new Vector3(x / 2, y, cameraOffset);
         transform.position = tempPosition;
         if (board.width >= board.height)
             Camera.main.orthographicSize = (board.width / 2 + padding) / aspectRatio;

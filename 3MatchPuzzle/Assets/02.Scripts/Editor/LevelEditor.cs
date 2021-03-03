@@ -26,24 +26,13 @@ public class LevelEditor : Editor
         GUILayout.Space(30);
 
         EditorGUILayout.LabelField("---- 목표 설정 ----");
-        EditorGUI.BeginChangeCheck();
-        level.gameType = (GameType)GUILayout.Toolbar((int)level.gameType, level.returngameType());
-        if(EditorGUI.EndChangeCheck()) GUI.FocusControl(null);
+        level.Score = EditorGUILayout.IntField("스코어 점수", level.Score);
+        level.Timer = EditorGUILayout.IntField("시간 제한", level.Timer);
 
-        switch (level.gameType)
-        {
-            case GameType.Odd:
-                level.Score = EditorGUILayout.IntField("스코어 점수",level.Score);
-                level.Timer = EditorGUILayout.IntField("시간 제한",level.Timer);
-                break;
-            case GameType.Even:
-                EditorGUILayout.PropertyField(Blocks, new GUIContent("미션 블록 (최대 3개까지 가능)"));
-                serializedObject.ApplyModifiedProperties();
-                GUILayout.Space(10);
-                level.MoveCount = EditorGUILayout.IntField("이동횟수 제한", level.MoveCount);
-                break;
-        }
+        EditorGUILayout.PropertyField(Blocks, new GUIContent("출현방해 블록 (최대 3개까지 가능)"));
+        serializedObject.ApplyModifiedProperties();
         GUILayout.Space(10);
+
 
         EditorGUILayout.LabelField("---- 레벨 디자인 ----");
         int index = 0;

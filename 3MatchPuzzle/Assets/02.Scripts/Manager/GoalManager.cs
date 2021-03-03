@@ -7,22 +7,20 @@ using System.Linq;
 
 public class GoalManager : MonoBehaviour
 {
-    [HideInInspector]
-    public GameType gameType;
 
-    private int timeMoveCount;
-    public int TimeMoveCount
+    private int timeCount;
+    public int TimeCount
     {
-        get => timeMoveCount;
+        get => timeCount;
         set
         {
-            timeMoveCount = value;
+            timeCount = value;
 
-            if (timeMoveCount >= 0)
+            if (timeCount >= 0)
             {
-                _TimeMoveCountUpate.Invoke(timeMoveCount);
+                _TimeCountUpate.Invoke(timeCount);
 
-                if (timeMoveCount == 0)
+                if (timeCount == 0)
                     b_TimeOver = true;
             }
         }
@@ -44,71 +42,56 @@ public class GoalManager : MonoBehaviour
     }
 
     [HideInInspector]
+    public int MaxGage = 20;
+
+    private int currentGage;
+    public int CurrentGage
+    {
+        get => currentGage;
+        set
+        {
+            currentGage = value;
+            _GageUpdate.Invoke(currentGage);
+
+            if (currentGage >= MaxGage)
+            {
+                currentGage %= MaxGage;
+                Debug.Log("미스틱 생성!");
+            }
+        }
+    }
+
+
+    [HideInInspector]
     public bool b_MissionComplete = false;
 
     [HideInInspector]
     public bool b_TimeOver = false;
 
-    public delegate void TimeMoveCountUpdate(int count);
-    public event TimeMoveCountUpdate _TimeMoveCountUpate;
+    public delegate void TimeCountUpdate(int count);
+    public event TimeCountUpdate _TimeCountUpate;
 
     public delegate void ScoreUpdate(int Score);
     public event ScoreUpdate _ScoreUpate;
 
+    public delegate void GageUpdate(int Gage);
+    public event GageUpdate _GageUpdate;
 
     // 스테이지 타입, 스코어, 시간 초기화
     public void Set_InitGame(Level level)
     {
-        gameType = level.gameType;
         MissionScore = level.Score;
-
-        if (GameType.Odd == gameType)
-            TimeMoveCount = level.Timer;
-        else if (GameType.Even == gameType)
-            TimeMoveCount = level.MoveCount;
-
+        TimeCount = level.Timer;
     }
 
 
-    //게임 시작시에 미션 블록 정보 생성
-    public void Add_MissionBlockInfo(MissionBlocks missionBlock, Text missionUI, GameObject CompleteUI)
-    {
-        MissionBlocksInfo.Add(new MissionBlockInfo(missionBlock.BlockCount, missionBlock.Block.tag, missionUI, CompleteUI));
-    }
-
-
-    #region 홀수 스테이지
+    #region 스코어
     public void Update_CurrentScore(int score)
     {
         CurrentScore += score;
-
-        if (GameType.Odd == gameType)
-            b_MissionComplete = CompareScore();
+        b_MissionComplete = CompareScore();
 
     }
-
-    public void Time_CountDown()
-    {
-        if(GameType.Odd == gameType)
-            StartCoroutine("time_CountDown_Co");
-    }
-
-    IEnumerator time_CountDown_Co()
-    {
-        var ws = new WaitForSeconds(1.0f);
-
-        while (true)
-        {
-            TimeMoveCount--;
-            yield return ws;
-        }
-    }
-
-    public void Time_CountDown_Stop()
-    {
-        StopCoroutine("time_CountDown_Co");
-    }
-
 
     private bool CompareScore()
     {
@@ -120,11 +103,47 @@ public class GoalManager : MonoBehaviour
     }
     #endregion
 
-    #region 짝수 스테이지
+    #region 타이머
+    public void Time_CountDown()
+    {
+        StartCoroutine("time_CountDown_Co");
+    }
+
+    IEnumerator time_CountDown_Co()
+    {
+        var ws = new WaitForSeconds(1.0f);
+
+        while (true)
+        {
+            TimeCount--;
+            yield return ws;
+        }
+    }
+
+    public void Time_CountDown_Stop()
+    {
+        StopCoroutine("time_CountDown_Co");
+    }
+    #endregion
+
+    #region 게이지
+    public void Update_CurrentGage(int gage)
+    {
+        CurrentGage += gage;
+    }
+    #endregion
+
+    #region 임시 저장
+
+
+    //게임 시작시에 미션 블록 정보 생성
+    public void Add_MissionBlockInfo(MissionBlocks missionBlock, Text missionUI, GameObject CompleteUI)
+    {
+        MissionBlocksInfo.Add(new MissionBlockInfo(missionBlock.BlockCount, missionBlock.Block.tag, missionUI, CompleteUI));
+    }
+
     public void UpdateGoals(string tag)
     {
-        if (GameType.Even != gameType)
-            return;
 
         var Selects = MissionBlocksInfo.Where(x => x.tagName.CompareTo(tag) == 0);
 
@@ -136,12 +155,6 @@ public class GoalManager : MonoBehaviour
         var Complete = MissionBlocksInfo.Count(x => x.numberCollected >= x.numberNeeded);
 
         b_MissionComplete = CompareBlockCount(Complete);
-    }
-
-    public void Update_CurrentTimeMoveCount()
-    {
-        if (GameType.Even == gameType)
-            TimeMoveCount--;
     }
 
     private bool CompareBlockCount(int Complete)

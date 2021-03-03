@@ -361,46 +361,6 @@ public class Board : MonoBehaviour
         return 0;
     }
 
-    private int Indirectmatching()
-    {
-        List<Dot> matchCopy = findMatches.currentMatches;
-
-        for (int i = 0; i < matchCopy.Count; i++)
-        {
-            var column = matchCopy[i].column;
-            var row = matchCopy[i].row;
-            var Thistag = matchCopy[i].tag;
-
-            var columnMatch = 0;
-            var rowMatch = 0;
-
-            //가로 5줄
-
-            if (column - 2 >= 0 && allDots[column - 2, row] != null && allDots[column - 2, row].CompareTag(Thistag))
-            {
-                columnMatch++;
-            }
-            if (column - 1 >= 0 && allDots[column - 1, row] != null && allDots[column - 1, row].CompareTag(Thistag))
-            {
-                columnMatch++;
-            }
-            if (column + 1 < width && allDots[column + 1, row] != null && allDots[column + 1, row].CompareTag(Thistag))
-            {
-                columnMatch++;
-            }
-            if (column + 2 < width && allDots[column + 1, row] != null && allDots[column + 1, row].CompareTag(Thistag))
-            {
-
-
-                columnMatch++;
-            }
-
-        }
-        // 만약 칼럼이 4일 경우에 +3을해보고 똑같은 Dot이 존재한다면 4매칭 취소로 한다.
-        return 0;
-
-    }
-
     private void CheckToMakeBombs() // 4,5매치를 한 경우
     {
         if (findMatches.currentMatches.Count > 3)
@@ -451,8 +411,8 @@ public class Board : MonoBehaviour
 
                 if (goalManager != null)
                 {
+                    goalManager.Update_CurrentGage(1);
                     goalManager.Update_CurrentScore(basePieceValue * streakValue);
-                    goalManager.UpdateGoals(allDots[column, row].tag);
                 }
                 // 스코어 점수에 따라 달라지도록 구현
 

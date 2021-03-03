@@ -1,28 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class IngameGetMissionInfo : MonoBehaviour
+public class IngameGetMissionInfo : GetMissionItem
 {
+    [SerializeField]
+    private Text timeCount_Text;
 
     [SerializeField]
-    private Transform MissionGroupRootUI;
+    private Text currentScoreUI_Text;
 
     [SerializeField]
-    private GameObject MissionScoreRootUI;
-
-    [SerializeField]
-    private Text TimeMoveCount;
-
-    [SerializeField]
-    private GameObject MissionItem;
-
-    [SerializeField]
-    private Text MissionScoreUI;
-
-    [SerializeField]
-    private Text CurrentScoreUI;
-
-    private Level CurrentStage;
+    private Image gageUI_Image;
 
     private GoalManager goalManager;
 
@@ -31,42 +19,29 @@ public class IngameGetMissionInfo : MonoBehaviour
         goalManager = FindObjectOfType<GoalManager>();
     }
 
-    private void Start()
-    {
-        CurrentStage = InfoManager.ReturnCurrentStage();
-        goalManager._ScoreUpate += Update_CurrentScore;
-        goalManager._TimeMoveCountUpate += Update_CurrentTimeMoveCount;
-        goalManager.Set_InitGame(CurrentStage);
 
-        switch (CurrentStage.gameType)
-        {
-            case GameType.Odd:
-                MissionScoreUI.text = CurrentStage.Score.ToString();
-                MissionScoreRootUI.SetActive(true);
-                break;
-            case GameType.Even:
-                foreach (var block in CurrentStage.Blocks)
-                {
-                    GameObject MissionItem_ = Instantiate(MissionItem);
-                    MissionItem_.transform.SetParent(MissionGroupRootUI, false);
-                    IngameMissionItem MissionItemUI = MissionItem_.GetComponent<IngameMissionItem>();
-                    MissionItemUI.MissionImg.sprite = InfoManager.ReturnMissionSprite(block.Block.tag);
-                    MissionItemUI.MissionText.text = block.BlockCount.ToString();
-                    goalManager.Add_MissionBlockInfo(block, MissionItemUI.MissionText, MissionItemUI.CompleteUI);
-                }
-                MissionGroupRootUI.gameObject.SetActive(true);
-                break;    
-        }
+    protected override void Start()
+    {
+        base.Start();
+        goalManager._ScoreUpate += Update_CurrentScore;
+        goalManager._TimeCountUpate += Update_CurrentTimeCount;
+        goalManager._GageUpdate += Update_CurrentGage;
+        goalManager.Set_InitGame(CurrentStage);
     }
 
     private void Update_CurrentScore(int score)
     {
-        CurrentScoreUI.text = score.ToString();
+        currentScoreUI_Text.text = score.ToString();
     }
 
-    private void Update_CurrentTimeMoveCount(int count)
+    private void Update_CurrentTimeCount(int count)
     {
-        TimeMoveCount.text = count.ToString();
+        timeCount_Text.text = count.ToString();
+    }
+
+    private void Update_CurrentGage(int gage)
+    {
+        gageUI_Image.fillAmount = (float)gage / goalManager.MaxGage;
     }
 
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using DG.Tweening;
 
 public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
@@ -57,7 +56,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         hintManager = FindObjectOfType<HintManager>();
         findMatches = FindObjectOfType<FindMatches>();
         board = FindObjectOfType<Board>();
-
 
     }
 
@@ -163,7 +161,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
             else
             {
-                goalManager.Update_CurrentTimeMoveCount();
                 board.DestroyMatches(true, true);
             }
         }

@@ -7,9 +7,6 @@ public class AnimationUI : MonoBehaviour
     [SerializeField]
     private Image MissionInfoUI;
 
-    [SerializeField]
-    private GameObject VisibleCurrentScoreUI;
-
     private GoalManager goalManager;
     private Board board;
 
@@ -29,6 +26,5 @@ public class AnimationUI : MonoBehaviour
         board.b_PlayStart = true;
         goalManager.Time_CountDown();
         MissionInfoUI.raycastTarget = false;
-        VisibleCurrentScoreUI.SetActive(true);
     }
 }

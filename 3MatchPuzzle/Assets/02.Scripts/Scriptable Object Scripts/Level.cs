@@ -5,20 +5,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Level", menuName = "Level")]
 public class Level : ScriptableObject
 {
-    /*
-* 1. 게임 타입 설정
-*     홀수 스테이지 : 점수 , 시간
-*     짝수 스테이지 : 목표 블록, 이동 횟수
-*     보스 스테이지 : 홀수 + 짝수 접목시켜서.. 아직 미정
-*/
-
     public int[] Tile = new int[81];
     public GameObject[] dots;
     public GameType gameType;
     public int Score = 0;
     public int Timer = 0;
     public MissionBlocks[] Blocks;
-    public int MoveCount = 0;
 
     /// <summary>
     /// 게임 타입 이름들 반환하는 함수
