@@ -19,7 +19,7 @@ MonoBehaviour:
   - {fileID: 5106775713722325321, guid: 57f5df479c6993d40a95c612f9044c7d, type: 3}
   - {fileID: 8501881304681260594, guid: 708f761f6f43aa141bd3ef61f84bc7e0, type: 3}
   gameType: 1
-  Score: 3
+  Score: 33333
   Timer: 344
   Blocks:
   - Block: {fileID: 5106775713722325321, guid: 57f5df479c6993d40a95c612f9044c7d, type: 3}

@@ -42,7 +42,7 @@ public class GoalManager : MonoBehaviour
     }
 
     [HideInInspector]
-    public int MaxGage = 20;
+    public int MaxGage = 10;
 
     private int currentGage;
     public int CurrentGage
@@ -56,6 +56,7 @@ public class GoalManager : MonoBehaviour
             if (currentGage >= MaxGage)
             {
                 currentGage %= MaxGage;
+                createMisteak.Createobj();
                 Debug.Log("미스틱 생성!");
             }
         }
@@ -76,6 +77,13 @@ public class GoalManager : MonoBehaviour
 
     public delegate void GageUpdate(int Gage);
     public event GageUpdate _GageUpdate;
+
+    private CreateMisteak createMisteak;
+
+    private void Start()
+    {
+        createMisteak = FindObjectOfType<CreateMisteak>();
+    }
 
     // 스테이지 타입, 스코어, 시간 초기화
     public void Set_InitGame(Level level)

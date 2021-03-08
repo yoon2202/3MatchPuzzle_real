@@ -13,6 +13,8 @@ public class ScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private Slider TabSlider;
     [SerializeField]
     private RectTransform[] BtnRect;
+    [SerializeField]
+    private RectTransform[] BtnImageRect;
 
     const int SIZE = 4;
     float[] pos = new float[SIZE];
@@ -95,6 +97,26 @@ public class ScrollManager : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 BtnRect[i].sizeDelta = new Vector2(i == targetIndex ? 360 : 180, BtnRect[i].sizeDelta.y);
             }
 
+        }
+
+        if (Time.time < 0.1f) return;
+
+        for(int i = 0; i < SIZE; i ++)
+        {
+            Vector3 btnTargetPos = BtnRect[i].anchoredPosition3D;
+            Vector3 btntargetScale = Vector3.one;
+            bool Textarea = false;
+
+            if( i == targetIndex)
+            {
+                btnTargetPos.y = -23f;
+                btntargetScale = new Vector3(1.2f, 1.2f, 1);
+                Textarea = true;
+;            }
+
+            BtnImageRect[i].anchoredPosition3D = Vector3.Lerp(BtnImageRect[i].anchoredPosition3D, btnTargetPos, 0.25f);
+            BtnImageRect[i].localScale = Vector3.Lerp(BtnImageRect[i].localScale, btntargetScale, 0.25f);
+            BtnImageRect[i].transform.GetChild(0).gameObject.SetActive(Textarea);
         }
 
     }
