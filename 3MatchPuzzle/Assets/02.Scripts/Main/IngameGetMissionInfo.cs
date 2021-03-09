@@ -14,7 +14,7 @@ public class IngameGetMissionInfo : GetMissionItem
 
     private GoalManager goalManager;
 
-    public Transform gageUI_Icon;
+    public RectTransform gageUI_Icon;
 
     private void Awake()
     {

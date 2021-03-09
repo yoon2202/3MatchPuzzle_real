@@ -289,9 +289,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdffa3e0a6e2b56418b9a3e10b3bf201, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2.5
-  PosA: 0.55
-  PosB: 0.45
+  speed: 0.8
+  PosA: 3
+  PosB: 3
 --- !u!4 &75921344
 Transform:
   m_ObjectHideFlags: 0
@@ -3091,9 +3091,9 @@ Canvas:
   m_GameObject: {fileID: 920544506}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 534669904}
-  m_PlaneDistance: 100
+  m_PlaneDistance: 10
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -4219,7 +4219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0afb4a56e097d914c9e5b5bfc8da6352, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxGage: 20
+  MaxGage: 10
   b_MissionComplete: 0
   b_TimeOver: 0
 --- !u!4 &1084776166

@@ -41,7 +41,6 @@ public class GoalManager : MonoBehaviour
         }
     }
 
-    [HideInInspector]
     public int MaxGage = 10;
 
     private int currentGage;
