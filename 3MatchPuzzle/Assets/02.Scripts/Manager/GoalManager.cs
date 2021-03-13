@@ -50,7 +50,6 @@ public class GoalManager : MonoBehaviour
         set
         {
             currentGage = value;
-            _GageUpdate.Invoke(currentGage);
 
             if (currentGage >= MaxGage)
             {
@@ -73,9 +72,6 @@ public class GoalManager : MonoBehaviour
 
     public delegate void ScoreUpdate(int Score);
     public event ScoreUpdate _ScoreUpate;
-
-    public delegate void GageUpdate(int Gage);
-    public event GageUpdate _GageUpdate;
 
     private CreateMisteak createMisteak;
 

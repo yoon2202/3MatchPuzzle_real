@@ -55,7 +55,7 @@ public class Board : MonoBehaviour
     [Header("블록 타입 집합")]
     private bool[,] blankSpaces;
     private BackGroundTile[,] concreteTiles;
-    public ObstructionDot[,] ObstructionDots;
+    public Obstruction_Abstract[,] ObstructionDots;
     public Dot[,] allDots;
     private List<GameObject> Create_dots = new List<GameObject>();
     private GameObject Previous_Bellow;
@@ -97,12 +97,12 @@ public class Board : MonoBehaviour
         findMatches = FindObjectOfType<FindMatches>();
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
-        ObstructionDots = new ObstructionDot[width, height];
+        ObstructionDots = new Obstruction_Abstract[width, height];
         allDots = new Dot[width, height];
 
         InitList();
         Setup();
-
+        findMatches.FIndAllMathces();
     }
     #region 초기 세팅 함수모음
 
@@ -135,7 +135,7 @@ public class Board : MonoBehaviour
                         break;
                     case 3:
                         GameObject Obstruction = Instantiate(ObstructionPrefabs, tempPosition, Quaternion.identity);
-                        ObstructionDots[i, j] = Obstruction.GetComponent<ObstructionDot>();
+                        ObstructionDots[i, j] = Obstruction.GetComponent<Obstruction_Abstract>();
                         break;
                 }
             }
@@ -273,45 +273,45 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void DamageObstruction(int column, int row) // 콘크리트 타일
-    {
-        if (column > 0)
-        {
-            if (ObstructionDots[column - 1, row])
-            {
-                ObstructionDots[column - 1, row].TakeDamage(1);
-                if (ObstructionDots[column - 1, row].Health <= 0)
-                    ObstructionDots[column - 1, row] = null;
-            }
-        }
-        if (column < width - 1)
-        {
-            if (ObstructionDots[column + 1, row])
-            {
-                ObstructionDots[column + 1, row].TakeDamage(1);
-                if (ObstructionDots[column + 1, row].Health <= 0)
-                    ObstructionDots[column + 1, row] = null;
-            }
-        }
-        if (row > 0)
-        {
-            if (ObstructionDots[column, row - 1])
-            {
-                ObstructionDots[column, row - 1].TakeDamage(1);
-                if (ObstructionDots[column, row - 1].Health <= 0)
-                    ObstructionDots[column, row - 1] = null;
-            }
-        }
-        if (row < height - 1)
-        {
-            if (ObstructionDots[column, row + 1])
-            {
-                ObstructionDots[column, row + 1].TakeDamage(1);
-                if (ObstructionDots[column, row + 1].Health <= 0)
-                    ObstructionDots[column, row + 1] = null;
-            }
-        }
-    }
+    //private void DamageObstruction(int column, int row) // 콘크리트 타일
+    //{
+    //    if (column > 0)
+    //    {
+    //        if (ObstructionDots[column - 1, row])
+    //        {
+    //            ObstructionDots[column - 1, row].TakeDamage(1);
+    //            if (ObstructionDots[column - 1, row].Health <= 0)
+    //                ObstructionDots[column - 1, row] = null;
+    //        }
+    //    }
+    //    if (column < width - 1)
+    //    {
+    //        if (ObstructionDots[column + 1, row])
+    //        {
+    //            ObstructionDots[column + 1, row].TakeDamage(1);
+    //            if (ObstructionDots[column + 1, row].Health <= 0)
+    //                ObstructionDots[column + 1, row] = null;
+    //        }
+    //    }
+    //    if (row > 0)
+    //    {
+    //        if (ObstructionDots[column, row - 1])
+    //        {
+    //            ObstructionDots[column, row - 1].TakeDamage(1);
+    //            if (ObstructionDots[column, row - 1].Health <= 0)
+    //                ObstructionDots[column, row - 1] = null;
+    //        }
+    //    }
+    //    if (row < height - 1)
+    //    {
+    //        if (ObstructionDots[column, row + 1])
+    //        {
+    //            ObstructionDots[column, row + 1].TakeDamage(1);
+    //            if (ObstructionDots[column, row + 1].Health <= 0)
+    //                ObstructionDots[column, row + 1] = null;
+    //        }
+    //    }
+    //}
     #endregion
 
     #region 4,5 매치
@@ -390,8 +390,8 @@ public class Board : MonoBehaviour
 
     public void DestroyMatches(bool isMove, bool Special)
     {
-        if (findMatches.currentMatches.Count > 3 && isMove) // 직접 블록을 움직였을때, 4,5 매치 판단
-            CheckToMakeBombs();
+        //if (findMatches.currentMatches.Count > 3 && isMove) // 직접 블록을 움직였을때, 4,5 매치 판단
+        //    CheckToMakeBombs();
 
 
         for (int i = 0; i < findMatches.currentMatches.Count; i++)
@@ -403,7 +403,7 @@ public class Board : MonoBehaviour
             {
                 DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
                 DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
-                DamageObstruction(column, row);
+                //DamageObstruction(column, row);
 
 
                 ObjectPool.ReturnObject(allDots[column, row].gameObject);               
@@ -411,7 +411,7 @@ public class Board : MonoBehaviour
 
                 if (goalManager != null)
                 {
-                    goalManager.Update_CurrentGage(1);
+                    goalManager.Update_CurrentGage(3);
                     goalManager.Update_CurrentScore(basePieceValue * streakValue);
                 }
                 // 스코어 점수에 따라 달라지도록 구현
@@ -419,10 +419,6 @@ public class Board : MonoBehaviour
                 allDots[column, row] = null;
             }
         }
-
-        //if (Special == false) //직접 매치 & 특수블록으로 인한 파괴가 아닌경우
-        //    findMatches.RandomCreateBombs(); // 랜덤 확률로 특수, 선택 블록 생성
-
         findMatches.currentMatches.Clear();
         StartCoroutine(DecreaseRowCo()); // 행 내리기
     }
@@ -469,12 +465,12 @@ public class Board : MonoBehaviour
             StartCoroutine(Refiilheight(i));
         }
 
-        StartCoroutine(FillBoardCo());
+        //StartCoroutine(FillBoardCo());
     }
 
     private IEnumerator FillBoardCo() // 보드 리필함수 -> 매치 확인 함수 -> 데드락 확인 함수 관려 코루틴
     {
-        yield return StartCoroutine(findMatches.FindAllMatchesCo());
+        //yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (findMatches.currentMatches.Count > 0)
         {

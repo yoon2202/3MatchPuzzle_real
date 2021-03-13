@@ -9644,10 +9644,10 @@ GameObject:
   - component: {fileID: 5064979680435070772}
   - component: {fileID: 4937449970164712288}
   - component: {fileID: 4936002048758060754}
-  - component: {fileID: -2633517217042125540}
+  - component: {fileID: -7017492380262415808}
   m_Layer: 0
-  m_Name: Blue Effect
-  m_TagString: Blue
+  m_Name: Indigo Effect
+  m_TagString: Teal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14408,7 +14408,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3e2b88a99adecbe4a957cd836dc02d40, type: 2}
+  - {fileID: 2100000, guid: fa0940207347e83458f670e3a15d8e5a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -14453,7 +14453,7 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &-2633517217042125540
+--- !u!114 &-7017492380262415808
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

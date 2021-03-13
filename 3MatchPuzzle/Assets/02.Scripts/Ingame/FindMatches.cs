@@ -64,7 +64,6 @@ public class FindMatches : MonoBehaviour
 
     public void SpecialSkill(Dot dot)
     {
-        Debug.Log("1");
         switch (dot.specialBlock)
         {
             case SpecialBlock.Cross:
@@ -76,12 +75,6 @@ public class FindMatches : MonoBehaviour
                 board.SpecialDestroy();
                 break;
         }
-    }
-
-    private void AddToListAndMatch(Dot dot)
-    {
-        if (!currentMatches.Contains(dot))         // Match된 Dot들을 리스트에 포함시킨다.
-            currentMatches.Add(dot);
     }
 
     private void GetNearbyPieces(Dot dot1, Dot dot2, Dot dot3)
@@ -99,10 +92,16 @@ public class FindMatches : MonoBehaviour
         AddToListAndMatch(dot4);
     }
 
+    private void AddToListAndMatch(Dot dot)
+    {
+        if (!currentMatches.Contains(dot)) // Match된 Dot들을 리스트에 포함시킨다.
+            currentMatches.Add(dot);
+    }
+
     public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
     {
-        yield return new WaitForSeconds(0.2f);
         board.b_matching = true;
+
         while (true)
         {
             if (MovingDot.Count > 0)
@@ -111,69 +110,67 @@ public class FindMatches : MonoBehaviour
             }
             else
             {
-                break;
-            }
-        }
-
-        for (int i = 0; i < board.width; i++)
-        {
-            for (int j = 0; j < board.height; j++)
-            {
-                Dot currentDot = board.allDots[i, j];
-                if (currentDot != null)
+                for (int i = 0; i < board.width; i++)
                 {
-                    if (i > 0 && i < board.width - 1)  // 왼쪽 오른쪽 매치 확인
+                    for (int j = 0; j < board.height; j++)
                     {
-                        Dot leftDot = board.allDots[i - 1, j];
-                        Dot rightDot = board.allDots[i + 1, j];
-                        if (leftDot != null && rightDot != null)
+                        Dot currentDot = board.allDots[i, j];
+                        if (currentDot != null)
                         {
-                            if (!leftDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !rightDot.IsSpecialBlock())
+                            if (i > 0 && i < board.width - 1)  // 왼쪽 오른쪽 매치 확인
                             {
-                                if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
+                                Dot leftDot = board.allDots[i - 1, j];
+                                Dot rightDot = board.allDots[i + 1, j];
+
+                                if (leftDot != null && rightDot != null)
                                 {
-                                    //currentMatches = currentMatches.Union(isCrossBomb(leftDot, currentDot, rightDot)).ToList();
-
-                                    //currentMatches = currentMatches.Union(isDiagonalBomb(leftDot, currentDot, rightDot)).ToList();
-
-                                    GetNearbyPieces(leftDot, currentDot, rightDot);
-                                }
-                            }
-                        }
-                    }
-
-                    if (j > 0 && j < board.height - 1) // 위 아래 매치 확인 
-                    {
-                        Dot upDot = board.allDots[i, j + 1];
-                        Dot downDot = board.allDots[i, j - 1];
-                        if (upDot != null && downDot != null)
-                        {
-                            if (!upDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !currentDot.IsSpecialBlock())
-                            {
-                                if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
-                                {
-                                    //currentMatches = currentMatches.Union(isCrossBomb(upDot, currentDot, downDot)).ToList();
-
-                                    GetNearbyPieces(upDot, currentDot, downDot);
+                                    if (!leftDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !rightDot.IsSpecialBlock())
+                                    {
+                                        if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
+                                        {
+                                            GetNearbyPieces(leftDot, currentDot, rightDot);
+                                        }
+                                    }
                                 }
                             }
 
-                        }
-                    }
+                            if (j > 0 && j < board.height - 1) // 위 아래 매치 확인 
+                            {
+                                Dot upDot = board.allDots[i, j + 1];
+                                Dot downDot = board.allDots[i, j - 1];
+                                if (upDot != null && downDot != null)
+                                {
+                                    if (!upDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !currentDot.IsSpecialBlock())
+                                    {
+                                        if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
+                                        {
+                                            GetNearbyPieces(upDot, currentDot, downDot);
+                                        }
+                                    }
 
-                    if ((i > 0 && i < board.width - 1) && j > 0 && j < board.height - 1) // 대각선 매치 확인
-                    {
-                        squareMatch(i, j, 1, 1, currentDot);
-                        squareMatch(i, j, -1, 1, currentDot);
-                        squareMatch(i, j, -1, -1, currentDot);
-                        squareMatch(i, j, 1, -1, currentDot);
+                                }
+                            }
+                        }
                     }
                 }
             }
+
+            yield return new WaitForSeconds(0.03f);
+
+            if(currentMatches.Count > 0)
+            {
+                board.DestroyMatches(false, false);
+            }
+            else
+            {
+                board.currentState = GameState.move;
+                board.currentDot = null;
+            }
         }
+
     }
 
-    private void squareMatch(int i_, int j_ ,int H, int V, Dot CurrentDot)
+    private void squareMatch(int i_, int j_, int H, int V, Dot CurrentDot)
     {
         Dot Diagonal = board.allDots[i_ + H, j_ + V];
         Dot Horizon = board.allDots[i_ + H, j_];

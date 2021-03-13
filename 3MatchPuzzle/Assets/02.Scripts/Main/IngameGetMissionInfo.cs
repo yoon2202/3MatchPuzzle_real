@@ -27,8 +27,12 @@ public class IngameGetMissionInfo : GetMissionItem
         base.Start();
         goalManager._ScoreUpate += Update_CurrentScore;
         goalManager._TimeCountUpate += Update_CurrentTimeCount;
-        goalManager._GageUpdate += Update_CurrentGage;
         goalManager.Set_InitGame(CurrentStage);
+    }
+
+    private void Update()
+    {
+        gageUI_Image.fillAmount = Mathf.Lerp(gageUI_Image.fillAmount, (float)goalManager.CurrentGage / goalManager.MaxGage, 0.1f);
     }
 
     private void Update_CurrentScore(int score)

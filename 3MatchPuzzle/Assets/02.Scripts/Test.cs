@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    public boxbox boxbox;
-
-    List<box> boxs = new List<box>();
-
     private void Start()
     {
-        boxs.Add(boxbox);
+        StartCoroutine(Testtest());
+    }
 
-        boxs[0].Test();
+    IEnumerator Testtest()
+    {
+        int count = 0;
+        while(true)
+        {
+            Debug.Log(count);
+            yield return new WaitForSeconds(1.0f);
+            count++;
+        }
+
+        yield return null;
     }
 }

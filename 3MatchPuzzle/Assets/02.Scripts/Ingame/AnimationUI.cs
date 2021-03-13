@@ -13,11 +13,14 @@ public class AnimationUI : MonoBehaviour
     public GameObject MissionSuccessUI;
     public GameObject MissionFailUI;
 
+    private FindMatches findMatches;
+
 
     void Start()
     {
         board = FindObjectOfType<Board>();
         goalManager = FindObjectOfType<GoalManager>();
+        findMatches = FindObjectOfType<FindMatches>();
         MissionInfoUI.DOColor(new Color(0, 0, 0, 0), 3).SetDelay(2f).OnComplete(() => CompleteFunction()).SetEase(Ease.OutQuad);
     }
 

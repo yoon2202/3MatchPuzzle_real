@@ -147,7 +147,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         board.StartCoroutine(Action2D.MoveTo(this, otherDotPos, 0.15f, true));
         board.StartCoroutine(Action2D.MoveTo(otherDot, CurrentDotPos, 0.15f));
         yield return new WaitForSeconds(.2f);
-        yield return StartCoroutine(findMatches.FindAllMatchesCo());
+        //yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (otherDot != null)
         {

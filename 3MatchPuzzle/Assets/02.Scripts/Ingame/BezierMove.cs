@@ -44,7 +44,7 @@ public class BezierMove : MonoBehaviour
             t += Time.deltaTime * speed;
             yield return null;
         }
-
+        origin.position = target;
         yield return null;
     }
 
