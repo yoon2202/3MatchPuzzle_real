@@ -11,15 +11,6 @@ public enum SpecialBlock
 {
     None, Cross, Multiple
 }
-/// <summary>
-/// 방해형 블록 리스트
-/// 0: 랜덤 1: 참새 2: 도토리나무 3: 엮인줄기나무 4: 도토리
-/// </summary>
-public enum Obstructionblock
-{
-    None, Bird, AcornTree, StalkTree, Acorn
-}
-
 
 
 public class Board : MonoBehaviour
@@ -685,30 +676,4 @@ public class Board : MonoBehaviour
         }
     }
     #endregion
-
-    //public void BombRow(int row)
-    //{
-    //    for (int i = 0; i < width; i++)
-    //    {
-    //        if (concreteTiles[i, row])
-    //        {
-    //            concreteTiles[i, row].TakeDamage(1);
-    //            if (concreteTiles[i, row].hitPoints <= 0)
-    //                concreteTiles[i, row] = null;
-    //        }
-    //    }
-    //}
-
-    //public void BombColumn(int column)
-    //{
-    //    for (int i = 0; i < height; i++)
-    //    {
-    //        if (concreteTiles[column, i])
-    //        {
-    //            concreteTiles[column, i].TakeDamage(1);
-    //            if (concreteTiles[column, i].hitPoints <= 0)
-    //                concreteTiles[column, i] = null;
-    //        }
-    //    }
-    //}
 }

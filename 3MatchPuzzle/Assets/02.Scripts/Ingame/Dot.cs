@@ -12,6 +12,9 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private HintManager hintManager;
     private FindMatches findMatches;
     private GoalManager goalManager;
+    private ObstructionManager obstructionManager;
+
+
     private Board board;
     public Dot otherDot;
     private Vector2 firstTouchPosition;
@@ -22,39 +25,17 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     [Header("Bool Type = 특수블록")]
     public SpecialBlock specialBlock = SpecialBlock.None;
-    [HideInInspector]
-    public Obstructionblock obstructionblock = Obstructionblock.None;
 
-    // 가로 세로 가위
-    public bool isColumnBomb;
-    public bool isRowBomb;
-    public bool isSlingShot;
-    public GameObject SlingShotTarget;
-    public bool isAxe;
-    public bool isAcornBoom;
-
-    public GameObject diagonalArrow;
-    public GameObject CrossArrow;
     [Header("Bool Type = 방해블록")]
     public bool isAcorn;
-    public bool isAcornTree;
-    public bool isStalkTree;
-    public GameObject StalkTree_obj;
-    public bool isSpreader;
-    public bool isBird;
 
-
-    [Header("특수/방해블록 이미지")]
-    public Sprite[] SpecialImg;
-    public Sprite[] Obstruction;
-    private SpriteRenderer DotSprite;
 
     void Start()
     {
-        DotSprite = GetComponent<SpriteRenderer>();
         goalManager = FindObjectOfType<GoalManager>();
         hintManager = FindObjectOfType<HintManager>();
         findMatches = FindObjectOfType<FindMatches>();
+        obstructionManager = FindObjectOfType<ObstructionManager>();
         board = FindObjectOfType<Board>();
 
     }
@@ -64,21 +45,12 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (hintManager != null)
             hintManager.DestroyHint();
 
-        if (specialBlock != SpecialBlock.None)
-        {
-            findMatches.SpecialSkill(this);
-            return;
-        }
-
         if (board.currentState == GameState.move && !IsSpecialBlock())
             firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (specialBlock != SpecialBlock.None)
-            return;
-
         if (board.currentState == GameState.move && !IsSpecialBlock())
         {
             finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -146,21 +118,23 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         board.currentDot = this;
         board.StartCoroutine(Action2D.MoveTo(this, otherDotPos, 0.15f, true));
         board.StartCoroutine(Action2D.MoveTo(otherDot, CurrentDotPos, 0.15f));
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(0.2f);
         //yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (otherDot != null)
         {
-            if (!findMatches.currentMatches.Contains(this) && !findMatches.currentMatches.Contains(otherDot))
+            if (findMatches.currentMatches.Contains(this) == false && findMatches.currentMatches.Contains(otherDot) == false)
             {
                 board.StartCoroutine(Action2D.MoveTo(this, CurrentDotPos, 0.15f, true));
                 board.StartCoroutine(Action2D.MoveTo(otherDot, otherDotPos, 0.15f));
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.2f);
                 board.currentDot = null;
                 board.currentState = GameState.move;
             }
             else
             {
+                Debug.Log("test");
+                obstructionManager.Block_Count++;
                 board.DestroyMatches(true, true);
             }
         }
@@ -168,30 +142,14 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     #endregion
 
-    public void MakeSpecialBlock()// 선택형 특수블록 생성
-    {
-        int Length = System.Enum.GetNames(typeof(SpecialBlock)).Length;
-        int Rannum = Random.Range(1, Length);
-        specialBlock = (SpecialBlock)Rannum;
-        DotSprite.sprite = SpecialImg[Rannum - 1];
-    }
+    //public void MakeSpecialBlock()// 선택형 특수블록 생성
+    //{
+    //    int Length = System.Enum.GetNames(typeof(SpecialBlock)).Length;
+    //    int Rannum = Random.Range(1, Length);
+    //    specialBlock = (SpecialBlock)Rannum;
+    //    DotSprite.sprite = SpecialImg[Rannum - 1];
+    //}
 
-
-    public bool SpecialBlockCheck() // 특수/방해 블록 체크
-    {
-        if (isAcorn || isColumnBomb || isRowBomb || isBird || isAcornTree || isStalkTree || isSlingShot || isAxe || isAcornBoom)
-            return false;
-        else
-            return true;
-    }
-
-    public bool isHinderBlock() // 방해블록 체크
-    {
-        if (isBird || isAcornTree || isStalkTree || isAcorn)
-            return true;
-        else
-            return false;
-    }
 
     public bool IsSpecialBlock() // 직접 매치가 안되는 블록 체크
     {
@@ -202,81 +160,4 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
 }
 
-
-//public void MakematchingBomb() // 매치형 특수블록 생성
-//{
-//    int Rannum = Random.Range(0, 2);
-//    if (Rannum == 0) // 크로스
-//    {
-//        isCrossArrow = true;
-//        GameObject arrow = Instantiate(CrossArrow, transform.position, Quaternion.identity);
-//        arrow.transform.parent = this.transform;
-//    }
-//    else if (Rannum == 1)
-//    {
-//        isDiagonal = true;
-//        GameObject arrow = Instantiate(diagonalArrow, transform.position, Quaternion.identity);
-//        arrow.transform.parent = this.transform;
-//    }
-//}
-
-//public void CreateHinderBlock(int i, bool Spreader) // 방해블록 생성
-//{
-//    GetComponent<SpriteRenderer>().color = Color.white;
-//    obstructionblock = (Obstructionblock)(i);
-
-//    switch(obstructionblock)
-//    {
-//        case Obstructionblock.None:
-//            int Rannum = Random.Range(0, 3);
-//            CreateHinderBlock(Rannum, true);
-//            break;
-//        case Obstructionblock.Bird:
-//            break;
-//        case Obstructionblock.AcornTree:
-//            if (findMatches.AcornTree_Exist())
-//            {
-//                obstructionblock = Obstructionblock.None;
-//                int Rannum2 = Random.Range(0, 3);
-//                CreateHinderBlock(Rannum2, true);
-//            }
-//            break;
-//        case Obstructionblock.StalkTree:
-//            if (Spreader == true) //초기 엮인 블록 생성자
-//            {
-//                isSpreader = true;
-//                GameObject StalkTree_ = Instantiate(StalkTree_obj, transform.position, Quaternion.identity);
-//                StalkTree_.transform.parent = this.transform;
-//            }
-//            else
-//            {
-//                if (matchblock != Matchblock.None) // 매치형 블록일 경우
-//                {
-//                    matchblock = Matchblock.None;
-//                    Destroy(this.transform.GetChild(0));
-//                }
-//                else if (selectblock == Selectblock.ColumnBomb || selectblock == Selectblock.RowBomb) // 선택형 블록일 경우
-//                {
-//                    int Radnum = Random.Range(0, board.world.levels[board.level].dots.Length);
-//                    GameObject dot = board.world.levels[board.level].dots[Radnum];
-//                    this.tag = dot.tag;
-//                    this.GetComponent<SpriteRenderer>().sprite = dot.GetComponent<SpriteRenderer>().sprite;
-//                }
-//                else // 일반 블록일 경우
-//                {
-//                    GameObject StalkTree_ = Instantiate(StalkTree_obj, transform.position, Quaternion.identity);
-//                    StalkTree_.transform.parent = this.transform;
-//                }
-//            }
-//            break;
-//        case Obstructionblock.Acorn:
-//            break;
-//    }       
-//}
-
-//public void SlingShot_Target()
-//{
-//    GameObject arrow = Instantiate(SlingShotTarget, transform.position, Quaternion.identity);
-//    arrow.transform.parent = this.transform;
-//} // 새총 과녁 생성
 

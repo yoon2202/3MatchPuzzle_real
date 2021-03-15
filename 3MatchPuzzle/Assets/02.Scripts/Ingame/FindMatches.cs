@@ -62,21 +62,6 @@ public class FindMatches : MonoBehaviour
         board.SpecialDestroy();
     }
 
-    public void SpecialSkill(Dot dot)
-    {
-        switch (dot.specialBlock)
-        {
-            case SpecialBlock.Cross:
-                currentMatches = currentMatches.Union(GetCrossDots(dot.column, dot.row)).ToList();
-                board.SpecialDestroy();
-                break;
-            case SpecialBlock.Multiple:
-                currentMatches = currentMatches.Union(GetMultipleDots(dot.column, dot.row)).ToList();
-                board.SpecialDestroy();
-                break;
-        }
-    }
-
     private void GetNearbyPieces(Dot dot1, Dot dot2, Dot dot3)
     {
         AddToListAndMatch(dot1);
@@ -157,54 +142,18 @@ public class FindMatches : MonoBehaviour
 
             yield return new WaitForSeconds(0.03f);
 
-            if(currentMatches.Count > 0)
-            {
-                board.DestroyMatches(false, false);
-            }
-            else
-            {
-                board.currentState = GameState.move;
-                board.currentDot = null;
-            }
+            //if(currentMatches.Count > 0)
+            //{
+            //    board.DestroyMatches(false, false);
+            //}
+            //else
+            //{
+            //    board.currentState = GameState.move;
+            //    board.currentDot = null;
+            //}
         }
 
     }
-
-    private void squareMatch(int i_, int j_, int H, int V, Dot CurrentDot)
-    {
-        Dot Diagonal = board.allDots[i_ + H, j_ + V];
-        Dot Horizon = board.allDots[i_ + H, j_];
-        Dot Vertical = board.allDots[i_, j_ + V];
-
-        if (Diagonal != null && Horizon != null && Vertical != null)
-        {
-            if (Diagonal.tag == CurrentDot.tag && Horizon.tag == CurrentDot.tag && Vertical.tag == CurrentDot.tag) // 현재 매치가 된 상태
-            {
-                GetNearbyPieces(Diagonal, CurrentDot, Horizon, Vertical);
-            }
-        }
-    }
-
-
-    //public void CheckBombs() // 4,5매치를 통한 특수블록 생성 함수
-    //{
-    //    if (board.currentDot != null)
-    //    {
-    //        if (currentMatches.Contains(board.currentDot)) //움직인 개체가 매치상태이면?
-    //        {
-    //            currentMatches.Remove(board.currentDot);
-    //            board.currentDot.MakeSpecialBlock();
-    //        }
-    //    }
-    //    else if (board.currentDot.otherDot != null)
-    //    {
-    //        if (currentMatches.Contains(board.currentDot.otherDot)) // 움직여진 개체가 매치상태이면?
-    //        {
-    //            currentMatches.Remove(board.currentDot.otherDot);
-    //            board.currentDot.otherDot.MakeSpecialBlock();
-    //        }
-    //    }
-    //}
 
     #region 특수블록 스킬
     List<Dot> GetCrossDots(int column, int row) // 십자가형 매칭
@@ -652,11 +601,7 @@ public class FindMatches : MonoBehaviour
             int RandomYPick = Random.Range(0, currentdots.GetLength(1));
             if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
             {
-                if (currentdots[RandomXPick, RandomYPick].SpecialBlockCheck()) // 선택된 블록이 특수블록을 갖고있는지 확인
-                {
-                    currentdots[RandomXPick, RandomYPick].MakeSpecialBlock();
                     return;
-                }
             }
             i++;
         }
@@ -673,15 +618,7 @@ public class FindMatches : MonoBehaviour
             int RandomYPick = Random.Range(0, currentdots.GetLength(1));
             if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
             {
-                if (currentdots[RandomXPick, RandomYPick].SpecialBlockCheck()) // 선택된 블록이 특수블록을 갖고있는지 확인
-                {
-                    //currentdots[RandomXPick, RandomYPick].CreateHinderBlock(num, true);
-
-                    if (num != 4) // 도토리 블록이 아닌 경우
-                        return;
-                    else
-                        Acornnum++;
-                }
+               
             }
             if (Acornnum == 4)
                 return;

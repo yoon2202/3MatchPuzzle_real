@@ -15,7 +15,7 @@ public class GoalManager : MonoBehaviour
         set
         {
             timeCount = value;
-
+            timeCount = Mathf.Clamp(timeCount, 0, 1000);
             if (timeCount >= 0)
             {
                 _TimeCountUpate.Invoke(timeCount);

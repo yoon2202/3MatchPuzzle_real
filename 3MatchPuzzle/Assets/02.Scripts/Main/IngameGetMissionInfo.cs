@@ -45,9 +45,9 @@ public class IngameGetMissionInfo : GetMissionItem
         timeCount_Text.text = count.ToString();
     }
 
-    private void Update_CurrentGage(int gage)
+    public Vector3 GetPosition_timeCount()
     {
-        gageUI_Image.fillAmount = (float)gage / goalManager.MaxGage;
+        return timeCount_Text.transform.position;
     }
 
 }

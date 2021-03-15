@@ -6,10 +6,12 @@ public abstract class Obstruction_Abstract : MonoBehaviour
 {
     private Text TimeLimit_UI;
 
-    public int Time_Limit;
+    [SerializeField]
+    protected int Time_Limit;
 
     private float Time_Current = 0;
-    
+
+    public abstract void Init();
     public abstract void Effect();
 
     public virtual void Start()
