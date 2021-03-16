@@ -13,8 +13,6 @@ public class Obstruction_Graystone : Obstruction_Abstract
     public Ease ease;
 
 
-    //private GameObject Create_Particle;
-
     public override void Start()
     {
         goalManager = FindObjectOfType<GoalManager>();
@@ -28,13 +26,14 @@ public class Obstruction_Graystone : Obstruction_Abstract
     {
         Debug.Log("발동");
         Create_Particle();
-        Destroy(gameObject);
     }
 
     private void Create_Particle()
     {
-        var Particle = Instantiate(GrayStone_Particle.gameObject);
+        var Particle = Instantiate(GrayStone_Particle.gameObject,transform.position,Quaternion.identity);
         Particle.transform.DOMove(ingameGetMissionInfo.GetPosition_timeCount(), 1.5f, false).SetEase(ease).OnComplete( () => { Debuff(Particle); });
+        Board.DestroyObstruction(transform);
+        Destroy(gameObject);
     }
 
     private void Debuff(GameObject Particle)

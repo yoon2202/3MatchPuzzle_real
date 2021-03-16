@@ -27,7 +27,6 @@ public class AnimationUI : MonoBehaviour
     private void CompleteFunction()
     {
         board.b_PlayStart = true;
-        goalManager.Time_CountDown();
         MissionInfoUI.raycastTarget = false;
     }
 }

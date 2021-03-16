@@ -72,8 +72,21 @@ public class Board : MonoBehaviour
 
     [HideInInspector]
     public bool b_matching = false;
-    [HideInInspector]
-    public bool b_PlayStart = false;
+
+    private bool b_playStart = false;
+    public bool b_PlayStart
+    {
+        get => b_playStart;
+        set
+        {
+            b_playStart = value;
+
+            if(b_playStart == true)
+            {
+                goalManager.Time_CountDown();
+            }
+        }
+    }
 
     private void Awake()
     {
@@ -394,11 +407,9 @@ public class Board : MonoBehaviour
             {
                 DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
                 DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
-                //DamageObstruction(column, row);
 
-
-                ObjectPool.ReturnObject(allDots[column, row].gameObject);               
                 DestroyEffectPool.GetObject(column, row, allDots[column, row].gameObject);
+                ObjectPool.ReturnObject(allDots[column, row].gameObject);               
 
                 if (goalManager != null)
                 {
@@ -407,9 +418,10 @@ public class Board : MonoBehaviour
                 }
                 // 스코어 점수에 따라 달라지도록 구현
 
-                allDots[column, row] = null;
+                //allDots[column, row] = null;
             }
         }
+
         findMatches.currentMatches.Clear();
         StartCoroutine(DecreaseRowCo()); // 행 내리기
     }
@@ -421,9 +433,9 @@ public class Board : MonoBehaviour
             if (findMatches.currentMatches[i] != null)
             {
                 var Dot = findMatches.currentMatches[i];
-                ObjectPool.ReturnObject(allDots[Dot.column, Dot.row].gameObject);
                 DestroyEffectPool.GetObject(Dot.column, Dot.row, allDots[Dot.column, Dot.row].gameObject);
-                allDots[Dot.column, Dot.row] = null;
+                ObjectPool.ReturnObject(allDots[Dot.column, Dot.row].gameObject);
+                //allDots[Dot.column, Dot.row] = null;
             }
         }
         findMatches.currentMatches.Clear();
@@ -433,11 +445,12 @@ public class Board : MonoBehaviour
     private IEnumerator DecreaseRowCo() // 행을 밑으로 내리는 함수
     {
         yield return new WaitForSeconds(0.2f);
+
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                if (!blankSpaces[i, j] && allDots[i, j] == null && !concreteTiles[i, j] && !ObstructionDots[i,j]) // 빈공간이 아니고, 해당열에 Dot이 없거나, 콘크리트 타일이 아닌경우
+                if (!blankSpaces[i, j] && allDots[i, j] == null && !ObstructionDots[i,j])
                 {
                     for (int k = j + 1; k < height; k++) // 해당 열 위에서 아래로 공간 반복
                     {
@@ -456,12 +469,12 @@ public class Board : MonoBehaviour
             StartCoroutine(Refiilheight(i));
         }
 
-        //StartCoroutine(FillBoardCo());
+        StartCoroutine(FillBoardCo());
     }
 
     private IEnumerator FillBoardCo() // 보드 리필함수 -> 매치 확인 함수 -> 데드락 확인 함수 관려 코루틴
     {
-        //yield return StartCoroutine(findMatches.FindAllMatchesCo());
+        yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (findMatches.currentMatches.Count > 0)
         {
@@ -476,6 +489,7 @@ public class Board : MonoBehaviour
         {
             ShuffleBoard();
         }
+
         yield return new WaitForSeconds(refillDelay * 0.4f);
         b_matching = false;
         currentState = GameState.move;
@@ -499,12 +513,17 @@ public class Board : MonoBehaviour
     }
 
 
-
     public static void SetChangeDotArray(Dot CurrentDot, Vector2 OtherDot)
     {
         Dot temp_obj = Instance.allDots[(int)OtherDot.x, (int)OtherDot.y];
         Instance.allDots[(int)OtherDot.x, (int)OtherDot.y] = Instance.allDots[CurrentDot.column, CurrentDot.row];
         Instance.allDots[CurrentDot.column, CurrentDot.row] = temp_obj;
+    }
+
+    public static void DestroyObstruction(Transform ObstructionBlock)
+    {
+        Instance.ObstructionDots[(int)ObstructionBlock.position.x, (int)ObstructionBlock.position.y] = null;
+        Instance.StartCoroutine(Instance.DecreaseRowCo());
     }
 
     #region 데드락 함수 모음

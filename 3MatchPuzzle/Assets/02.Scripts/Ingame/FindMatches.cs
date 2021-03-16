@@ -95,65 +95,67 @@ public class FindMatches : MonoBehaviour
             }
             else
             {
-                for (int i = 0; i < board.width; i++)
+                break;
+            }
+        }
+
+        for (int i = 0; i < board.width; i++)
+        {
+            for (int j = 0; j < board.height; j++)
+            {
+                Dot currentDot = board.allDots[i, j];
+                if (currentDot != null)
                 {
-                    for (int j = 0; j < board.height; j++)
+                    if (i > 0 && i < board.width - 1)  // 왼쪽 오른쪽 매치 확인
                     {
-                        Dot currentDot = board.allDots[i, j];
-                        if (currentDot != null)
+                        Dot leftDot = board.allDots[i - 1, j];
+                        Dot rightDot = board.allDots[i + 1, j];
+
+                        if (leftDot != null && rightDot != null)
                         {
-                            if (i > 0 && i < board.width - 1)  // 왼쪽 오른쪽 매치 확인
+                            if (!leftDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !rightDot.IsSpecialBlock())
                             {
-                                Dot leftDot = board.allDots[i - 1, j];
-                                Dot rightDot = board.allDots[i + 1, j];
-
-                                if (leftDot != null && rightDot != null)
+                                if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
                                 {
-                                    if (!leftDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !rightDot.IsSpecialBlock())
-                                    {
-                                        if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
-                                        {
-                                            GetNearbyPieces(leftDot, currentDot, rightDot);
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (j > 0 && j < board.height - 1) // 위 아래 매치 확인 
-                            {
-                                Dot upDot = board.allDots[i, j + 1];
-                                Dot downDot = board.allDots[i, j - 1];
-                                if (upDot != null && downDot != null)
-                                {
-                                    if (!upDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !currentDot.IsSpecialBlock())
-                                    {
-                                        if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
-                                        {
-                                            GetNearbyPieces(upDot, currentDot, downDot);
-                                        }
-                                    }
-
+                                    GetNearbyPieces(leftDot, currentDot, rightDot);
                                 }
                             }
                         }
                     }
+
+                    if (j > 0 && j < board.height - 1) // 위 아래 매치 확인 
+                    {
+                        Dot upDot = board.allDots[i, j + 1];
+                        Dot downDot = board.allDots[i, j - 1];
+                        if (upDot != null && downDot != null)
+                        {
+                            if (!upDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !currentDot.IsSpecialBlock())
+                            {
+                                if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
+                                {
+                                    GetNearbyPieces(upDot, currentDot, downDot);
+                                }
+                            }
+
+                        }
+                    }
                 }
             }
-
-            yield return new WaitForSeconds(0.03f);
-
-            //if(currentMatches.Count > 0)
-            //{
-            //    board.DestroyMatches(false, false);
-            //}
-            //else
-            //{
-            //    board.currentState = GameState.move;
-            //    board.currentDot = null;
-            //}
         }
 
+        //yield return new WaitForSeconds(0.03f);
+
+        //if(currentMatches.Count > 0)
+        //{
+        //    board.DestroyMatches(false, false);
+        //}
+        //else
+        //{
+        //    board.currentState = GameState.move;
+        //    board.currentDot = null;
+        //}
     }
+
 
     #region 특수블록 스킬
     List<Dot> GetCrossDots(int column, int row) // 십자가형 매칭
@@ -601,7 +603,7 @@ public class FindMatches : MonoBehaviour
             int RandomYPick = Random.Range(0, currentdots.GetLength(1));
             if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
             {
-                    return;
+                return;
             }
             i++;
         }
@@ -618,7 +620,7 @@ public class FindMatches : MonoBehaviour
             int RandomYPick = Random.Range(0, currentdots.GetLength(1));
             if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
             {
-               
+
             }
             if (Acornnum == 4)
                 return;

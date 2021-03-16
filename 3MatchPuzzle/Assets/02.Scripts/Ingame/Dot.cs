@@ -119,7 +119,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         board.StartCoroutine(Action2D.MoveTo(this, otherDotPos, 0.15f, true));
         board.StartCoroutine(Action2D.MoveTo(otherDot, CurrentDotPos, 0.15f));
         yield return new WaitForSeconds(0.2f);
-        //yield return StartCoroutine(findMatches.FindAllMatchesCo());
+        yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (otherDot != null)
         {
@@ -133,7 +133,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
             else
             {
-                Debug.Log("test");
                 obstructionManager.Block_Count++;
                 board.DestroyMatches(true, true);
             }

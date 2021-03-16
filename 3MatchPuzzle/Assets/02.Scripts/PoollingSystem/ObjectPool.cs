@@ -46,8 +46,8 @@ public class ObjectPool : MonoBehaviour
         var obj = Instance.poolingObjectQueue.Dequeue();
         obj.transform.SetParent(null);
         obj.transform.position = tempPosition;
-        obj.GetComponent<Dot>().row = j;
         obj.GetComponent<Dot>().column = i;
+        obj.GetComponent<Dot>().row = j;      
         obj.SetActive(true);
         return obj;
     }
@@ -65,6 +65,9 @@ public class ObjectPool : MonoBehaviour
             Instance.TempStorage.Add(obj);
             Instance.ShuffleObject();
         }
+
+        Dot dot = obj.GetComponent<Dot>();
+        Board.Instance.allDots[dot.column, dot.row] = null;
     }
     void ShuffleObject()
     {
