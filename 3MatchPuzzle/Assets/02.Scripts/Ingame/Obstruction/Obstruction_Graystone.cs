@@ -12,15 +12,11 @@ public class Obstruction_Graystone : Obstruction_Abstract
     private Transform GrayStone_Particle;
     public Ease ease;
 
-
-    public override void Start()
+    public override void Init() 
     {
         goalManager = FindObjectOfType<GoalManager>();
         ingameGetMissionInfo = FindObjectOfType<IngameGetMissionInfo>();
-        base.Start();
     }
-
-    public override void Init() { }
 
     public override void Effect()
     {

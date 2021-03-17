@@ -1,0 +1,23 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+
+public class ScoreManager : MonoBehaviour
+{
+
+    private int BaseScore = 20;
+
+    [HideInInspector]
+    public float Rate = 1.0f;
+
+    [HideInInspector]
+    private int streakValue = 1;
+
+
+    public double GetScore()
+    {
+        return Math.Floor(BaseScore * Rate);
+    }
+
+}

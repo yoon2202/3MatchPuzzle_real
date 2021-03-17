@@ -35,8 +35,6 @@ public class Board : MonoBehaviour
     public Level CurrentLevel;
 
     [Header("블록")]
-    public GameObject tilePrefabs;
-    public GameObject breakableTilePrefabs;
     public GameObject concreteTilePrefabs;
     public GameObject ObstructionPrefabs;
 
@@ -47,26 +45,21 @@ public class Board : MonoBehaviour
     private bool[,] blankSpaces;
     private BackGroundTile[,] concreteTiles;
     public Obstruction_Abstract[,] ObstructionDots;
+
     public Dot[,] allDots;
+
     private List<GameObject> Create_dots = new List<GameObject>();
     private GameObject Previous_Bellow;
     private GameObject Previous_Left;
     private int[,] TileSpace = new int[9, 9];
 
     public Dot currentDot;
+
+
     private FindMatches findMatches;
-
-    //--------- Score---------
-    public int basePieceValue = 20;
-    private int streakValue = 1;
-
     private SoundManager soundManager;
     private GoalManager goalManager;
-
-    [Header("이동횟수제한")]
-    public int BirdLimitingMove = 0;
-    public int AcornTreeLimitingMove = 0;
-    public int StalkTreeLimitingMove = 0;
+    private ScoreManager scoreManager;
 
     private float refillDelay = 1f;
 
@@ -99,6 +92,8 @@ public class Board : MonoBehaviour
         goalManager = FindObjectOfType<GoalManager>();
         soundManager = FindObjectOfType<SoundManager>();
         findMatches = FindObjectOfType<FindMatches>();
+        scoreManager = FindObjectOfType<ScoreManager>();
+
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
         ObstructionDots = new Obstruction_Abstract[width, height];
@@ -108,6 +103,7 @@ public class Board : MonoBehaviour
         Setup();
         findMatches.FIndAllMathces();
     }
+
     #region 초기 세팅 함수모음
 
     void InitList()
@@ -414,7 +410,7 @@ public class Board : MonoBehaviour
                 if (goalManager != null)
                 {
                     goalManager.Update_CurrentGage(3);
-                    goalManager.Update_CurrentScore(basePieceValue * streakValue);
+                    goalManager.Update_CurrentScore((int)scoreManager.GetScore());
                 }
                 // 스코어 점수에 따라 달라지도록 구현
 
@@ -478,7 +474,6 @@ public class Board : MonoBehaviour
 
         if (findMatches.currentMatches.Count > 0)
         {
-            streakValue += 1;
             DestroyMatches(false, false);
             yield break;
         }
@@ -493,7 +488,6 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(refillDelay * 0.4f);
         b_matching = false;
         currentState = GameState.move;
-        streakValue = 1;
     }
 
     IEnumerator Refiilheight(int i)

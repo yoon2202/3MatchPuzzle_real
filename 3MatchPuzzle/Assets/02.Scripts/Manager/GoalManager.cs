@@ -74,10 +74,12 @@ public class GoalManager : MonoBehaviour
     public event ScoreUpdate _ScoreUpate;
 
     private CreateMisteak createMisteak;
+    private ObstructionManager obstructionManager;
 
     private void Start()
     {
         createMisteak = FindObjectOfType<CreateMisteak>();
+        obstructionManager = FindObjectOfType<ObstructionManager>();
     }
 
     // 스테이지 타입, 스코어, 시간 초기화
@@ -119,6 +121,10 @@ public class GoalManager : MonoBehaviour
         while (true)
         {
             TimeCount--;
+
+            if(obstructionManager.B_Queenbee_EffectStart == true)
+                TimeCount--;
+
             yield return ws;
         }
     }
@@ -132,6 +138,11 @@ public class GoalManager : MonoBehaviour
     #region 게이지
     public void Update_CurrentGage(int gage)
     {
+        if(obstructionManager.B_Acidjelly_EffectStart == true)
+        {
+            return;
+        }
+
         CurrentGage += gage;
     }
     #endregion

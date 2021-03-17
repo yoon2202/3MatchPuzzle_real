@@ -1363,6 +1363,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ObstructionBlock:
   - {fileID: 4111076753285721755, guid: a017963a0a4e4b14a8961a1d0abf095a, type: 3}
+  - {fileID: 4111076753285721755, guid: 3bce6a3410c328e4d9b210324b66ddeb, type: 3}
+  - {fileID: 4111076753285721755, guid: 5e0f942d41bdcc1499176dd19923c503, type: 3}
+  - {fileID: 4111076753285721755, guid: b5ba1fbfa30009c48aca09a2dc804816, type: 3}
+  - {fileID: 4111076753285721755, guid: fdfe64a342ccaf146bbc89332d3e13fa, type: 3}
 --- !u!1 &470417264
 GameObject:
   m_ObjectHideFlags: 0
@@ -2749,10 +2753,6 @@ MonoBehaviour:
   - 0.725
   - 0.75
   CurrentLevel: {fileID: 0}
-  tilePrefabs: {fileID: 1716627672935493946, guid: 7bae7d0cc9478cd4184b4154e437e4c6,
-    type: 3}
-  breakableTilePrefabs: {fileID: 8246079631009926288, guid: c76ea9421774fa9408a08d4a17094676,
-    type: 3}
   concreteTilePrefabs: {fileID: 8945728187427195647, guid: b48cda27fba43fe46b499710753c6578,
     type: 3}
   ObstructionPrefabs: {fileID: 4111076753285721755, guid: 537ed9f0930b34349804332bc988d323,
@@ -2760,12 +2760,7 @@ MonoBehaviour:
   destroyEffect: {fileID: 5062197095049848332, guid: 8e2153a08d5c23a4dbdcdecba873d77c,
     type: 3}
   currentDot: {fileID: 0}
-  basePieceValue: 20
-  BirdLimitingMove: 0
-  AcornTreeLimitingMove: 0
-  StalkTreeLimitingMove: 0
   b_matching: 0
-  b_PlayStart: 0
 --- !u!4 &873381041
 Transform:
   m_ObjectHideFlags: 0
@@ -4159,6 +4154,7 @@ GameObject:
   - component: {fileID: 1084776166}
   - component: {fileID: 1084776165}
   - component: {fileID: 1084776164}
+  - component: {fileID: 1084776167}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -4207,6 +4203,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1084776167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084776163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 707cce71b0aeb0a48af5ee922dd9ada4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Rate: 1
 --- !u!1 &1094576399
 GameObject:
   m_ObjectHideFlags: 0

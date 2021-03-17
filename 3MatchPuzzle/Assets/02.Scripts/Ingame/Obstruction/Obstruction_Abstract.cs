@@ -11,13 +11,17 @@ public abstract class Obstruction_Abstract : MonoBehaviour
 
     private float Time_Current = 0;
 
+    protected ObstructionManager obstructionManager;
+
     public abstract void Init();
     public abstract void Effect();
 
     public virtual void Start()
     {
+        obstructionManager = FindObjectOfType<ObstructionManager>();
         TimeLimit_UI = transform.GetChild(0).GetChild(0).GetComponent<Text>();
         Time_Current = Time_Limit;
+        Init();
         StartCoroutine(CountDown());
     }
 
