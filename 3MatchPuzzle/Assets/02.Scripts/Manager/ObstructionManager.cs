@@ -147,8 +147,7 @@ public class ObstructionManager : MonoBehaviour
 
                 ObjectPool.ReturnObject(currentdots[RandomXPick, RandomYPick].gameObject);
 
-                var block = Instantiate(ObstructionBlock[Countnum], new Vector2(RandomXPick, RandomYPick), Quaternion.identity);
-                Board.Instance.ObstructionDots[RandomXPick, RandomYPick] = block.GetComponent<Obstruction_Abstract>();
+                Instantiate(ObstructionBlock[Countnum], new Vector2(RandomXPick, RandomYPick), Quaternion.identity);
                 Countnum++;
                 return;
             }

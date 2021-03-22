@@ -20,16 +20,14 @@ public class Obstruction_Graystone : Obstruction_Abstract
 
     public override void Effect()
     {
-        Debug.Log("발동");
         Create_Particle();
+        base.Effect();
     }
 
     private void Create_Particle()
     {
         var Particle = Instantiate(GrayStone_Particle.gameObject,transform.position,Quaternion.identity);
         Particle.transform.DOMove(ingameGetMissionInfo.GetPosition_timeCount(), 1.5f, false).SetEase(ease).OnComplete( () => { Debuff(Particle); });
-        Board.DestroyObstruction(transform);
-        Destroy(gameObject);
     }
 
     private void Debuff(GameObject Particle)

@@ -7,7 +7,7 @@ public class Obstruction_Acidjelly : Obstruction_Abstract
     public override void Effect()
     {
         obstructionManager.B_Acidjelly_EffectStart = true;
-        Destroy(gameObject);
+        base.Effect();
     }   
 
     public override void Init(){}

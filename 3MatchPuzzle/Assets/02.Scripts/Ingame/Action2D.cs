@@ -8,7 +8,6 @@ public static class Action2D
     {
         FindMatches.MovingDot.Enqueue(target);
         Vector2 startPos = target.transform.position;
-        //Vector2 endPos = to.transform.position;
 
         float elapsed = 0.0f;
         while (elapsed < duration)

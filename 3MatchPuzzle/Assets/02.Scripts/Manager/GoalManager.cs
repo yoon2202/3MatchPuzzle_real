@@ -54,7 +54,7 @@ public class GoalManager : MonoBehaviour
             if (currentGage >= MaxGage)
             {
                 currentGage %= MaxGage;
-                createMisteak.Createobj();
+                mysticManager.Createobj();
                 Debug.Log("미스틱 생성!");
             }
         }
@@ -73,12 +73,12 @@ public class GoalManager : MonoBehaviour
     public delegate void ScoreUpdate(int Score);
     public event ScoreUpdate _ScoreUpate;
 
-    private CreateMisteak createMisteak;
+    private MysticManager mysticManager;
     private ObstructionManager obstructionManager;
 
     private void Start()
     {
-        createMisteak = FindObjectOfType<CreateMisteak>();
+        mysticManager = FindObjectOfType<MysticManager>();
         obstructionManager = FindObjectOfType<ObstructionManager>();
     }
 

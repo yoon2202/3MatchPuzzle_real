@@ -7,8 +7,6 @@ public class BezierMove : MonoBehaviour
     public static BezierMove Instance;
 
     [SerializeField]
-    private float speed = 5;
-    [SerializeField]
     private float PosA = 0.55f;
     [SerializeField]
     private float PosB = 0.45f;
@@ -19,20 +17,20 @@ public class BezierMove : MonoBehaviour
         Instance = this;
     }
 
-    public static void Move_Function(Transform origin, Vector2 target)
+    public static void Move_Function(Transform origin, Transform target, int speed = 5)
     {
-       Instance.StartCoroutine(Instance.Move_Function_Co(origin, target));
+       Instance.StartCoroutine(Instance.Move_Function_Co(origin, target, speed));
     }
 
-    IEnumerator Move_Function_Co(Transform origin, Vector2 target)
+    IEnumerator Move_Function_Co(Transform origin, Transform target,int speed)
     {
         float t = 0;
 
         Vector2[] point = new Vector2[4];
         point[0] = origin.position;
         point[1] = PointSetting(origin.position);
-        point[2] = PointSetting(target);
-        point[3] = target;
+        point[2] = PointSetting(target.position);
+        point[3] = target.position;
 
         while(t <= 1)
         {
@@ -44,7 +42,7 @@ public class BezierMove : MonoBehaviour
             t += Time.deltaTime * speed;
             yield return null;
         }
-        origin.position = target;
+        origin.position = target.position;
         yield return null;
     }
 

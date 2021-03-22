@@ -41,10 +41,13 @@ public class Board : MonoBehaviour
     public static GameObject[] dots;
     public GameObject destroyEffect;
 
-    [Header("블록 타입 집합")]
     private bool[,] blankSpaces;
     private BackGroundTile[,] concreteTiles;
+
     public Obstruction_Abstract[,] ObstructionDots;
+    public Queue<Obstruction_Abstract> Obstruction_Queue;
+
+    public Mystic_Abstract[,] MysticDots;
 
     public Dot[,] allDots;
 
@@ -97,6 +100,8 @@ public class Board : MonoBehaviour
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
         ObstructionDots = new Obstruction_Abstract[width, height];
+        Obstruction_Queue = new Queue<Obstruction_Abstract>();
+        MysticDots = new Mystic_Abstract[width, height];
         allDots = new Dot[width, height];
 
         InitList();
@@ -516,7 +521,13 @@ public class Board : MonoBehaviour
 
     public static void DestroyObstruction(Transform ObstructionBlock)
     {
-        Instance.ObstructionDots[(int)ObstructionBlock.position.x, (int)ObstructionBlock.position.y] = null;
+        Destroy(ObstructionBlock.gameObject);
+        Instance.StartCoroutine(Instance.DecreaseRowCo());
+    }
+
+    public static void DestroyMystic(Transform MysticBlock)
+    {
+        Destroy(MysticBlock.gameObject);
         Instance.StartCoroutine(Instance.DecreaseRowCo());
     }
 

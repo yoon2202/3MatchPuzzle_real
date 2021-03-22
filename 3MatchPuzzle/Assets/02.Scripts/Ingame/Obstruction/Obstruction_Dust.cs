@@ -8,7 +8,7 @@ public class Obstruction_Dust : Obstruction_Abstract
     public override void Effect()
     {
         obstructionManager.B_Dust_EffectStart = true;
-        Destroy(gameObject);
+        base.Effect();
     }
 
     public override void Init(){}

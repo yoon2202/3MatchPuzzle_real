@@ -5,23 +5,27 @@ using System.Collections;
 public abstract class Obstruction_Abstract : MonoBehaviour
 {
     private Text TimeLimit_UI;
-
     [SerializeField]
     protected int Time_Limit;
-
     private float Time_Current = 0;
+
+    [SerializeField]
+    protected int Life;
 
     protected ObstructionManager obstructionManager;
 
     public abstract void Init();
-    public abstract void Effect();
 
     public virtual void Start()
     {
         obstructionManager = FindObjectOfType<ObstructionManager>();
         TimeLimit_UI = transform.GetChild(0).GetChild(0).GetComponent<Text>();
         Time_Current = Time_Limit;
+        Board.Instance.ObstructionDots[(int)transform.position.x, (int)transform.position.y] = this;
+        Board.Instance.Obstruction_Queue.Enqueue(this);
         Init();
+
+
         StartCoroutine(CountDown());
     }
 
@@ -45,4 +49,30 @@ public abstract class Obstruction_Abstract : MonoBehaviour
         Effect();
         yield return null;
     }
+
+    public void GetDamage(int damage)
+    {
+        if (Life > damage)
+            Life -= damage;
+        else
+            Destroy_Obj();
+    }
+
+    public virtual void Effect()
+    {
+        Destroy_Obj();
+    }
+
+
+    private void Destroy_Obj()
+    {
+        Board.DestroyObstruction(transform);
+    }
+
+    private void OnDestroy()
+    {
+        Board.Instance.ObstructionDots[(int)transform.position.x, (int)transform.position.y] = null;
+        Board.Instance.Obstruction_Queue.Dequeue();
+    }
+
 }

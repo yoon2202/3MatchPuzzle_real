@@ -133,7 +133,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
             else
             {
-                obstructionManager.Block_Count++;
                 board.DestroyMatches(true, true);
             }
         }

@@ -8,7 +8,7 @@ public class Obstruction_Queenbee : Obstruction_Abstract
     public override void Effect()
     {
         obstructionManager.B_Queenbee_EffectStart = true;
-        Destroy(gameObject);
+        base.Effect();
     }
 
     public override void Init(){} 

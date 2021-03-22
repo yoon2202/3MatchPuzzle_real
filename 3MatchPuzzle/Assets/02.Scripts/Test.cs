@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
+    private int[,] it = new int[4, 4];
+    private List<int> Test23 = new List<int>();
+
     private void Start()
     {
-        StartCoroutine(Testtest());
+        it[0, 0] = 5;
+        it[1, 1] = 5;
+
+        //StartCoroutine(Testtest());
     }
 
     IEnumerator Testtest()
