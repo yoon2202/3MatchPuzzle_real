@@ -48,19 +48,6 @@ public class FindMatches : MonoBehaviour
     //    return currentDots;
     //}
 
-    public void isColmnBomb(Dot dot)
-    {
-        currentMatches = currentMatches.Union(GetColumnPieces(dot.column)).ToList();
-        board.SpecialDestroy();
-        //currentMatches.Union(GetColumnPieces(dot.column));
-        //board.BombColumn(dot.column);
-    }
-
-    public void isRowBomb(Dot dot)
-    {
-        currentMatches = currentMatches.Union(GetRowPieces(dot.row)).ToList();
-        board.SpecialDestroy();
-    }
 
     private void GetNearbyPieces(Dot dot1, Dot dot2, Dot dot3)
     {
@@ -544,82 +531,6 @@ public class FindMatches : MonoBehaviour
     //    board.SpecialDestroy();
     //}
 
-    public void AcornBoom_Skill(Dot dot) //도토리 폭파 발동
-    {
-        List<Dot> dots = new List<Dot>();
-        var AcornExist = false;
-        board.currentState = GameState.wait;
-
-        for (int i = 0; i < board.width; i++)
-        {
-            for (int j = 0; j < board.height; j++)
-            {
-                if (board.allDots[i, j] != null && board.allDots[i, j].isAcorn)
-                {
-                    dots.Add(board.allDots[i, j]);
-                    AcornExist = true;
-                }
-            }
-        }
-        if (AcornExist == true)
-            StartCoroutine(AcornBoom_Skill_Co(dots));
-        else
-        {
-            currentMatches = currentMatches.Union(GetAcornPieces(dot.column, dot.row)).ToList();
-            board.SpecialDestroy();
-            board.currentState = GameState.move;
-        }
-    }
-    IEnumerator AcornBoom_Skill_Co(List<Dot> dots)
-    {
-        for (int i = 0; i < dots.Count; i++)
-        {
-            currentMatches = currentMatches.Union(GetAcornPieces(dots[i].column, dots[i].row)).ToList();
-            board.SpecialDestroy();
-            yield return new WaitForSeconds(0.2f);
-        }
-        board.currentState = GameState.move;
-        yield return null;
-    }
-    #endregion
-
-    #region 랜덤생성
-    public void RandomCreateBombs() // 랜덤블록에서 특수블록 생성
-    {
-        Dot[,] currentdots = board.allDots;
-        var i = 0;
-        int Createpercent = Random.Range(0, 10); // 이거로 확률 계산 가능.
-
-        while (i < 10)
-        {
-            int RandomXPick = Random.Range(0, currentdots.GetLength(0));
-            int RandomYPick = Random.Range(0, currentdots.GetLength(1));
-            if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
-            {
-                return;
-            }
-            i++;
-        }
-    }
-
-    public void RandomCreateHinder(int num) // num -> 0: 참새 1: 도토리나무 2: 엮인줄기나무 3: 랜덤 4: 도토리
-    {
-        Dot[,] currentdots = board.allDots;
-        var i = 0;
-        var Acornnum = 0;
-        while (i < 15)
-        {
-            int RandomXPick = Random.Range(0, currentdots.GetLength(0));
-            int RandomYPick = Random.Range(0, currentdots.GetLength(1));
-            if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
-            {
-
-            }
-            if (Acornnum == 4)
-                return;
-            i++;
-        }
-    }
     #endregion
 
     public void Shuffle<T>(IList<T> list)

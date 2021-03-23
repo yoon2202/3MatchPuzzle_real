@@ -267,80 +267,6 @@ public class Board : MonoBehaviour
     }
     #endregion
 
-    #region 4,5 매치
-    private int ColumnOrRow(Dot currentMatch) // 매치된 블록들에 대한 직접 4,5 매치 판단
-    {
-        List<Dot> matchCopy = findMatches.currentMatches;
-
-        int columnMatch = 0;
-        int rowMatch = 0;
-        int diagonalMatch = 0;
-
-        for (int j = 0; j < matchCopy.Count; j++) // i의 점에 대하여 
-        {
-            Dot nextDot = matchCopy[j];
-
-            if (nextDot.column == currentMatch.column && nextDot.CompareTag(currentMatch.tag))
-            {
-                columnMatch++;
-            }
-            else if (nextDot.row == currentMatch.row && nextDot.CompareTag(currentMatch.tag))
-            {
-                rowMatch++;
-            }
-            else
-            {
-                diagonalMatch++;
-            }
-        }
-
-        if (diagonalMatch > 0) // 사각형 매치시 특수블록
-        {
-            return 4;
-        }
-        if (columnMatch == 4 || rowMatch == 4) // 세로 혹은 가로 5개 매치
-        {
-            return 1;
-        }
-        if (columnMatch == 2 && rowMatch == 2) // 가로 세로 합 5개
-        {
-            return 2;
-        }
-        if (columnMatch == 3 || rowMatch == 3) // 세로 혹은 가로 4개 매치
-        {
-            return 3;
-        }
-
-        return 0;
-    }
-
-    private void CheckToMakeBombs() // 4,5매치를 한 경우
-    {
-        if (findMatches.currentMatches.Count > 3)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                int typeOfMatch = 0;
-                Dot thisDot_ = currentDot;
-
-                if (i == 1)
-                    thisDot_ = currentDot.otherDot;
-
-                typeOfMatch = ColumnOrRow(thisDot_);
-
-                if (typeOfMatch != 0)
-                {
-                    if (findMatches.currentMatches.Contains(thisDot_))
-                    {
-                        findMatches.currentMatches.Remove(thisDot_);
-                        //thisDot_.MakeSpecialBlock();
-                    }
-                }
-            }
-        }
-    }
-    #endregion
-
     public void DestroyMatches(bool isMove, bool Special)
     {
         //if (findMatches.currentMatches.Count > 3 && isMove) // 직접 블록을 움직였을때, 4,5 매치 판단
@@ -369,22 +295,6 @@ public class Board : MonoBehaviour
             }
         }
 
-        findMatches.currentMatches.Clear();
-        StartCoroutine(DecreaseRowCo()); // 행 내리기
-    }
-
-    public void SpecialDestroy() // 특수 블록, 선택블록에 대한 폭파
-    {
-        for (int i = 0; i < findMatches.currentMatches.Count; i++)
-        {
-            if (findMatches.currentMatches[i] != null)
-            {
-                var Dot = findMatches.currentMatches[i];
-                DestroyEffectPool.GetObject(Dot.column, Dot.row, allDots[Dot.column, Dot.row].gameObject);
-                ObjectPool.ReturnObject(allDots[Dot.column, Dot.row].gameObject);
-                //allDots[Dot.column, Dot.row] = null;
-            }
-        }
         findMatches.currentMatches.Clear();
         StartCoroutine(DecreaseRowCo()); // 행 내리기
     }
