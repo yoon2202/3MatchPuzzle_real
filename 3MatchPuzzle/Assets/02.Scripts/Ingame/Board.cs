@@ -2,17 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-/// <summary>
-/// 스페셜 블록 리스트
-/// </summary>
-public enum SpecialBlock
-{
-    None, Cross, Multiple
-}
-
-
 public class Board : MonoBehaviour
 {
     public static Board Instance;
@@ -39,7 +28,6 @@ public class Board : MonoBehaviour
     public GameObject ObstructionPrefabs;
 
     public static GameObject[] dots;
-    public GameObject destroyEffect;
 
     private bool[,] blankSpaces;
     private BackGroundTile[,] concreteTiles;
@@ -145,10 +133,10 @@ public class Board : MonoBehaviour
                 }
             }
         }
-        if (IsDeadlocked())
-        {
-            ShuffleBoard();
-        }
+        //if (IsDeadlocked())
+        //{
+        //    ShuffleBoard();
+        //}
 
     }
 
@@ -277,46 +265,6 @@ public class Board : MonoBehaviour
             }
         }
     }
-
-    //private void DamageObstruction(int column, int row) // 콘크리트 타일
-    //{
-    //    if (column > 0)
-    //    {
-    //        if (ObstructionDots[column - 1, row])
-    //        {
-    //            ObstructionDots[column - 1, row].TakeDamage(1);
-    //            if (ObstructionDots[column - 1, row].Health <= 0)
-    //                ObstructionDots[column - 1, row] = null;
-    //        }
-    //    }
-    //    if (column < width - 1)
-    //    {
-    //        if (ObstructionDots[column + 1, row])
-    //        {
-    //            ObstructionDots[column + 1, row].TakeDamage(1);
-    //            if (ObstructionDots[column + 1, row].Health <= 0)
-    //                ObstructionDots[column + 1, row] = null;
-    //        }
-    //    }
-    //    if (row > 0)
-    //    {
-    //        if (ObstructionDots[column, row - 1])
-    //        {
-    //            ObstructionDots[column, row - 1].TakeDamage(1);
-    //            if (ObstructionDots[column, row - 1].Health <= 0)
-    //                ObstructionDots[column, row - 1] = null;
-    //        }
-    //    }
-    //    if (row < height - 1)
-    //    {
-    //        if (ObstructionDots[column, row + 1])
-    //        {
-    //            ObstructionDots[column, row + 1].TakeDamage(1);
-    //            if (ObstructionDots[column, row + 1].Health <= 0)
-    //                ObstructionDots[column, row + 1] = null;
-    //        }
-    //    }
-    //}
     #endregion
 
     #region 4,5 매치
@@ -409,8 +357,8 @@ public class Board : MonoBehaviour
                 DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
                 DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
 
-                DestroyEffectPool.GetObject(column, row, allDots[column, row].gameObject);
-                ObjectPool.ReturnObject(allDots[column, row].gameObject);               
+                DestroyEffectPool.GetObject(column, row, findMatches.currentMatches[i].gameObject);
+                ObjectPool.ReturnObject(findMatches.currentMatches[i].gameObject);               
 
                 if (goalManager != null)
                 {
@@ -418,8 +366,6 @@ public class Board : MonoBehaviour
                     goalManager.Update_CurrentScore((int)scoreManager.GetScore());
                 }
                 // 스코어 점수에 따라 달라지도록 구현
-
-                //allDots[column, row] = null;
             }
         }
 
@@ -451,16 +397,32 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                if (!blankSpaces[i, j] && allDots[i, j] == null && !ObstructionDots[i,j])
+                if (!blankSpaces[i, j] && allDots[i, j] == null && ObstructionDots[i,j] == null && MysticDots[i,j] == null)
                 {
                     for (int k = j + 1; k < height; k++) // 해당 열 위에서 아래로 공간 반복
                     {
                         if (allDots[i, k] != null)
                         {
-                            StartCoroutine(Action2D.MoveTo(allDots[i, k], new Vector2(i, j), dropSpeed[k - j]));
+                            StartCoroutine(Action2D.MoveTo(allDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j]));
                             allDots[i, k].row = j;
                             allDots[i, j] = allDots[i, k];
                             allDots[i, k] = null;
+                            yield return null;
+                            break;
+                        }
+                        else if(ObstructionDots[i, k] != null)
+                        {
+                            StartCoroutine(Action2D.MoveTo(ObstructionDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j]));
+                            ObstructionDots[i, j] = ObstructionDots[i, k];
+                            ObstructionDots[i, k] = null;
+                            yield return null;
+                            break;
+                        }
+                        else if(MysticDots[i, k] != null)
+                        {
+                            StartCoroutine(Action2D.MoveTo(MysticDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j]));
+                            MysticDots[i, j] = MysticDots[i, k];
+                            MysticDots[i, k] = null;
                             yield return null;
                             break;
                         }
@@ -485,10 +447,10 @@ public class Board : MonoBehaviour
 
         currentDot = null;
 
-        if (IsDeadlocked())
-        {
-            ShuffleBoard();
-        }
+        //if (IsDeadlocked())
+        //{
+        //    ShuffleBoard();
+        //}
 
         yield return new WaitForSeconds(refillDelay * 0.4f);
         b_matching = false;
@@ -501,11 +463,11 @@ public class Board : MonoBehaviour
 
         for (int j = 0; j < height; j++)
         {
-            if (allDots[i, j] == null && !blankSpaces[i, j] && !concreteTiles[i, j] && !ObstructionDots[i, j])
+            if (allDots[i, j] == null && !blankSpaces[i, j] && !ObstructionDots[i, j] && !MysticDots[i, j])
             {
                 GameObject piece = ObjectPool.GetObject(i, j, offSet);
                 allDots[i, j] = piece.GetComponent<Dot>();
-                StartCoroutine(Action2D.MoveTo(allDots[i, j], new Vector2(i, j), dropSpeed[offSet - j]));
+                StartCoroutine(Action2D.MoveTo(allDots[i, j].transform, new Vector2(i, j), dropSpeed[offSet - j]));
                 yield return Delay;
             }
         }
@@ -519,15 +481,9 @@ public class Board : MonoBehaviour
         Instance.allDots[CurrentDot.column, CurrentDot.row] = temp_obj;
     }
 
-    public static void DestroyObstruction(Transform ObstructionBlock)
+    public static void Destroy_DecreaseRow(Transform Block)
     {
-        Destroy(ObstructionBlock.gameObject);
-        Instance.StartCoroutine(Instance.DecreaseRowCo());
-    }
-
-    public static void DestroyMystic(Transform MysticBlock)
-    {
-        Destroy(MysticBlock.gameObject);
+        Destroy(Block.gameObject);
         Instance.StartCoroutine(Instance.DecreaseRowCo());
     }
 
@@ -694,10 +650,10 @@ public class Board : MonoBehaviour
                 }
             }
         }
-        if (IsDeadlocked())
-        {
-            ShuffleBoard();
-        }
+        //if (IsDeadlocked())
+        //{
+        //    ShuffleBoard();
+        //}
     }
     #endregion
 }

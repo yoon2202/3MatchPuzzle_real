@@ -8,7 +8,7 @@ public class FindMatches : MonoBehaviour
     private Board board;
     public ActiveList activeList;
     public List<Dot> currentMatches = new List<Dot>();
-    public static Queue<Dot> MovingDot = new Queue<Dot>();
+    public static Queue<Transform> MovingDot = new Queue<Transform>();
     void Start()
     {
 
@@ -113,13 +113,10 @@ public class FindMatches : MonoBehaviour
 
                         if (leftDot != null && rightDot != null)
                         {
-                            if (!leftDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !rightDot.IsSpecialBlock())
-                            {
                                 if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
                                 {
                                     GetNearbyPieces(leftDot, currentDot, rightDot);
                                 }
-                            }
                         }
                     }
 
@@ -129,14 +126,10 @@ public class FindMatches : MonoBehaviour
                         Dot downDot = board.allDots[i, j - 1];
                         if (upDot != null && downDot != null)
                         {
-                            if (!upDot.IsSpecialBlock() && !currentDot.IsSpecialBlock() && !currentDot.IsSpecialBlock())
-                            {
                                 if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
                                 {
                                     GetNearbyPieces(upDot, currentDot, downDot);
                                 }
-                            }
-
                         }
                     }
                 }

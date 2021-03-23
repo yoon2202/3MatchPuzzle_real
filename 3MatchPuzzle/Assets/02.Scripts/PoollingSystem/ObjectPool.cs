@@ -40,43 +40,32 @@ public class ObjectPool : MonoBehaviour
         return piece;
     }
 
-    public static GameObject GetObject(int i, int j,int offset)
+    public static GameObject GetObject(int i, int j, int offset)
     {
         Vector2 tempPosition = new Vector2(i, offset);
         var obj = Instance.poolingObjectQueue.Dequeue();
         obj.transform.SetParent(null);
         obj.transform.position = tempPosition;
         obj.GetComponent<Dot>().column = i;
-        obj.GetComponent<Dot>().row = j;      
+        obj.GetComponent<Dot>().row = j;
         obj.SetActive(true);
         return obj;
     }
 
     public static void ReturnObject(GameObject obj)
     {
-        if(obj.GetComponent<Dot>().specialBlock != SpecialBlock.None)
-        {
-            Destroy(obj);
-            Instance.poolingObjectQueue.Enqueue(Instance.CreatenewObject());
-        }
-        else
-        {
-            obj.SetActive(false);
-            Instance.TempStorage.Add(obj);
-            Instance.ShuffleObject();
-        }
-
-        Dot dot = obj.GetComponent<Dot>();
-        Board.Instance.allDots[dot.column, dot.row] = null;
+        obj.SetActive(false);
+        Instance.TempStorage.Add(obj);
+        Instance.ShuffleObject();
     }
     void ShuffleObject()
     {
-        if(TempStorage.Count > 20)
+        if (TempStorage.Count > 20)
         {
             ShuffleList(TempStorage);
             ShuffleList(TempStorage);
-            
-            for (int i =0; i< TempStorage.Count; i ++)
+
+            for (int i = 0; i < TempStorage.Count; i++)
             {
                 Instance.poolingObjectQueue.Enqueue(TempStorage[i]);
                 TempStorage[i].transform.SetParent(Instance.transform);
@@ -95,16 +84,16 @@ public class ObjectPool : MonoBehaviour
 
         var i = 0;
         while (i < 3)
-        { 
-        for (int index = 0; index < list.Count; ++index)
         {
-            random1 = Random.Range(0, list.Count);
-            random2 = Random.Range(0, list.Count);
+            for (int index = 0; index < list.Count; ++index)
+            {
+                random1 = Random.Range(0, list.Count);
+                random2 = Random.Range(0, list.Count);
 
-            tmp = list[random1];
-            list[random1] = list[random2];
-            list[random2] = tmp;
-        }
+                tmp = list[random1];
+                list[random1] = list[random2];
+                list[random2] = tmp;
+            }
             i++;
         }
     }

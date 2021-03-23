@@ -54,7 +54,7 @@ public class GoalManager : MonoBehaviour
             if (currentGage >= MaxGage)
             {
                 currentGage %= MaxGage;
-                mysticManager.Createobj();
+                mysticManager.Mystic_Create();
                 Debug.Log("미스틱 생성!");
             }
         }

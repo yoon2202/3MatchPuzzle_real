@@ -6,8 +6,8 @@ using UnityEngine.EventSystems;
 public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     [Header("현재 포지션 위치")]
-    public int column;
-    public int row;
+    public int column = -1;
+    public int row = -1 ;
 
     private HintManager hintManager;
     private FindMatches findMatches;
@@ -22,9 +22,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public float swipeAngle = 0;
     public float swipeResist = 1f;
-
-    [Header("Bool Type = 특수블록")]
-    public SpecialBlock specialBlock = SpecialBlock.None;
 
     [Header("Bool Type = 방해블록")]
     public bool isAcorn;
@@ -45,13 +42,13 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (hintManager != null)
             hintManager.DestroyHint();
 
-        if (board.currentState == GameState.move && !IsSpecialBlock())
+        if (board.currentState == GameState.move)
             firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (board.currentState == GameState.move && !IsSpecialBlock())
+        if (board.currentState == GameState.move)
         {
             finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             CalculateAngle();
@@ -103,7 +100,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
 
-        if (otherDot != null && !otherDot.IsSpecialBlock())  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
+        if (otherDot != null)  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
         {
             Vector2 otherDotPos = new Vector2(otherDot.column, otherDot.row);
             Vector2 CurrentDotPos = new Vector2(column, row);
@@ -116,8 +113,8 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public IEnumerator CheckMoveCo(Vector2 otherDotPos, Vector2 CurrentDotPos)
     {
         board.currentDot = this;
-        board.StartCoroutine(Action2D.MoveTo(this, otherDotPos, 0.15f, true));
-        board.StartCoroutine(Action2D.MoveTo(otherDot, CurrentDotPos, 0.15f));
+        board.StartCoroutine(Action2D.MoveTo(transform, otherDotPos, 0.15f, true));
+        board.StartCoroutine(Action2D.MoveTo(otherDot.transform, CurrentDotPos, 0.15f));
         yield return new WaitForSeconds(0.2f);
         yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
@@ -125,8 +122,8 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             if (findMatches.currentMatches.Contains(this) == false && findMatches.currentMatches.Contains(otherDot) == false)
             {
-                board.StartCoroutine(Action2D.MoveTo(this, CurrentDotPos, 0.15f, true));
-                board.StartCoroutine(Action2D.MoveTo(otherDot, otherDotPos, 0.15f));
+                board.StartCoroutine(Action2D.MoveTo(transform, CurrentDotPos, 0.15f, true));
+                board.StartCoroutine(Action2D.MoveTo(otherDot.transform, otherDotPos, 0.15f));
                 yield return new WaitForSeconds(0.2f);
                 board.currentDot = null;
                 board.currentState = GameState.move;
@@ -140,22 +137,12 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     #endregion
 
-    //public void MakeSpecialBlock()// 선택형 특수블록 생성
-    //{
-    //    int Length = System.Enum.GetNames(typeof(SpecialBlock)).Length;
-    //    int Rannum = Random.Range(1, Length);
-    //    specialBlock = (SpecialBlock)Rannum;
-    //    DotSprite.sprite = SpecialImg[Rannum - 1];
-    //}
-
-
-    public bool IsSpecialBlock() // 직접 매치가 안되는 블록 체크
+    private void OnDisable()
     {
-        if (specialBlock != SpecialBlock.None)
-            return true;
-        else
-            return false;
+        if((column == -1 || row == -1) == false)
+            Board.Instance.allDots[column, row] = null;
     }
+
 }
 
 

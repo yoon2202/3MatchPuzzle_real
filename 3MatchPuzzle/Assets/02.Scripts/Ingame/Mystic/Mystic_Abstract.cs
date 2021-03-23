@@ -3,53 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public abstract class Mystic_Abstract : MonoBehaviour, IPointerUpHandler
+public class Mystic_Abstract : MonoBehaviour,IPointerDownHandler, IPointerUpHandler
 {
-    protected int Level = 1;
+    public GameObject MysticCrystal;
 
-    protected ScoreManager scoreManager;
-
-    public abstract void Init();
-    public abstract void Level_1();
-    public abstract void Level_2();
-    public abstract void Level_3();
-
-    void Start()
+    private void Start()
     {
-        scoreManager = FindObjectOfType<ScoreManager>();
-        Init();
+        Board.Instance.MysticDots[(int)transform.position.x, (int)transform.position.y] = this;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {    
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        Effect();
+        Destroy_Mystic();
     }
 
-    public virtual void Effect()
+    public void Destroy_Mystic()
     {
-        switch(Level)
-        {
-            case 1:
-                Level_1();
-                break;
-            case 2:
-                Level_2();
-                break;
-            case 3:
-                Level_3();
-                break;
-        }
-
-        Destroy_Mystic(gameObject);
-    }
-
-    private void Destroy_Mystic(GameObject Mystic)
-    {
-        Board.DestroyMystic(Mystic.transform);
+        Instantiate(MysticCrystal, transform.position + Vector3.up * 0.2f, Quaternion.identity);
+        Board.Destroy_DecreaseRow(transform);
     }
 
     private void OnDestroy()
     {
-       Board.Instance.MysticDots[(int)transform.position.x, (int)transform.position.y] = null;
+        Board.Instance.MysticDots[(int)transform.position.x, (int)transform.position.y] = null;
     }
+
+  
 }

@@ -66,7 +66,7 @@ public abstract class Obstruction_Abstract : MonoBehaviour
 
     private void Destroy_Obj()
     {
-        Board.DestroyObstruction(transform);
+        Board.Destroy_DecreaseRow(transform);
     }
 
     private void OnDestroy()

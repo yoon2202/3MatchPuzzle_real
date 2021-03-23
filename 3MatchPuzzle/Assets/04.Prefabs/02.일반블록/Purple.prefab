@@ -112,34 +112,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 189202a83c9c5784ab4f29fe35784a61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  column: 0
-  row: 0
+  column: -1
+  row: -1
   otherDot: {fileID: 0}
   swipeAngle: 0
   swipeResist: 1
-  specialBlock: 0
-  obstructionblock: 0
-  isColumnBomb: 0
-  isRowBomb: 0
-  isSlingShot: 0
-  SlingShotTarget: {fileID: 570968254, guid: 22e00984d771b424189ac4ecf5acadbf, type: 3}
-  isAxe: 0
-  isAcornBoom: 0
-  diagonalArrow: {fileID: 2340711928377865172, guid: 2cd5a8331d90eb7498f5a46cee61ca48,
-    type: 3}
-  CrossArrow: {fileID: 2419755647465323094, guid: a2ddfcdcb196c5a419731c3065ece5b3,
-    type: 3}
   isAcorn: 0
-  isAcornTree: 0
-  isStalkTree: 0
-  StalkTree_obj: {fileID: 659559161979808875, guid: 4e5a431dcf046c04d94590eb6290a78a,
-    type: 3}
-  isSpreader: 0
-  isBird: 0
-  SpecialImg:
-  - {fileID: 21300000, guid: 338165b9410c1de4d9264f9ccf77150d, type: 3}
-  - {fileID: 21300000, guid: a419ffa113e461f4a9197aa1c8f3caf6, type: 3}
-  Obstruction: []
 --- !u!95 &1532554760
 Animator:
   serializedVersion: 3
