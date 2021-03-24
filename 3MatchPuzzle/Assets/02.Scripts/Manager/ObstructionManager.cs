@@ -140,7 +140,7 @@ public class ObstructionManager : MonoBehaviour
             int RandomXPick = Random.Range(0, currentdots.GetLength(0));
             int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
-            if (currentdots[RandomXPick, RandomYPick] != null) // 1. 해당 블록의 존재 유무 판단.
+            if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].b_IsTargeted == false) // 1. 해당 블록의 존재 유무 판단.
             {
                 if (Countnum == ObstructionBlock.Count)
                     Countnum = 0;

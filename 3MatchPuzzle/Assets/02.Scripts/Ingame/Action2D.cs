@@ -34,6 +34,7 @@ public static class Action2D
             }
             target_Dot.column = (int)to.x;
             target_Dot.row = (int)to.y;
+
         }
 
         target.transform.position = to;

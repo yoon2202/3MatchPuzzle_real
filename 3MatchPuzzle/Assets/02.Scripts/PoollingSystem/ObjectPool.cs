@@ -55,6 +55,9 @@ public class ObjectPool : MonoBehaviour
     public static void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
+        obj.transform.SetParent(Instance.transform);
+        obj.transform.localPosition = Vector3.zero;
+
         Instance.TempStorage.Add(obj);
         Instance.ShuffleObject();
     }
@@ -68,9 +71,9 @@ public class ObjectPool : MonoBehaviour
             for (int i = 0; i < TempStorage.Count; i++)
             {
                 Instance.poolingObjectQueue.Enqueue(TempStorage[i]);
-                TempStorage[i].transform.SetParent(Instance.transform);
-                TempStorage[i].transform.localPosition = Vector3.zero;
             }
+
+            Debug.Log(TempStorage.Count);
             TempStorage.Clear();
         }
     }

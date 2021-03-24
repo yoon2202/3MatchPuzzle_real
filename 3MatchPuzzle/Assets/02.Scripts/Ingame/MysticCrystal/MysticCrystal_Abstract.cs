@@ -30,6 +30,8 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
         findMatches = FindObjectOfType<FindMatches>();
 
         target = TargetInit();
+        //Debug.Log(target.gameObject.name);
+        //Debug.Log(target.position.x + ",,," + target.position.y);
 
         if (target != null)
             StartCoroutine(Move_Function());
@@ -65,6 +67,8 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                     if (findMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]))
                         findMatches.currentMatches.Remove(currentdots[RandomXPick, RandomYPick]);
 
+                    currentdots[RandomXPick, RandomYPick].b_IsTargeted = true;
+
                     return currentdots[RandomXPick, RandomYPick].transform;
                 }
                 else if (obstructiondots[RandomXPick, RandomYPick] != null)
@@ -98,6 +102,7 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
             target.GetComponent<Obstruction_Abstract>().GetDamage(Damage);
         else
             target.GetComponent<Mystic_Abstract>().Destroy_Mystic();
+
 
         Board.Destroy_DecreaseRow(transform);
     }

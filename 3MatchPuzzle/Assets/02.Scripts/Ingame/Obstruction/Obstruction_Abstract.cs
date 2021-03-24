@@ -69,10 +69,10 @@ public abstract class Obstruction_Abstract : MonoBehaviour
         Board.Destroy_DecreaseRow(transform);
     }
 
-    private void OnDestroy()
-    {
-        Board.Instance.ObstructionDots[(int)transform.position.x, (int)transform.position.y] = null;
-        Board.Instance.Obstruction_Queue.Dequeue();
-    }
+    //private void OnDestroy()
+    //{
+    //    Board.Instance.ObstructionDots[(int)transform.position.x, (int)transform.position.y] = null;
+    //    Board.Instance.Obstruction_Queue.Dequeue();
+    //}
 
 }

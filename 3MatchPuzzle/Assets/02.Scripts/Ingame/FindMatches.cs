@@ -98,7 +98,7 @@ public class FindMatches : MonoBehaviour
                         Dot leftDot = board.allDots[i - 1, j];
                         Dot rightDot = board.allDots[i + 1, j];
 
-                        if (leftDot != null && rightDot != null)
+                        if (leftDot != null && rightDot != null && leftDot.b_IsTargeted == false && rightDot.b_IsTargeted == false)
                         {
                                 if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
                                 {
@@ -111,7 +111,8 @@ public class FindMatches : MonoBehaviour
                     {
                         Dot upDot = board.allDots[i, j + 1];
                         Dot downDot = board.allDots[i, j - 1];
-                        if (upDot != null && downDot != null)
+
+                        if (upDot != null && downDot != null && upDot.b_IsTargeted == false && downDot.b_IsTargeted == false)
                         {
                                 if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
                                 {

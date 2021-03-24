@@ -23,9 +23,10 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public float swipeAngle = 0;
     public float swipeResist = 1f;
 
-    [Header("Bool Type = 방해블록")]
     public bool isAcorn;
 
+    [HideInInspector]
+    public bool b_IsTargeted;
 
     void Start()
     {
@@ -139,8 +140,11 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void OnDisable()
     {
-        if((column == -1 || row == -1) == false)
+        if ((column == -1 || row == -1) == false)
+        {
             Board.Instance.allDots[column, row] = null;
+            b_IsTargeted = false;
+        }
     }
 
 }

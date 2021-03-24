@@ -27,10 +27,8 @@ public class Mystic_Abstract : MonoBehaviour,IPointerDownHandler, IPointerUpHand
         Board.Destroy_DecreaseRow(transform);
     }
 
-    private void OnDestroy()
-    {
-        Board.Instance.MysticDots[(int)transform.position.x, (int)transform.position.y] = null;
-    }
-
-  
+    //private void OnDestroy()
+    //{
+    //    Board.Instance.MysticDots[(int)transform.position.x, (int)transform.position.y] = null;
+    //} 
 }
