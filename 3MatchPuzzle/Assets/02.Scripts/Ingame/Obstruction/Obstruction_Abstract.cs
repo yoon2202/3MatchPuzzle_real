@@ -21,8 +21,6 @@ public abstract class Obstruction_Abstract : State
         obstructionManager = FindObjectOfType<ObstructionManager>();
         TimeLimit_UI = transform.GetChild(0).GetChild(0).GetComponent<Text>();
         Time_Current = Time_Limit;
-        Board.Instance.ObstructionDots[(int)transform.position.x, (int)transform.position.y] = this;
-        Board.Instance.Obstruction_Queue.Enqueue(this);
         Init();
 
 

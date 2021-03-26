@@ -146,7 +146,9 @@ public class ObstructionManager : MonoBehaviour
                     Countnum = 0;
 
                 currentdots[RandomXPick, RandomYPick].dotState = DotState.Targeted;
-                Instantiate(ObstructionBlock[Countnum], new Vector2(RandomXPick, RandomYPick), Quaternion.identity);
+                Obstruction_Abstract Obj = Instantiate(ObstructionBlock[Countnum], new Vector2(RandomXPick, RandomYPick), Quaternion.identity).GetComponent<Obstruction_Abstract>();
+                Board.Instance.ObstructionDots[RandomXPick, RandomYPick] = Obj;
+                Board.Instance.Obstruction_Queue.Enqueue(Obj);
                 ObjectPool.ReturnObject(currentdots[RandomXPick, RandomYPick].gameObject);
                 Countnum++;
                 return;

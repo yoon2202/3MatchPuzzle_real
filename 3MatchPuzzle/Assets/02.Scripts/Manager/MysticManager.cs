@@ -27,7 +27,9 @@ public class MysticManager : MonoBehaviour
             if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].dotState == DotState.Possible && FindMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]) == false)
             {
                 currentdots[RandomXPick, RandomYPick].dotState = DotState.Targeted;
-                Instantiate(MysticBlock[0], new Vector2(RandomXPick, RandomYPick), Quaternion.identity);
+              
+                Mystic_Abstract Obj = Instantiate(MysticBlock[0], new Vector2(RandomXPick, RandomYPick), Quaternion.identity).GetComponent<Mystic_Abstract>();
+                Board.Instance.MysticDots[RandomXPick, RandomYPick] = Obj;
                 ObjectPool.ReturnObject(currentdots[RandomXPick, RandomYPick].gameObject);
                 return;
             }

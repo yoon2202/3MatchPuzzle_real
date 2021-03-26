@@ -2472,7 +2472,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeList: {fileID: 11400000, guid: aa02272ae78d572448a98f99881a9996, type: 2}
-  currentMatches: []
 --- !u!1 &792724061
 GameObject:
   m_ObjectHideFlags: 0
@@ -2754,7 +2753,6 @@ GameObject:
   m_Component:
   - component: {fileID: 873381041}
   - component: {fileID: 873381040}
-  - component: {fileID: 873381042}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -2821,22 +2819,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &873381042
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 873381039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e17ac72714da39a4f8bd1ac30a306af0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hintDelay: 3
-  hintParticle: {fileID: 716558029247369938, guid: 052a35020e9f2c4469935c90c35939b0,
-    type: 3}
-  currentHint: {fileID: 0}
 --- !u!1 &874417657
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,11 +7,6 @@ public class Mystic_Abstract : State ,IPointerDownHandler, IPointerUpHandler
 {
     public GameObject MysticCrystal;
 
-    private void Start()
-    {
-        Board.Instance.MysticDots[(int)transform.position.x, (int)transform.position.y] = this;
-    }
-
     public void OnPointerDown(PointerEventData eventData)
     {
 

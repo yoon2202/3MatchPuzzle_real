@@ -9,7 +9,6 @@ public class Dot : State, IPointerDownHandler, IPointerUpHandler
     public int column = -1;
     public int row = -1;
 
-    private HintManager hintManager;
     private FindMatches findMatches;
     private GoalManager goalManager;
     private ObstructionManager obstructionManager;
@@ -28,7 +27,6 @@ public class Dot : State, IPointerDownHandler, IPointerUpHandler
     void Start()
     {
         goalManager = FindObjectOfType<GoalManager>();
-        hintManager = FindObjectOfType<HintManager>();
         findMatches = FindObjectOfType<FindMatches>();
         obstructionManager = FindObjectOfType<ObstructionManager>();
         board = FindObjectOfType<Board>();
@@ -37,9 +35,6 @@ public class Dot : State, IPointerDownHandler, IPointerUpHandler
 
     public void OnPointerDown(PointerEventData eventData) // 선택형 매치 판별
     {
-        if (hintManager != null)
-            hintManager.DestroyHint();
-
         if (board.currentState == GameState.move)
             firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
