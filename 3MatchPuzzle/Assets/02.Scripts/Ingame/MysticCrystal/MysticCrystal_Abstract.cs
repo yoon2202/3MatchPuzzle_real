@@ -21,17 +21,13 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
     public abstract void Level_3();
 
     protected ScoreManager scoreManager;
-    protected FindMatches findMatches;
     protected Transform target;
 
     void Start()
     {
         scoreManager = FindObjectOfType<ScoreManager>();
-        findMatches = FindObjectOfType<FindMatches>();
 
         target = TargetInit();
-        //Debug.Log(target.gameObject.name);
-        //Debug.Log(target.position.x + ",,," + target.position.y);
 
         if (target != null)
             StartCoroutine(Move_Function());
@@ -62,27 +58,24 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                 int RandomXPick = Random.Range(0, currentdots.GetLength(0));
                 int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
-                if (currentdots[RandomXPick, RandomYPick] != null && FindMatches.MovingDot.Contains(currentdots[RandomXPick, RandomYPick].transform) == false) // 해당 블록의 존재 유무 판단.
+                if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].dotState == DotState.Possible && FindMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]) == false) // 해당 블록의 존재 유무 판단.
                 {
-                    if (findMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]))
-                        findMatches.currentMatches.Remove(currentdots[RandomXPick, RandomYPick]);
-
-                    currentdots[RandomXPick, RandomYPick].b_IsTargeted = true;
-
+                    currentdots[RandomXPick, RandomYPick].dotState = DotState.Targeted;
                     return currentdots[RandomXPick, RandomYPick].transform;
                 }
-                else if (obstructiondots[RandomXPick, RandomYPick] != null && FindMatches.MovingDot.Contains(obstructiondots[RandomXPick, RandomYPick].transform) == false)
+                else if (obstructiondots[RandomXPick, RandomYPick] != null && obstructiondots[RandomXPick, RandomYPick].dotState == DotState.Possible)
                 {
+                    obstructiondots[RandomXPick, RandomYPick].dotState = DotState.Targeted;
                     return obstructiondots[RandomXPick, RandomYPick].transform;
                 }
-                else if(mystic_Abstracts[RandomXPick, RandomYPick] != null && FindMatches.MovingDot.Contains(mystic_Abstracts[RandomXPick, RandomYPick].transform) == false)
+                else if(mystic_Abstracts[RandomXPick, RandomYPick] != null && mystic_Abstracts[RandomXPick, RandomYPick].dotState == DotState.Possible)
                 {
+                    mystic_Abstracts[RandomXPick, RandomYPick].dotState = DotState.Targeted;
                     return mystic_Abstracts[RandomXPick, RandomYPick].transform;
                 }
                 i++;
             }
 
-            Debug.LogError("find_Block 횟수 초과");
         }
 
         return null;
@@ -97,14 +90,15 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
         else
         {
             if (target.GetComponent<Dot>() != null)
+            {
                 ObjectPool.ReturnObject(target.gameObject);
+                Board.Destroy_DecreaseRow(transform);
+            }
             else if (target.GetComponent<Obstruction_Abstract>() != null)
                 target.GetComponent<Obstruction_Abstract>().GetDamage(Damage);
             else
                 target.GetComponent<Mystic_Abstract>().Destroy_Mystic();
         }
-
-        Board.Destroy_DecreaseRow(transform);
     }
 
 

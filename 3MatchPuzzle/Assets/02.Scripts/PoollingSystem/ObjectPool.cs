@@ -9,6 +9,8 @@ public class ObjectPool : MonoBehaviour
     private Queue<GameObject> poolingObjectQueue = new Queue<GameObject>();
     private List<GameObject> TempStorage = new List<GameObject>();
 
+    private FindMatches findMatches;
+
     private void Awake()
     {
         Instance = this;
@@ -16,12 +18,8 @@ public class ObjectPool : MonoBehaviour
 
     private void Start()
     {
+        findMatches = FindObjectOfType<FindMatches>();
         Initialize(50);
-    }
-
-    public static void EnqueueObject(GameObject dot)
-    {
-        Instance.poolingObjectQueue.Enqueue(dot);
     }
 
     void Initialize(int count)
@@ -54,9 +52,15 @@ public class ObjectPool : MonoBehaviour
 
     public static void ReturnObject(GameObject obj)
     {
+        Dot obj_Dot = obj.GetComponent<Dot>();
+        Board.Instance.allDots[obj_Dot.column, obj_Dot.row] = null;
         obj.SetActive(false);
         obj.transform.SetParent(Instance.transform);
         obj.transform.localPosition = Vector3.zero;
+
+        obj_Dot.column = -1;
+        obj_Dot.row = -1;
+        obj_Dot.dotState = DotState.Possible;
 
         Instance.TempStorage.Add(obj);
         Instance.ShuffleObject();

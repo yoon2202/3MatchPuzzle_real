@@ -3,6 +3,11 @@ using UnityEngine.UI;
 
 #region 스테이지 관련 정보
 
+public enum DotState
+{
+    Possible, Targeted, Moving
+}
+
 public enum GameType
 {
     Odd, Even, Boss

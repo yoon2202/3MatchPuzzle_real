@@ -47,7 +47,8 @@ public class Board : MonoBehaviour
 
     public Dot currentDot;
 
-    Coroutine[] DecreaseRowArray = new Coroutine[9];
+    [HideInInspector]
+    public Coroutine[] DecreaseRowArray = new Coroutine[9]; 
 
     private FindMatches findMatches;
     private SoundManager soundManager;
@@ -273,18 +274,20 @@ public class Board : MonoBehaviour
     {
         List<int> columnList = new List<int>();
 
-        for (int i = 0; i < findMatches.currentMatches.Count; i++)
+        while(FindMatches.currentMatches.Count > 0)
         {
-            var column = findMatches.currentMatches[i].column;
-            var row = findMatches.currentMatches[i].row;
+            Dot dot = FindMatches.currentMatches.Dequeue();
 
-            if (findMatches.currentMatches[i] != null && findMatches.currentMatches[i].b_IsTargeted == false)
+            var column = dot.column;
+            var row = dot.row;
+
+            if (dot != null && dot.dotState == DotState.Possible)
             {
                 DamageConcrete(column, row);  // 여기 콘크리트 타일 데미지 입힌다.
                 DamageAcorn(column, row); //여기에 도토리 타일 데미지 입히면된다.
 
-                DestroyEffectPool.GetObject(column, row, findMatches.currentMatches[i].gameObject);
-                ObjectPool.ReturnObject(findMatches.currentMatches[i].gameObject);
+                DestroyEffectPool.GetObject(column, row, dot.gameObject);
+                ObjectPool.ReturnObject(dot.gameObject);
 
                 if (goalManager != null)
                 {
@@ -295,9 +298,9 @@ public class Board : MonoBehaviour
                 columnList.Add(column);
             }
         }
+        //findMatches.currentMatches.Clear();
 
         columnList = columnList.Distinct().ToList();
-        findMatches.currentMatches.Clear();
 
         foreach (int i in columnList)
         {
@@ -310,11 +313,14 @@ public class Board : MonoBehaviour
             DecreaseRowArray[i] = StartCoroutine(DecreaseRowCo(i)); // 행 내리기
         }
 
+        //yield return new WaitForSeconds(0.1f);
     }
 
     private IEnumerator DecreaseRowCo(int i) // 행을 밑으로 내리는 함수
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.15f);
+
+        List<State> dot = new List<State>();
 
         for (int j = 0; j < height; j++)
         {
@@ -325,31 +331,47 @@ public class Board : MonoBehaviour
                     if (allDots[i, k] != null)
                     {
 
-                        if (allDots[i, k].b_IsTargeted)
+                        if (allDots[i, k].dotState == DotState.Targeted)
                         {
-                            yield return new WaitUntil(() => allDots[i, k].b_IsTargeted == false);
+                            yield return new WaitUntil(() => allDots[i, k].dotState != DotState.Targeted);
                             break;
                         }
 
                         StartCoroutine(Action2D.MoveTo(allDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
                         allDots[i, j] = allDots[i, k];
                         allDots[i, k] = null;
+                        dot.Add(allDots[i, j]);
                         yield return null;
                         break;
                     }
                     else if (ObstructionDots[i, k] != null)
                     {
+                        if (ObstructionDots[i, k].dotState == DotState.Targeted)
+                        {
+                            yield return new WaitUntil(() => ObstructionDots[i, k].dotState != DotState.Targeted);
+                            break;
+                        }
+
                         StartCoroutine(Action2D.MoveTo(ObstructionDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
                         ObstructionDots[i, j] = ObstructionDots[i, k];
                         ObstructionDots[i, k] = null;
+                        dot.Add(ObstructionDots[i, j]);
+                     
                         yield return null;
                         break;
                     }
                     else if (MysticDots[i, k] != null)
                     {
+                        if (MysticDots[i, k].dotState == DotState.Targeted)
+                        {
+                            yield return new WaitUntil(() => MysticDots[i, k].dotState != DotState.Targeted);
+                            break;
+                        }
+
                         StartCoroutine(Action2D.MoveTo(MysticDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
                         MysticDots[i, j] = MysticDots[i, k];
                         MysticDots[i, k] = null;
+                        dot.Add(MysticDots[i, j]);
                         yield return null;
                         break;
                     }
@@ -357,9 +379,9 @@ public class Board : MonoBehaviour
             }
         }
 
-        yield return new WaitForSeconds(0.1f);
-
         var Delay = new WaitForSeconds(0.15f);
+
+        yield return Delay;
 
         for (int j = 0; j < height; j++)
         {
@@ -373,27 +395,29 @@ public class Board : MonoBehaviour
             }
         }
 
-        Instance.DecreaseRowArray[i] = null;
+        DecreaseRowArray[i] = null;
+        yield return new WaitUntil(() => dot.Where(x => x.dotState == DotState.Moving).Count() == 0);
 
         StartCoroutine(FillBoardCo());
     }
 
-    private IEnumerator FillBoardCo() // 보드 리필함수 -> 매치 확인 함수 -> 데드락 확인 함수 관려 코루틴
+    private IEnumerator FillBoardCo() // 보드 리필함수 -> 매치 확인 함수
     {
-        yield return StartCoroutine(findMatches.FindAllMatchesCo());
+        if (findMatches.FindAllMatche != null)
+        {
+            findMatches.StopCoroutine(findMatches.FindAllMatche);
+            Debug.Log("Find match 코루틴 정지");
+        }
 
-        if (findMatches.currentMatches.Count > 0)
+        yield return findMatches.FindAllMatche = findMatches.StartCoroutine(findMatches.FindAllMatchesCo());
+
+        if (FindMatches.currentMatches.Count > 0)
         {
             DestroyMatches(false, false);
             yield break;
         }
 
         currentDot = null;
-
-        //if (IsDeadlocked())
-        //{
-        //    ShuffleBoard();
-        //}
 
         yield return new WaitForSeconds(refillDelay * 0.4f);
         b_matching = false;

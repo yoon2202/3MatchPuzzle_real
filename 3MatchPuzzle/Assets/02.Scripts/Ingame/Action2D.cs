@@ -6,17 +6,14 @@ public static class Action2D
 {
     public static IEnumerator MoveTo(Transform target, Vector3 to, float duration = 0.15f, bool IsSwap = false)
     {
-        FindMatches.MovingDot.Enqueue(target);
+        target.GetComponent<State>().dotState = DotState.Moving;
         Vector2 startPos = target.transform.position;
 
         float elapsed = 0.0f;
         while (elapsed < duration)
         {
             if (target == null)
-            {
-                FindMatches.MovingDot.Dequeue();
                 yield break;
-            }
 
             elapsed += Time.smoothDeltaTime;
             target.transform.position = Vector2.Lerp(startPos, to, elapsed / duration);
@@ -24,7 +21,9 @@ public static class Action2D
             yield return null;
         }
 
-        if(target.GetComponent<Dot>() == true)
+        target.transform.position = to;
+
+        if (target.GetComponent<Dot>() == true)
         {
             Dot target_Dot = target.GetComponent<Dot>();
 
@@ -37,8 +36,7 @@ public static class Action2D
 
         }
 
-        target.transform.position = to;
-        FindMatches.MovingDot.Dequeue();
+        target.GetComponent<State>().dotState = DotState.Possible;
         yield return null;
     }
 

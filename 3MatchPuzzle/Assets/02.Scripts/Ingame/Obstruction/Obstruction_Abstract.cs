@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public abstract class Obstruction_Abstract : MonoBehaviour
+public abstract class Obstruction_Abstract : State
 {
     private Text TimeLimit_UI;
     [SerializeField]
@@ -45,6 +45,8 @@ public abstract class Obstruction_Abstract : MonoBehaviour
 
             yield return Timeruns;
         }
+
+        yield return new WaitUntil(() => dotState != DotState.Moving);
 
         Effect();
         yield return null;

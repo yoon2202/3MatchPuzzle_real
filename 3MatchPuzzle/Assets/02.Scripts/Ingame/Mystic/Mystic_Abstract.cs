@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Mystic_Abstract : MonoBehaviour,IPointerDownHandler, IPointerUpHandler
+public class Mystic_Abstract : State ,IPointerDownHandler, IPointerUpHandler
 {
     public GameObject MysticCrystal;
 
@@ -13,11 +13,15 @@ public class Mystic_Abstract : MonoBehaviour,IPointerDownHandler, IPointerUpHand
     }
 
     public void OnPointerDown(PointerEventData eventData)
-    {    
+    {
+
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (dotState != DotState.Possible)
+            return;
+
         Destroy_Mystic();
     }
 

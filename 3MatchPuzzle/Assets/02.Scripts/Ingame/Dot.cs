@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class Dot : State, IPointerDownHandler, IPointerUpHandler
 {
     [Header("현재 포지션 위치")]
     public int column = -1;
-    public int row = -1 ;
+    public int row = -1;
 
     private HintManager hintManager;
     private FindMatches findMatches;
@@ -24,9 +24,6 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public float swipeResist = 1f;
 
     public bool isAcorn;
-
-    [HideInInspector]
-    public bool b_IsTargeted;
 
     void Start()
     {
@@ -101,7 +98,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
 
-        if (otherDot != null)  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
+        if (otherDot != null && board.DecreaseRowArray[column + (int)direction.x] == null)  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
         {
             Vector2 otherDotPos = new Vector2(otherDot.column, otherDot.row);
             Vector2 CurrentDotPos = new Vector2(column, row);
@@ -116,12 +113,12 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         board.currentDot = this;
         board.StartCoroutine(Action2D.MoveTo(transform, otherDotPos, 0.15f, true));
         board.StartCoroutine(Action2D.MoveTo(otherDot.transform, CurrentDotPos, 0.15f));
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.1f);
         yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (otherDot != null)
         {
-            if (findMatches.currentMatches.Contains(this) == false && findMatches.currentMatches.Contains(otherDot) == false)
+            if (FindMatches.currentMatches.Contains(this) == false && FindMatches.currentMatches.Contains(otherDot) == false)
             {
                 board.StartCoroutine(Action2D.MoveTo(transform, CurrentDotPos, 0.15f, true));
                 board.StartCoroutine(Action2D.MoveTo(otherDot.transform, otherDotPos, 0.15f));
@@ -139,14 +136,14 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     #endregion
 
-    private void OnDisable()
-    {
-        if ((column == -1 || row == -1) == false)
-        {
-            Board.Instance.allDots[column, row] = null;
-            b_IsTargeted = false;
-        }
-    }
+    //private void OnDisable()
+    //{
+    //    if ((column == -1 || row == -1) == false)
+    //    {
+    //        Board.Instance.allDots[column, row] = null;
+    //        b_IsTargeted = false;
+    //    }
+    //}
 
 }
 

@@ -7,11 +7,13 @@ public class FindMatches : MonoBehaviour
 {
     private Board board;
     public ActiveList activeList;
-    public List<Dot> currentMatches = new List<Dot>();
-    public static Queue<Transform> MovingDot = new Queue<Transform>();
+    public static Queue<Dot> currentMatches = new Queue<Dot>();
+
+    [HideInInspector]
+    public Coroutine FindAllMatche;
+
     void Start()
     {
-
         board = FindObjectOfType<Board>();
     }
 
@@ -56,54 +58,36 @@ public class FindMatches : MonoBehaviour
         AddToListAndMatch(dot3);
     }
 
-    private void GetNearbyPieces(Dot dot1, Dot dot2, Dot dot3, Dot dot4)
-    {
-        AddToListAndMatch(dot1);
-        AddToListAndMatch(dot2);
-        AddToListAndMatch(dot3);
-        AddToListAndMatch(dot4);
-    }
 
     private void AddToListAndMatch(Dot dot)
     {
         if (!currentMatches.Contains(dot)) // Match된 Dot들을 리스트에 포함시킨다.
-            currentMatches.Add(dot);
+            currentMatches.Enqueue(dot);
     }
 
     public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
     {
         board.b_matching = true;
-
-        while (true)
-        {
-            if (MovingDot.Count > 0)
-            {
-                yield return null;
-            }
-            else
-            {
-                break;
-            }
-        }
+        yield return new WaitForSeconds(0.1f);
 
         for (int i = 0; i < board.width; i++)
         {
             for (int j = 0; j < board.height; j++)
             {
                 Dot currentDot = board.allDots[i, j];
-                if (currentDot != null)
+                if (currentDot != null && currentDot.dotState == DotState.Possible)
                 {
                     if (i > 0 && i < board.width - 1)  // 왼쪽 오른쪽 매치 확인
                     {
                         Dot leftDot = board.allDots[i - 1, j];
                         Dot rightDot = board.allDots[i + 1, j];
 
-                        if (leftDot != null && rightDot != null && leftDot.b_IsTargeted == false && rightDot.b_IsTargeted == false)
+                        if (leftDot != null && rightDot != null && leftDot.dotState == DotState.Possible && rightDot.dotState == DotState.Possible)
                         {
-                                if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
-                                {
-                                    GetNearbyPieces(leftDot, currentDot, rightDot);
-                                }
+                            if (leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) // 현재 매치가 된 상태, 여기서 특수효과블록들을 찾는다.
+                            {
+                                GetNearbyPieces(leftDot, currentDot, rightDot);
+                            }
                         }
                     }
 
@@ -112,29 +96,19 @@ public class FindMatches : MonoBehaviour
                         Dot upDot = board.allDots[i, j + 1];
                         Dot downDot = board.allDots[i, j - 1];
 
-                        if (upDot != null && downDot != null && upDot.b_IsTargeted == false && downDot.b_IsTargeted == false)
+                        if (upDot != null && downDot != null && upDot.dotState == DotState.Possible && downDot.dotState == DotState.Possible)
                         {
-                                if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
-                                {
-                                    GetNearbyPieces(upDot, currentDot, downDot);
-                                }
+                            if (upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) // 현재 매치가 된 상태
+                            {
+                                GetNearbyPieces(upDot, currentDot, downDot);
+                            }
                         }
                     }
                 }
             }
         }
+        yield return null;
 
-        //yield return new WaitForSeconds(0.03f);
-
-        //if(currentMatches.Count > 0)
-        //{
-        //    board.DestroyMatches(false, false);
-        //}
-        //else
-        //{
-        //    board.currentState = GameState.move;
-        //    board.currentDot = null;
-        //}
     }
 
 
