@@ -47,6 +47,7 @@ public class Board : MonoBehaviour
 
     public Dot currentDot;
 
+    Coroutine[] DecreaseRowArray = new Coroutine[9];
 
     private FindMatches findMatches;
     private SoundManager soundManager;
@@ -299,13 +300,21 @@ public class Board : MonoBehaviour
         findMatches.currentMatches.Clear();
 
         foreach (int i in columnList)
-            StartCoroutine(DecreaseRowCo(i)); // 행 내리기
+        {
+            if (DecreaseRowArray[i] != null)
+            {
+                StopCoroutine(DecreaseRowArray[i]);
+                Debug.Log("코루틴 정지");
+            }
+
+            DecreaseRowArray[i] = StartCoroutine(DecreaseRowCo(i)); // 행 내리기
+        }
+
     }
 
     private IEnumerator DecreaseRowCo(int i) // 행을 밑으로 내리는 함수
     {
-        //Debug.LogError("test2");
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.2f);
 
         for (int j = 0; j < height; j++)
         {
@@ -315,11 +324,14 @@ public class Board : MonoBehaviour
                 {
                     if (allDots[i, k] != null)
                     {
+
                         if (allDots[i, k].b_IsTargeted)
                         {
-                            yield break;
+                            yield return new WaitUntil(() => allDots[i, k].b_IsTargeted == false);
+                            break;
                         }
-                        StartCoroutine(Action2D.MoveTo(allDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j]));
+
+                        StartCoroutine(Action2D.MoveTo(allDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
                         allDots[i, j] = allDots[i, k];
                         allDots[i, k] = null;
                         yield return null;
@@ -327,7 +339,7 @@ public class Board : MonoBehaviour
                     }
                     else if (ObstructionDots[i, k] != null)
                     {
-                        StartCoroutine(Action2D.MoveTo(ObstructionDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j]));
+                        StartCoroutine(Action2D.MoveTo(ObstructionDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
                         ObstructionDots[i, j] = ObstructionDots[i, k];
                         ObstructionDots[i, k] = null;
                         yield return null;
@@ -335,7 +347,7 @@ public class Board : MonoBehaviour
                     }
                     else if (MysticDots[i, k] != null)
                     {
-                        StartCoroutine(Action2D.MoveTo(MysticDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j]));
+                        StartCoroutine(Action2D.MoveTo(MysticDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
                         MysticDots[i, j] = MysticDots[i, k];
                         MysticDots[i, k] = null;
                         yield return null;
@@ -345,7 +357,25 @@ public class Board : MonoBehaviour
             }
         }
 
-        StartCoroutine(Refiilheight(i));
+        yield return new WaitForSeconds(0.1f);
+
+        var Delay = new WaitForSeconds(0.15f);
+
+        for (int j = 0; j < height; j++)
+        {
+
+            if (allDots[i, j] == null && !blankSpaces[i, j] && !ObstructionDots[i, j] && !MysticDots[i, j])
+            {
+                GameObject piece = ObjectPool.GetObject(i, j, offSet);
+                allDots[i, j] = piece.GetComponent<Dot>();
+                StartCoroutine(Action2D.MoveTo(allDots[i, j].transform, new Vector2(i, j), dropSpeed[offSet - j] * 1.5f));
+                yield return Delay;
+            }
+        }
+
+        Instance.DecreaseRowArray[i] = null;
+
+        StartCoroutine(FillBoardCo());
     }
 
     private IEnumerator FillBoardCo() // 보드 리필함수 -> 매치 확인 함수 -> 데드락 확인 함수 관려 코루틴
@@ -370,28 +400,6 @@ public class Board : MonoBehaviour
         currentState = GameState.move;
     }
 
-    IEnumerator Refiilheight(int i)
-    {
-        yield return new WaitForSeconds(0.1f);
-
-        var Delay = new WaitForSeconds(0.1f);
-
-        for (int j = 0; j < height; j++)
-        {
-
-            if (allDots[i, j] == null && !blankSpaces[i, j] && !ObstructionDots[i, j] && !MysticDots[i, j])
-            {
-                GameObject piece = ObjectPool.GetObject(i, j, offSet);
-                allDots[i, j] = piece.GetComponent<Dot>();
-                StartCoroutine(Action2D.MoveTo(allDots[i, j].transform, new Vector2(i, j), dropSpeed[offSet - j]));
-                yield return Delay;
-            }
-        }
-
-        StartCoroutine(FillBoardCo());
-    }
-
-
     public static void SetChangeDotArray(Dot CurrentDot, Vector2 OtherDot)
     {
         Dot temp_obj = Instance.allDots[(int)OtherDot.x, (int)OtherDot.y];
@@ -400,19 +408,26 @@ public class Board : MonoBehaviour
     }
 
     public static void Destroy_DecreaseRow(Transform Block)
-    {   
-        if(Block.GetComponent<Obstruction_Abstract>())
+    {
+        if (Instance.DecreaseRowArray[(int)Block.position.x] != null)
+        {
+            Instance.StopCoroutine(Instance.DecreaseRowArray[(int)Block.position.x]);
+            Debug.Log("코루틴 정지");
+        }
+
+        if (Block.GetComponent<Obstruction_Abstract>())
         {
             Instance.ObstructionDots[(int)Block.position.x, (int)Block.position.y] = null;
             Instance.Obstruction_Queue.Dequeue();
         }
-        else if(Block.GetComponent<Mystic_Abstract>())
+        else if (Block.GetComponent<Mystic_Abstract>())
         {
             Instance.MysticDots[(int)Block.position.x, (int)Block.position.y] = null;
         }
 
+        Instance.DecreaseRowArray[(int)Block.position.x] = Instance.StartCoroutine(Instance.DecreaseRowCo((int)Block.position.x));
+
         Destroy(Block.gameObject);
-        Instance.StartCoroutine(Instance.DecreaseRowCo((int)Block.position.x));
     }
 
     #region 데드락 함수 모음

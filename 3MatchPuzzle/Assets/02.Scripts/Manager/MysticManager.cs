@@ -24,7 +24,7 @@ public class MysticManager : MonoBehaviour
             int RandomXPick = Random.Range(0, currentdots.GetLength(0));
             int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
-            if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].b_IsTargeted == false) // 1. 해당 블록의 존재 유무 판단.
+            if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].b_IsTargeted == false && FindMatches.MovingDot.Contains(currentdots[RandomXPick, RandomYPick].transform) == false ) // 1. 해당 블록의 존재 유무 판단.
             {
                 ObjectPool.ReturnObject(currentdots[RandomXPick, RandomYPick].gameObject);
                 Instantiate(MysticBlock[0], new Vector2(RandomXPick, RandomYPick), Quaternion.identity);

@@ -131,6 +131,7 @@ public class Dot : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             }
             else
             {
+                yield return new WaitForSeconds(0.1f);
                 board.DestroyMatches(true, true);
             }
         }

@@ -62,7 +62,7 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                 int RandomXPick = Random.Range(0, currentdots.GetLength(0));
                 int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
-                if (currentdots[RandomXPick, RandomYPick] != null) // 해당 블록의 존재 유무 판단.
+                if (currentdots[RandomXPick, RandomYPick] != null && FindMatches.MovingDot.Contains(currentdots[RandomXPick, RandomYPick].transform) == false) // 해당 블록의 존재 유무 판단.
                 {
                     if (findMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]))
                         findMatches.currentMatches.Remove(currentdots[RandomXPick, RandomYPick]);
@@ -71,11 +71,11 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
 
                     return currentdots[RandomXPick, RandomYPick].transform;
                 }
-                else if (obstructiondots[RandomXPick, RandomYPick] != null)
+                else if (obstructiondots[RandomXPick, RandomYPick] != null && FindMatches.MovingDot.Contains(obstructiondots[RandomXPick, RandomYPick].transform) == false)
                 {
                     return obstructiondots[RandomXPick, RandomYPick].transform;
                 }
-                else if(mystic_Abstracts[RandomXPick, RandomYPick] != null)
+                else if(mystic_Abstracts[RandomXPick, RandomYPick] != null && FindMatches.MovingDot.Contains(mystic_Abstracts[RandomXPick, RandomYPick].transform) == false)
                 {
                     return mystic_Abstracts[RandomXPick, RandomYPick].transform;
                 }
@@ -90,19 +90,19 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
 
     private void destroy_block()
     {
-        if(target == null)
+        if (target == null)
         {
             Debug.LogError("destroy_block 오류");
-            return;
         }
-
-        if (target.GetComponent<Dot>() != null)
-            ObjectPool.ReturnObject(target.gameObject);
-        else if (target.GetComponent<Obstruction_Abstract>() != null)
-            target.GetComponent<Obstruction_Abstract>().GetDamage(Damage);
         else
-            target.GetComponent<Mystic_Abstract>().Destroy_Mystic();
-
+        {
+            if (target.GetComponent<Dot>() != null)
+                ObjectPool.ReturnObject(target.gameObject);
+            else if (target.GetComponent<Obstruction_Abstract>() != null)
+                target.GetComponent<Obstruction_Abstract>().GetDamage(Damage);
+            else
+                target.GetComponent<Mystic_Abstract>().Destroy_Mystic();
+        }
 
         Board.Destroy_DecreaseRow(transform);
     }

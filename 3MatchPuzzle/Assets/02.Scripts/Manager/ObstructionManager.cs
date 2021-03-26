@@ -20,7 +20,7 @@ public class ObstructionManager : MonoBehaviour
         }
     }
 
-    private float timer_Max = 5;
+    private float timer_Max = 2;
     private float timer_Current;
 
     #region 더스트
@@ -140,7 +140,7 @@ public class ObstructionManager : MonoBehaviour
             int RandomXPick = Random.Range(0, currentdots.GetLength(0));
             int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
-            if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].b_IsTargeted == false) // 1. 해당 블록의 존재 유무 판단.
+            if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].b_IsTargeted == false && FindMatches.MovingDot.Contains(currentdots[RandomXPick, RandomYPick].transform) == false ) // 1. 해당 블록의 존재 유무 판단.
             {
                 if (Countnum == ObstructionBlock.Count)
                     Countnum = 0;
