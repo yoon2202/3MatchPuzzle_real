@@ -140,6 +140,9 @@ public class ObstructionManager : MonoBehaviour
             int RandomXPick = Random.Range(0, currentdots.GetLength(0));
             int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
+            if (Board.Instance.DecreaseRowArray[RandomXPick] != null)
+                continue;
+
             if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].dotState == DotState.Possible && FindMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]) == false)
             {
                 if (Countnum == ObstructionBlock.Count)

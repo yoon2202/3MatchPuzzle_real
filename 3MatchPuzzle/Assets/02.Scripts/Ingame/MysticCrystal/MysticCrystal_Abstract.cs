@@ -58,6 +58,9 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                 int RandomXPick = Random.Range(0, currentdots.GetLength(0));
                 int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
+                if (RandomXPick == (int)transform.position.x && RandomYPick == (int)transform.position.y || Board.Instance.DecreaseRowArray[RandomXPick] != null)
+                    continue;
+
                 if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].dotState == DotState.Possible && FindMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]) == false) // 해당 블록의 존재 유무 판단.
                 {
                     currentdots[RandomXPick, RandomYPick].dotState = DotState.Targeted;

@@ -16,7 +16,7 @@ public class Board : MonoBehaviour
     public int height = 9;
 
     [HideInInspector]
-    public int offSet = 9;
+    public int offSet = 11;
 
     [Header("블록 떨어지는 스피드")]
     public float[] dropSpeed;
@@ -334,7 +334,7 @@ public class Board : MonoBehaviour
                         if (allDots[i, k].dotState == DotState.Targeted)
                         {
                             yield return new WaitUntil(() => allDots[i, k].dotState != DotState.Targeted);
-                            break;
+                            yield break;
                         }
 
                         StartCoroutine(Action2D.MoveTo(allDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
@@ -379,7 +379,7 @@ public class Board : MonoBehaviour
             }
         }
 
-        var Delay = new WaitForSeconds(0.15f);
+        var Delay = new WaitForSeconds(0.13f);
 
         yield return Delay;
 
@@ -395,8 +395,9 @@ public class Board : MonoBehaviour
             }
         }
 
-        DecreaseRowArray[i] = null;
+
         yield return new WaitUntil(() => dot.Where(x => x.dotState == DotState.Moving).Count() == 0);
+        DecreaseRowArray[i] = null;
 
         StartCoroutine(FillBoardCo());
     }

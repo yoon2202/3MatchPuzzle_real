@@ -22,7 +22,7 @@ public class Mystic_Abstract : State ,IPointerDownHandler, IPointerUpHandler
 
     public void Destroy_Mystic()
     {
-        Instantiate(MysticCrystal, transform.position + Vector3.up * 0.2f, Quaternion.identity);
+        Instantiate(MysticCrystal, transform.position, Quaternion.identity);
         Board.Destroy_DecreaseRow(transform);
     }
 

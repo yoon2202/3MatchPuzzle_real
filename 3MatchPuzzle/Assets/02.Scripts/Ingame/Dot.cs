@@ -93,7 +93,7 @@ public class Dot : State, IPointerDownHandler, IPointerUpHandler
     {
         otherDot = board.allDots[column + (int)direction.x, row + (int)direction.y];
 
-        if (otherDot != null && board.DecreaseRowArray[column + (int)direction.x] == null)  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
+        if (otherDot != null && board.DecreaseRowArray[column + (int)direction.x] == null && otherDot.dotState == DotState.Possible)  // 여기에 이동불가 블록 추가하여 움직이지 못하게 판단.
         {
             Vector2 otherDotPos = new Vector2(otherDot.column, otherDot.row);
             Vector2 CurrentDotPos = new Vector2(column, row);
@@ -130,15 +130,6 @@ public class Dot : State, IPointerDownHandler, IPointerUpHandler
 
     }
     #endregion
-
-    //private void OnDisable()
-    //{
-    //    if ((column == -1 || row == -1) == false)
-    //    {
-    //        Board.Instance.allDots[column, row] = null;
-    //        b_IsTargeted = false;
-    //    }
-    //}
 
 }
 
