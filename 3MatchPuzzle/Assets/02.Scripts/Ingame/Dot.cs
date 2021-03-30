@@ -108,7 +108,7 @@ public class Dot : State, IPointerDownHandler, IPointerUpHandler
         board.currentDot = this;
         board.StartCoroutine(Action2D.MoveTo(transform, otherDotPos, 0.15f, true));
         board.StartCoroutine(Action2D.MoveTo(otherDot.transform, CurrentDotPos, 0.15f));
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.2f);
         yield return StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (otherDot != null)
@@ -123,7 +123,6 @@ public class Dot : State, IPointerDownHandler, IPointerUpHandler
             }
             else
             {
-                yield return new WaitForSeconds(0.1f);
                 board.DestroyMatches(true, true);
             }
         }

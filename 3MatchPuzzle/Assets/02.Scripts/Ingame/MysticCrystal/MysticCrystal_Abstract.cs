@@ -12,9 +12,10 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
     protected int Damage = 1;
 
     [SerializeField]
-    protected int Speed = 2;
+    protected GameObject EffectParticle;
 
-    //public GameObject EffectParticle;
+    [SerializeField]
+    protected int Speed = 2;
 
     public abstract void Level_1();
     public abstract void Level_2();
@@ -58,7 +59,7 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                 int RandomXPick = Random.Range(0, currentdots.GetLength(0));
                 int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
-                if (RandomXPick == (int)transform.position.x && RandomYPick == (int)transform.position.y || Board.Instance.DecreaseRowArray[RandomXPick] != null)
+                if ((RandomXPick == (int)transform.position.x && RandomYPick == (int)transform.position.y) || Board.Instance.DecreaseRowArray[RandomXPick] != null)
                     continue;
 
                 if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].dotState == DotState.Possible && FindMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]) == false) // 해당 블록의 존재 유무 판단.
@@ -124,7 +125,9 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
         }
 
         destroy_block();
-        //Instantiate(EffectParticle, transform.position, Quaternion.identity);
+
+        if(EffectParticle != null)
+            Instantiate(EffectParticle, transform.position, Quaternion.identity);
     }
 
     #region 베지어 곡선

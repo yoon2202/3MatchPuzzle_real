@@ -312,8 +312,6 @@ public class Board : MonoBehaviour
 
             DecreaseRowArray[i] = StartCoroutine(DecreaseRowCo(i)); // 행 내리기
         }
-
-        //yield return new WaitForSeconds(0.1f);
     }
 
     private IEnumerator DecreaseRowCo(int i) // 행을 밑으로 내리는 함수
@@ -331,10 +329,10 @@ public class Board : MonoBehaviour
                     if (allDots[i, k] != null)
                     {
 
-                        if (allDots[i, k].dotState == DotState.Targeted)
+                        if (allDots[i, k].dotState == DotState.Targeted || allDots[i, k].dotState == DotState.Moving)
                         {
-                            yield return new WaitUntil(() => allDots[i, k].dotState != DotState.Targeted);
-                            yield break;
+                            yield return new WaitUntil(() => allDots[i, k].dotState == DotState.Possible);
+                            yield return new WaitForSeconds(0.5f);
                         }
 
                         StartCoroutine(Action2D.MoveTo(allDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
@@ -397,20 +395,35 @@ public class Board : MonoBehaviour
 
 
         yield return new WaitUntil(() => dot.Where(x => x.dotState == DotState.Moving).Count() == 0);
+        yield return Delay;
+
+        yield return findMatches.StartCoroutine(findMatches.FindAllMatchesCo());
+
         DecreaseRowArray[i] = null;
 
-        StartCoroutine(FillBoardCo());
+        if (FindMatches.currentMatches.Count > 0)
+        {
+            DestroyMatches(false, false);
+            yield break;
+        }
+
+        currentDot = null;
+
+        yield return new WaitForSeconds(refillDelay * 0.4f);
+        b_matching = false;
+        currentState = GameState.move;
+
     }
 
     private IEnumerator FillBoardCo() // 보드 리필함수 -> 매치 확인 함수
     {
-        if (findMatches.FindAllMatche != null)
-        {
-            findMatches.StopCoroutine(findMatches.FindAllMatche);
-            Debug.Log("Find match 코루틴 정지");
-        }
-
-        yield return findMatches.FindAllMatche = findMatches.StartCoroutine(findMatches.FindAllMatchesCo());
+        //if (findMatches.FindAllMatche != null)
+        //{
+        //    findMatches.StopCoroutine(findMatches.FindAllMatche);
+        //    Debug.Log("Find match 코루틴 정지");
+        //}
+        //findMatches.FindAllMatche =
+        yield return findMatches.StartCoroutine(findMatches.FindAllMatchesCo());
 
         if (FindMatches.currentMatches.Count > 0)
         {
@@ -450,9 +463,10 @@ public class Board : MonoBehaviour
             Instance.MysticDots[(int)Block.position.x, (int)Block.position.y] = null;
         }
 
+        Destroy(Block.gameObject);
         Instance.DecreaseRowArray[(int)Block.position.x] = Instance.StartCoroutine(Instance.DecreaseRowCo((int)Block.position.x));
 
-        Destroy(Block.gameObject);
+
     }
 
     #region 데드락 함수 모음

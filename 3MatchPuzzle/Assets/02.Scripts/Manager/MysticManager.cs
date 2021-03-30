@@ -27,8 +27,9 @@ public class MysticManager : MonoBehaviour
             if (currentdots[RandomXPick, RandomYPick] != null && currentdots[RandomXPick, RandomYPick].dotState == DotState.Possible && FindMatches.currentMatches.Contains(currentdots[RandomXPick, RandomYPick]) == false)
             {
                 currentdots[RandomXPick, RandomYPick].dotState = DotState.Targeted;
-              
-                Mystic_Abstract Obj = Instantiate(MysticBlock[0], new Vector2(RandomXPick, RandomYPick), Quaternion.identity).GetComponent<Mystic_Abstract>();
+
+                var RandomNum = Random.Range(0, MysticBlock.Count);
+                Mystic_Abstract Obj = Instantiate(MysticBlock[RandomNum], new Vector2(RandomXPick, RandomYPick), Quaternion.identity).GetComponent<Mystic_Abstract>();
                 Board.Instance.MysticDots[RandomXPick, RandomYPick] = Obj;
                 ObjectPool.ReturnObject(currentdots[RandomXPick, RandomYPick].gameObject);
                 return;
@@ -37,18 +38,5 @@ public class MysticManager : MonoBehaviour
         }
         Debug.LogError("Mystic_Create 횟수 초과");
     }
-
-
-
-    //public void Createobj()
-    //{
-    //    Vector2 pos = ingameGetMission.gageUI_Icon.transform.position;
-    //    var GameObj = Instantiate(Obj);
-    //    GameObj.transform.position = pos;
-
-    //    Vector2 target = new Vector2(Random.Range(0, 9), Random.Range(0, 9));
-
-    //    BezierMove.Move_Function(GameObj.transform, GameObj.transform);
-    //}
 
 }

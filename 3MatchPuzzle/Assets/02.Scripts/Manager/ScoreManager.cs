@@ -15,7 +15,7 @@ public class ScoreManager : MonoBehaviour
     private int streakValue = 1;
 
 
-    public double GetScore(int Multiple = 1)
+    public double GetScore(float Multiple = 1)
     {
         return Math.Floor(BaseScore * Rate * Multiple);
     }
