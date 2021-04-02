@@ -124,6 +124,8 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                 break;
         }
 
+        yield return new WaitForSeconds(0.3f);
+
         destroy_block();
 
         if(EffectParticle != null)

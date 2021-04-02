@@ -54,6 +54,7 @@ public class Board : MonoBehaviour
     private SoundManager soundManager;
     private GoalManager goalManager;
     private ScoreManager scoreManager;
+    public MysticManager mysticManager;
 
     private float refillDelay = 1f;
 
@@ -87,6 +88,7 @@ public class Board : MonoBehaviour
         soundManager = FindObjectOfType<SoundManager>();
         findMatches = FindObjectOfType<FindMatches>();
         scoreManager = FindObjectOfType<ScoreManager>();
+        mysticManager = FindObjectOfType<MysticManager>();
 
         blankSpaces = new bool[width, height];
         concreteTiles = new BackGroundTile[width, height];
@@ -270,7 +272,7 @@ public class Board : MonoBehaviour
     }
     #endregion
 
-    public void DestroyMatches(bool isMove, bool Special)
+    public void DestroyMatches()
     {
         List<int> columnList = new List<int>();
 
@@ -289,7 +291,7 @@ public class Board : MonoBehaviour
                 DestroyEffectPool.GetObject(column, row, dot.gameObject);
                 ObjectPool.ReturnObject(dot.gameObject);
 
-                if (goalManager != null)
+                if (goalManager != null)    
                 {
                     goalManager.Update_CurrentGage(3);
                     goalManager.Update_CurrentScore((int)scoreManager.GetScore());
@@ -298,7 +300,6 @@ public class Board : MonoBehaviour
                 columnList.Add(column);
             }
         }
-        //findMatches.currentMatches.Clear();
 
         columnList = columnList.Distinct().ToList();
 
@@ -314,7 +315,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    private IEnumerator DecreaseRowCo(int i) // 행을 밑으로 내리는 함수
+    public IEnumerator DecreaseRowCo(int i) // 행을 밑으로 내리는 함수
     {
         yield return new WaitForSeconds(0.15f);
 
@@ -403,7 +404,7 @@ public class Board : MonoBehaviour
 
         if (FindMatches.currentMatches.Count > 0)
         {
-            DestroyMatches(false, false);
+            DestroyMatches();
             yield break;
         }
 
@@ -427,7 +428,7 @@ public class Board : MonoBehaviour
 
         if (FindMatches.currentMatches.Count > 0)
         {
-            DestroyMatches(false, false);
+            DestroyMatches();
             yield break;
         }
 
