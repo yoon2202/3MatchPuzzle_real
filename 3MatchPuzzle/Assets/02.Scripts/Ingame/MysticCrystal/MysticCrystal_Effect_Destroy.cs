@@ -6,7 +6,7 @@ public class MysticCrystal_Effect_Destroy : MonoBehaviour
 {
     void Start()
     {
-        Destroy(gameObject, 3.0f);
+        Destroy(gameObject, 1.5f);
     }
 
 }

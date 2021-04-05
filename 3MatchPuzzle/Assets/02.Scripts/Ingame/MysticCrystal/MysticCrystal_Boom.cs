@@ -12,7 +12,7 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
 
     public override void Level_1()
     {
-        Boom_Destroy(GetBoomDots_Lv1((int)transform.position.x, (int)transform.position.y));
+        StartCoroutine(Boom_Destroy(GetBoomDots_Lv1((int)transform.position.x, (int)transform.position.y)));
     }
 
     public override void Level_2()
@@ -23,9 +23,11 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
     {
     }
 
-    private void Boom_Destroy(Queue<State> blocks)
+    IEnumerator Boom_Destroy(Queue<State> blocks)
     {
-        //goalManager = FindObjectOfType<GoalManager>();
+        yield return new WaitForEndOfFrame();
+
+        goalManager = FindObjectOfType<GoalManager>();
 
         List<int> columnList = new List<int>();
 
@@ -35,6 +37,7 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
 
             if (dot != null && dot.dotState == DotState.Possible)
             {
+                dot.dotState = DotState.Targeted;
                 Instantiate(BoomParticle, dot.transform.position, Quaternion.identity);
 
                 if (dot.GetComponent<Dot>() != null)
@@ -48,11 +51,11 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
                     dot.GetComponent<Mystic_Abstract>().Destroy_Mystic();
 
 
-                //if (goalManager != null)
-                //{
-                //    goalManager.Update_CurrentGage(1);
-                //    goalManager.Update_CurrentScore((int)scoreManager.GetScore(0.4f));
-                //}
+                if (goalManager != null)
+                {
+                    goalManager.Update_CurrentGage(1);
+                    goalManager.Update_CurrentScore((int)scoreManager.GetScore(0.4f));
+                }
             }
         }
 
@@ -75,16 +78,22 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
     {
         Queue<State> dots = new Queue<State>();
 
-        //GetDot(column, row, dots);
-
-        if (0 < column) { GetDot(column - 1, row, dots); }
-        if (Board.Instance.width - 1 > column) { GetDot(column + 1, row, dots); }
-        if (Board.Instance.height - 1 > row) { GetDot(column, row + 1, dots); }
-        if (0 < row) { GetDot(column, row - 1, dots); }
-        if (0 < column && Board.Instance.height - 1 > row) { GetDot(column - 1, row + 1, dots); }
-        if (Board.Instance.width - 1 > column && Board.Instance.height - 1 > row) {GetDot(column + 1, row + 1, dots); }
-        if (0 < row && 0 < column) { GetDot(column - 1, row - 1, dots); }
-        if (0 < row && Board.Instance.width - 1 > column) { GetDot(column + 1, row - 1, dots); }
+        if (0 < column) 
+        { GetDot(column - 1, row, dots); }
+        if (Board.Instance.width - 1 > column) 
+        { GetDot(column + 1, row, dots); }
+        if (Board.Instance.height - 1 > row) 
+        { GetDot(column, row + 1, dots); }
+        if (0 < row) 
+        { GetDot(column, row - 1, dots); }
+        if (0 < column && Board.Instance.height - 1 > row) 
+        { GetDot(column - 1, row + 1, dots); }
+        if (Board.Instance.width - 1 > column && Board.Instance.height - 1 > row)
+        {GetDot(column + 1, row + 1, dots); }
+        if (0 < row && 0 < column) 
+        { GetDot(column - 1, row - 1, dots); }
+        if (0 < row && Board.Instance.width - 1 > column) 
+        { GetDot(column + 1, row - 1, dots); }
 
         return dots;
     }

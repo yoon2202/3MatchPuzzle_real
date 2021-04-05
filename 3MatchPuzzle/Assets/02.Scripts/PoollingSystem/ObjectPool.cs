@@ -9,8 +9,6 @@ public class ObjectPool : MonoBehaviour
     private Queue<GameObject> poolingObjectQueue = new Queue<GameObject>();
     private List<GameObject> TempStorage = new List<GameObject>();
 
-    private FindMatches findMatches;
-
     private void Awake()
     {
         Instance = this;
@@ -18,8 +16,7 @@ public class ObjectPool : MonoBehaviour
 
     private void Start()
     {
-        findMatches = FindObjectOfType<FindMatches>();
-        Initialize(100);
+        Initialize(300);
     }
 
     void Initialize(int count)
@@ -69,7 +66,6 @@ public class ObjectPool : MonoBehaviour
     {
         if (TempStorage.Count > 30)
         {
-            ShuffleList(TempStorage);
             ShuffleList(TempStorage);
 
             for (int i = 0; i < TempStorage.Count; i++)

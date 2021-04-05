@@ -56,6 +56,8 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
 
             while (i < 10)
             {
+                i++;
+
                 int RandomXPick = Random.Range(0, currentdots.GetLength(0));
                 int RandomYPick = Random.Range(0, currentdots.GetLength(1));
 
@@ -77,8 +79,6 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                     mystic_Abstracts[RandomXPick, RandomYPick].dotState = DotState.Targeted;
                     return mystic_Abstracts[RandomXPick, RandomYPick].transform;
                 }
-
-                i++;
             }
         }
 
