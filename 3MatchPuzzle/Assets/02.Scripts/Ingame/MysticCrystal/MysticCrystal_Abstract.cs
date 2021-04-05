@@ -77,9 +77,9 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                     mystic_Abstracts[RandomXPick, RandomYPick].dotState = DotState.Targeted;
                     return mystic_Abstracts[RandomXPick, RandomYPick].transform;
                 }
+
                 i++;
             }
-
         }
 
         return null;
@@ -100,7 +100,7 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
             }
             else if (target.GetComponent<Obstruction_Abstract>() != null)
                 target.GetComponent<Obstruction_Abstract>().GetDamage(Damage);
-            else
+            else if(target.GetComponent<Mystic_Abstract>() != null)
                 target.GetComponent<Mystic_Abstract>().Destroy_Mystic();
         }
     }
@@ -153,6 +153,7 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
             t += Time.deltaTime * Speed;
             yield return null;
         }
+
         if(target != null)
             transform.position = target.position;
 

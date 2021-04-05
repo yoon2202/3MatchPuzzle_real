@@ -1096,10 +1096,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Obj: {fileID: 0}
   MysticBlock:
-  - {fileID: 972143507884695446, guid: bed872a63eff2fe43a162b73ffc950e8, type: 3}
-  - {fileID: 1058850364909779242, guid: e52a820e53ff801499b0cde999b31542, type: 3}
   - {fileID: 1058850364909779242, guid: 737eaea53693cfe45bfe2a2ef9fbf1ae, type: 3}
-  - {fileID: 8025682871770751325, guid: bce1a0b08d7d87d43836d31c2d4b0ab9, type: 3}
   Nomal_MysticBlock: {fileID: 4845855383188488582, guid: 9d77044fb3665ce4485c8856ec8a778d,
     type: 3}
 --- !u!1 &360351737

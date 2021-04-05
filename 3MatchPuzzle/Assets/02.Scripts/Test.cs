@@ -1,17 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Test : MonoBehaviour
 {
-    private int[,] it = new int[4, 4];
-    private List<int> Test23 = new List<int>();
+    private Queue<int> list = new Queue<int>();
 
     private void Start()
     {
-        it[0, 0] = 5;
-        it[1, 1] = 5;
-
+        //list.Enqueue(null);
         //StartCoroutine(Testtest());
     }
 

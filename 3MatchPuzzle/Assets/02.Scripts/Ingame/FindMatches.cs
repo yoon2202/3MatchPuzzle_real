@@ -67,6 +67,8 @@ public class FindMatches : MonoBehaviour
 
     public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.
     {
+        yield return new WaitForEndOfFrame();
+
         board.b_matching = true;
         //yield return new WaitForSeconds(0.1f);
 

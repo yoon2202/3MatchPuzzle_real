@@ -23,15 +23,15 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
     {
     }
 
-    private void Boom_Destroy(List<State> blocks)
+    private void Boom_Destroy(Queue<State> blocks)
     {
-        goalManager = FindObjectOfType<GoalManager>();
+        //goalManager = FindObjectOfType<GoalManager>();
 
         List<int> columnList = new List<int>();
 
-        for (int i = 0; i < blocks.Count; i++)
+        while (blocks.Count > 0)
         {
-            State dot = blocks[i];
+            State dot = blocks.Dequeue();
 
             if (dot != null && dot.dotState == DotState.Possible)
             {
@@ -44,15 +44,15 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
                 }
                 else if (dot.GetComponent<Obstruction_Abstract>() != null)
                     dot.GetComponent<Obstruction_Abstract>().GetDamage(Damage);
-                else if(dot.GetComponent<Mystic_Abstract>() != null)
+                else if (dot.GetComponent<Mystic_Abstract>() != null)
                     dot.GetComponent<Mystic_Abstract>().Destroy_Mystic();
 
 
-                if (goalManager != null)
-                {
-                    goalManager.Update_CurrentGage(1);
-                    goalManager.Update_CurrentScore((int)scoreManager.GetScore(0.4f));
-                }
+                //if (goalManager != null)
+                //{
+                //    goalManager.Update_CurrentGage(1);
+                //    goalManager.Update_CurrentScore((int)scoreManager.GetScore(0.4f));
+                //}
             }
         }
 
@@ -71,150 +71,38 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
     }
 
 
-    List<State> GetBoomDots_Lv1(int column, int row)
+    Queue<State> GetBoomDots_Lv1(int column, int row)
     {
-        List<State> dots = new List<State>();
+        Queue<State> dots = new Queue<State>();
 
-        if (Board.Instance.allDots[column, row] != null) // 중앙
-        {
-            dots.Add(Board.Instance.allDots[column, row]);
-        }
-        else if (Board.Instance.MysticDots[column, row] != null)
-        {
-            dots.Add(Board.Instance.MysticDots[column, row]);
-        }
-        else if (Board.Instance.ObstructionDots[column, row] != null)
-        {
-            dots.Add(Board.Instance.ObstructionDots[column, row]);
-        }
+        //GetDot(column, row, dots);
 
-        if (0 < column)
-        {
-            if (Board.Instance.allDots[column - 1, row] != null) //왼쪽
-            {
-                dots.Add(Board.Instance.allDots[column - 1, row]);
-            }
-            else if (Board.Instance.MysticDots[column - 1, row] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[column - 1, row]);
-            }
-            else if (Board.Instance.ObstructionDots[column - 1, row] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[column - 1, row]);
-            }
-        }
-
-        if (Board.Instance.width - 1 > column)
-        {
-            if (Board.Instance.allDots[column + 1, row] != null) //오른쪽
-            {
-                dots.Add(Board.Instance.allDots[column + 1, row]);
-            }
-            else if (Board.Instance.MysticDots[column + 1, row] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[column + 1, row]);
-            }
-            else if (Board.Instance.ObstructionDots[column + 1, row] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[column + 1, row]);
-            }
-        }
-        if (Board.Instance.height - 1 > row)
-        {
-            if (row + 1 < Board.Instance.width && Board.Instance.allDots[column, row + 1] != null) //위쪽
-            {
-                dots.Add(Board.Instance.allDots[column, row + 1]);
-            }
-            else if (Board.Instance.MysticDots[column, row + 1] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[column, row + 1]);
-            }
-            else if (Board.Instance.ObstructionDots[column, row + 1] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[column, row + 1]);
-            }
-        }
-
-        if (0 < row)
-        {
-            if (Board.Instance.allDots[column, row - 1] != null) //아래쪽
-            {
-                dots.Add(Board.Instance.allDots[column, row - 1]);
-            }
-            else if (Board.Instance.MysticDots[column, row - 1] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[column, row - 1]);
-            }
-            else if (Board.Instance.ObstructionDots[column, row - 1] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[column, row - 1]);
-            }
-        }
-
-        if (0 < column && Board.Instance.height - 1 > row)
-        {
-            if (Board.Instance.allDots[column - 1, row + 1] != null) // 왼쪽 위 대각선
-            {
-                dots.Add(Board.Instance.allDots[column - 1, row + 1]);
-            }
-            else if (Board.Instance.MysticDots[column - 1, row + 1] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[column - 1, row + 1]);
-            }
-            else if (Board.Instance.ObstructionDots[column - 1, row + 1] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[column - 1, row + 1]);
-            }
-        }
-
-        if (Board.Instance.width - 1 > column && Board.Instance.height - 1 > row)
-        {
-            if (Board.Instance.allDots[column + 1, row + 1] != null) //오른쪽 위 대각선
-            {
-                dots.Add(Board.Instance.allDots[column + 1, row + 1]);
-            }
-            else if (Board.Instance.MysticDots[column + 1, row + 1] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[column + 1, row + 1]);
-            }
-            else if (Board.Instance.ObstructionDots[column + 1, row + 1] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[column + 1, row + 1]);
-            }
-        }
-        if (0 < row && 0 < column)
-        {
-            if (Board.Instance.allDots[column - 1, row - 1] != null) //왼쪽 아래 대각선
-            {
-                dots.Add(Board.Instance.allDots[column - 1, row - 1]);
-            }
-            else if (Board.Instance.MysticDots[column -1, row - 1] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[column - 1, row - 1]);
-            }
-            else if (Board.Instance.ObstructionDots[column - 1, row - 1] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[column - 1, row - 1]);
-            }
-        }
-
-        if (0 < row && Board.Instance.width - 1 > column)
-        {
-            if (Board.Instance.allDots[column + 1, row - 1] != null) //오른쪽 아래 대각선
-            {
-                dots.Add(Board.Instance.allDots[column + 1, row - 1]);
-            }
-            else if (Board.Instance.MysticDots[column + 1, row - 1] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[column + 1, row - 1]);
-            }
-            else if (Board.Instance.ObstructionDots[column + 1, row - 1] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[column + 1, row - 1]);
-            }
-        }
+        if (0 < column) { GetDot(column - 1, row, dots); }
+        if (Board.Instance.width - 1 > column) { GetDot(column + 1, row, dots); }
+        if (Board.Instance.height - 1 > row) { GetDot(column, row + 1, dots); }
+        if (0 < row) { GetDot(column, row - 1, dots); }
+        if (0 < column && Board.Instance.height - 1 > row) { GetDot(column - 1, row + 1, dots); }
+        if (Board.Instance.width - 1 > column && Board.Instance.height - 1 > row) {GetDot(column + 1, row + 1, dots); }
+        if (0 < row && 0 < column) { GetDot(column - 1, row - 1, dots); }
+        if (0 < row && Board.Instance.width - 1 > column) { GetDot(column + 1, row - 1, dots); }
 
         return dots;
     }
 
+    void GetDot(int column, int row, Queue<State> dots)
+    {
+        if (Board.Instance.allDots[column, row] != null)
+        {
+            dots.Enqueue(Board.Instance.allDots[column, row]);
+        }
+        else if (Board.Instance.MysticDots[column, row] != null)
+        {
+            dots.Enqueue(Board.Instance.MysticDots[column, row]);
+        }
+        else if (Board.Instance.ObstructionDots[column, row] != null)
+        {
+            dots.Enqueue(Board.Instance.ObstructionDots[column, row]);
+        }
+
+    }
 }

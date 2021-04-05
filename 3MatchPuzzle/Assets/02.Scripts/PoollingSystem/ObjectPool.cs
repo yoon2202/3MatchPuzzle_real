@@ -19,7 +19,7 @@ public class ObjectPool : MonoBehaviour
     private void Start()
     {
         findMatches = FindObjectOfType<FindMatches>();
-        Initialize(50);
+        Initialize(100);
     }
 
     void Initialize(int count)
@@ -67,7 +67,7 @@ public class ObjectPool : MonoBehaviour
     }
     void ShuffleObject()
     {
-        if (TempStorage.Count > 20)
+        if (TempStorage.Count > 30)
         {
             ShuffleList(TempStorage);
             ShuffleList(TempStorage);

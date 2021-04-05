@@ -448,6 +448,9 @@ public class Board : MonoBehaviour
 
     public static void Destroy_DecreaseRow(Transform Block)
     {
+        if (Block == null)
+            return;
+
         if (Instance.DecreaseRowArray[(int)Block.position.x] != null)
         {
             Instance.StopCoroutine(Instance.DecreaseRowArray[(int)Block.position.x]);
