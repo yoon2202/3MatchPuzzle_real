@@ -123,7 +123,7 @@ public class Dot : State, IPointerDownHandler, IPointerUpHandler
             }
             else
             {
-                board.DestroyMatches();
+               board.DestroyMatches();
 
                 if(board.mysticManager.B_Support_shooting)
                     Instantiate(board.mysticManager.Nomal_MysticBlock, transform.position, Quaternion.identity);

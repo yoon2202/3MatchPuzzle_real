@@ -62,7 +62,9 @@ public class FindMatches : MonoBehaviour
     private void AddToListAndMatch(Dot dot)
     {
         if (!currentMatches.Contains(dot)) // Match된 Dot들을 리스트에 포함시킨다.
+        {
             currentMatches.Enqueue(dot);
+        }
     }
 
     public IEnumerator FindAllMatchesCo() // 매칭 조건에 맞는다면 currentMatches에 리스트 추가.

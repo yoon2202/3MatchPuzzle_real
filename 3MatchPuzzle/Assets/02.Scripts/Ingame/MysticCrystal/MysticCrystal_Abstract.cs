@@ -90,6 +90,7 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
         if (target == null)
         {
             Debug.LogError("destroy_block 오류");
+            Destroy(gameObject);
         }
         else
         {
@@ -99,9 +100,15 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                 Board.Destroy_DecreaseRow(transform);
             }
             else if (target.GetComponent<Obstruction_Abstract>() != null)
+            {
                 target.GetComponent<Obstruction_Abstract>().GetDamage(Damage);
-            else if(target.GetComponent<Mystic_Abstract>() != null)
+                Destroy(gameObject);
+            }
+            else if (target.GetComponent<Mystic_Abstract>() != null)
+            {
                 target.GetComponent<Mystic_Abstract>().Destroy_Mystic();
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -124,12 +131,15 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                 break;
         }
 
-        yield return new WaitForSeconds(0.3f);
+        yield return null;
+
+        if (EffectParticle != null)
+            Instantiate(EffectParticle, transform.position, Quaternion.identity);
+
+        yield return null;
 
         destroy_block();
 
-        if(EffectParticle != null)
-            Instantiate(EffectParticle, transform.position, Quaternion.identity);
     }
 
     #region 베지어 곡선

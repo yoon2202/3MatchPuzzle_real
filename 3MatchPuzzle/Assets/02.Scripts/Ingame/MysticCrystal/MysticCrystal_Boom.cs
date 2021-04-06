@@ -12,7 +12,7 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
 
     public override void Level_1()
     {
-        StartCoroutine(Boom_Destroy(GetBoomDots_Lv1((int)transform.position.x, (int)transform.position.y)));
+        StartCoroutine(Boom_Destroy());
     }
 
     public override void Level_2()
@@ -23,11 +23,13 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
     {
     }
 
-    IEnumerator Boom_Destroy(Queue<State> blocks)
+    IEnumerator Boom_Destroy()
     {
         yield return new WaitForEndOfFrame();
 
         goalManager = FindObjectOfType<GoalManager>();
+
+        Queue<State> blocks = GetBoomDots_Lv1((int)transform.position.x, (int)transform.position.y);
 
         List<int> columnList = new List<int>();
 
@@ -35,12 +37,12 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
         {
             State dot = blocks.Dequeue();
 
-            if (dot != null && dot.dotState == DotState.Possible)
+            if (dot != null)
             {
                 dot.dotState = DotState.Targeted;
                 Instantiate(BoomParticle, dot.transform.position, Quaternion.identity);
 
-                if (dot.GetComponent<Dot>() != null)
+                if (dot.GetComponent<Dot>() != null && dot.gameObject.activeSelf)
                 {
                     columnList.Add(dot.GetComponent<Dot>().column);
                     ObjectPool.ReturnObject(dot.gameObject);
@@ -100,15 +102,15 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
 
     void GetDot(int column, int row, Queue<State> dots)
     {
-        if (Board.Instance.allDots[column, row] != null)
+        if (Board.Instance.allDots[column, row] != null && Board.Instance.allDots[column, row].dotState == DotState.Possible)
         {
             dots.Enqueue(Board.Instance.allDots[column, row]);
         }
-        else if (Board.Instance.MysticDots[column, row] != null)
+        else if (Board.Instance.MysticDots[column, row] != null && Board.Instance.MysticDots[column, row].dotState == DotState.Possible)
         {
             dots.Enqueue(Board.Instance.MysticDots[column, row]);
         }
-        else if (Board.Instance.ObstructionDots[column, row] != null)
+        else if (Board.Instance.ObstructionDots[column, row] != null && Board.Instance.ObstructionDots[column, row].dotState == DotState.Possible)
         {
             dots.Enqueue(Board.Instance.ObstructionDots[column, row]);
         }

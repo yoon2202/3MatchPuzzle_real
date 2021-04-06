@@ -6,8 +6,6 @@ public static class Action2D
 {
     public static IEnumerator MoveTo(Transform target, Vector3 to, float duration = 0.15f, bool IsSwap = false)
     {
-        yield return new WaitForEndOfFrame();
-
         target.GetComponent<State>().dotState = DotState.Moving;
         Vector2 startPos = target.transform.position;
 

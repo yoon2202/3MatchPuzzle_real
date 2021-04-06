@@ -9,6 +9,8 @@ public class ObjectPool : MonoBehaviour
     private Queue<GameObject> poolingObjectQueue = new Queue<GameObject>();
     private List<GameObject> TempStorage = new List<GameObject>();
 
+    private bool B_IsSuffle;
+
     private void Awake()
     {
         Instance = this;
@@ -16,7 +18,8 @@ public class ObjectPool : MonoBehaviour
 
     private void Start()
     {
-        Initialize(300);
+        B_IsSuffle = false;
+        Initialize(500);
     }
 
     void Initialize(int count)
@@ -59,23 +62,27 @@ public class ObjectPool : MonoBehaviour
         obj_Dot.row = -1;
         obj_Dot.dotState = DotState.Possible;
 
-        Instance.TempStorage.Add(obj);
-        Instance.ShuffleObject();
+        //Instance.TempStorage.Add(obj);
+
+        //if (Instance.B_IsSuffle == false && Instance.TempStorage.Count > 30)
+        //    Instance.StartCoroutine(Instance.ShuffleObject());
     }
-    void ShuffleObject()
+
+    IEnumerator ShuffleObject()
     {
-        if (TempStorage.Count > 30)
+        B_IsSuffle = true;
+
+        ShuffleList(TempStorage);
+
+        for (int i = 0; i < TempStorage.Count; i++)
         {
-            ShuffleList(TempStorage);
-
-            for (int i = 0; i < TempStorage.Count; i++)
-            {
-                Instance.poolingObjectQueue.Enqueue(TempStorage[i]);
-            }
-
-            Debug.Log(TempStorage.Count);
-            TempStorage.Clear();
+            Instance.poolingObjectQueue.Enqueue(TempStorage[i]);
         }
+
+        TempStorage.Clear();
+
+        B_IsSuffle = false;
+        yield return null;
     }
 
     void ShuffleList<T>(List<T> list)
