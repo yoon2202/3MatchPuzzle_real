@@ -25,6 +25,7 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
 
     IEnumerator Boom_Destroy()
     {
+        b_Effectprogress = true;
         yield return new WaitForEndOfFrame();
 
         goalManager = FindObjectOfType<GoalManager>();
@@ -59,6 +60,8 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
                     goalManager.Update_CurrentScore((int)scoreManager.GetScore(0.4f));
                 }
             }
+
+            yield return null;
         }
 
         columnList = columnList.Distinct().ToList();
@@ -73,6 +76,8 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
 
             Board.Instance.DecreaseRowArray[i] = Board.Instance.StartCoroutine(Board.Instance.DecreaseRowCo(i)); // 행 내리기
         }
+
+        b_Effectprogress = false;
     }
 
 

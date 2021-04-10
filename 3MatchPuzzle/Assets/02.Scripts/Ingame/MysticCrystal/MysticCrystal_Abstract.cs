@@ -11,6 +11,8 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
 
     protected int Damage = 1;
 
+    protected bool b_Effectprogress;
+
     [SerializeField]
     protected GameObject EffectParticle;
 
@@ -117,7 +119,6 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
     {
         yield return StartCoroutine(Move_Function_Co());
 
-
         switch (Level)
         {
             case 1:
@@ -131,7 +132,7 @@ public abstract class MysticCrystal_Abstract : MonoBehaviour
                 break;
         }
 
-        yield return null;
+        yield return new WaitUntil(() => b_Effectprogress == false);
 
         if (EffectParticle != null)
             Instantiate(EffectParticle, transform.position, Quaternion.identity);

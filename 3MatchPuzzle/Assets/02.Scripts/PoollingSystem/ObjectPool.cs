@@ -19,7 +19,7 @@ public class ObjectPool : MonoBehaviour
     private void Start()
     {
         B_IsSuffle = false;
-        Initialize(500);
+        Initialize(100);
     }
 
     void Initialize(int count)
@@ -62,10 +62,10 @@ public class ObjectPool : MonoBehaviour
         obj_Dot.row = -1;
         obj_Dot.dotState = DotState.Possible;
 
-        //Instance.TempStorage.Add(obj);
+        Instance.TempStorage.Add(obj);
 
-        //if (Instance.B_IsSuffle == false && Instance.TempStorage.Count > 30)
-        //    Instance.StartCoroutine(Instance.ShuffleObject());
+        if (Instance.B_IsSuffle == false && Instance.TempStorage.Count > 30)
+            Instance.StartCoroutine(Instance.ShuffleObject());
     }
 
     IEnumerator ShuffleObject()
@@ -77,9 +77,11 @@ public class ObjectPool : MonoBehaviour
         for (int i = 0; i < TempStorage.Count; i++)
         {
             Instance.poolingObjectQueue.Enqueue(TempStorage[i]);
+            yield return null;
         }
 
         TempStorage.Clear();
+        Debug.Log("셔플");
 
         B_IsSuffle = false;
         yield return null;

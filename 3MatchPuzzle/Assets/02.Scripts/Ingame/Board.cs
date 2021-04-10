@@ -336,7 +336,7 @@ public class Board : MonoBehaviour
                             yield return new WaitUntil(() => allDots[i, k].dotState == DotState.Possible);
                         }
 
-                        StartCoroutine(Action2D.MoveTo(allDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
+                        StartCoroutine(Action2D.MoveTo(allDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 2f));
                         allDots[i, j] = allDots[i, k];
                         allDots[i, k] = null;
                         dot.Add(allDots[i, j]);
@@ -350,7 +350,7 @@ public class Board : MonoBehaviour
                             yield return new WaitUntil(() => ObstructionDots[i, k].dotState != DotState.Targeted);
                         }
 
-                        StartCoroutine(Action2D.MoveTo(ObstructionDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
+                        StartCoroutine(Action2D.MoveTo(ObstructionDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 2f));
                         ObstructionDots[i, j] = ObstructionDots[i, k];
                         ObstructionDots[i, k] = null;
                         dot.Add(ObstructionDots[i, j]);
@@ -365,7 +365,7 @@ public class Board : MonoBehaviour
                             yield return new WaitUntil(() => MysticDots[i, k].dotState != DotState.Targeted);
                         }
 
-                        StartCoroutine(Action2D.MoveTo(MysticDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 1.5f));
+                        StartCoroutine(Action2D.MoveTo(MysticDots[i, k].transform, new Vector2(i, j), dropSpeed[k - j] * 2f));
                         MysticDots[i, j] = MysticDots[i, k];
                         MysticDots[i, k] = null;
                         dot.Add(MysticDots[i, j]);
@@ -376,7 +376,7 @@ public class Board : MonoBehaviour
             }
         }
 
-        var Delay = new WaitForSeconds(0.13f);
+        var Delay = new WaitForSeconds(0.2f);
 
         yield return Delay;
 
@@ -387,7 +387,7 @@ public class Board : MonoBehaviour
             {
                 GameObject piece = ObjectPool.GetObject(i, j, offSet);
                 allDots[i, j] = piece.GetComponent<Dot>();
-                StartCoroutine(Action2D.MoveTo(allDots[i, j].transform, new Vector2(i, j), dropSpeed[offSet - j] * 1.5f));
+                StartCoroutine(Action2D.MoveTo(allDots[i, j].transform, new Vector2(i, j), dropSpeed[offSet - j] * 2f));
                 yield return Delay;
             }
         }

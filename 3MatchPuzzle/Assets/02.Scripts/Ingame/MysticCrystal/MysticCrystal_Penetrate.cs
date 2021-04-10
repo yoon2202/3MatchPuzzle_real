@@ -14,8 +14,7 @@ public class MysticCrystal_Penetrate : MysticCrystal_Abstract
 
     public override void Level_1()
     {
-
-        Penetrate_Destroy(GetPenetrateDots_Lv1((int)transform.position.y), (int)transform.position.y);
+        StartCoroutine(Penetrate_Destroy());
     }
 
     public override void Level_2()
@@ -26,8 +25,11 @@ public class MysticCrystal_Penetrate : MysticCrystal_Abstract
     {
     }
 
-    private void Penetrate_Destroy(List<State> blocks,int row)
+    IEnumerator Penetrate_Destroy()
     {
+        b_Effectprogress = true;
+        yield return new WaitForEndOfFrame();
+
         goalManager = FindObjectOfType<GoalManager>();
 
         Instantiate(PenetrateSkill, new Vector2(-1, row), Quaternion.identity);
