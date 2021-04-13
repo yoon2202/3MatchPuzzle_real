@@ -272,7 +272,7 @@ public class Board : MonoBehaviour
     }
     #endregion
 
-    public void DestroyMatches()
+    public IEnumerator DestroyMatches()
     {
         Debug.Log("DestroyMatches");
         List<int> columnList = new List<int>();
@@ -300,19 +300,22 @@ public class Board : MonoBehaviour
 
                 columnList.Add(column);
             }
+
+            yield return null;
         }
 
         columnList = columnList.Distinct().ToList();
 
-        foreach (int i in columnList)
+        for(int i = 0; i< columnList.Count; i++)
         {
-            if (DecreaseRowArray[i] != null)
+            if (DecreaseRowArray[columnList[i]] != null)
             {
-                StopCoroutine(DecreaseRowArray[i]);
+                StopCoroutine(DecreaseRowArray[columnList[i]]);
                 Debug.Log("코루틴 정지");
             }
 
-            DecreaseRowArray[i] = StartCoroutine(DecreaseRowCo(i)); // 행 내리기
+            DecreaseRowArray[columnList[i]] = StartCoroutine(DecreaseRowCo(columnList[i])); // 행 내리기
+            yield return null;
         }
     }
 
@@ -394,12 +397,11 @@ public class Board : MonoBehaviour
 
 
         yield return new WaitUntil(() => dot.Where(x => x.dotState == DotState.Moving).Count() == 0);
-        yield return Delay;
         yield return findMatches.StartCoroutine(findMatches.FindAllMatchesCo());
 
         DecreaseRowArray[i] = null;
 
-        DestroyMatches();
+        StartCoroutine(DestroyMatches());
 
         currentDot = null;
         yield return new WaitForSeconds(refillDelay * 0.4f);

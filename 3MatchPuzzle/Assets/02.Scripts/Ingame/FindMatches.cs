@@ -110,6 +110,7 @@ public class FindMatches : MonoBehaviour
                     }
                 }
             }
+            yield return null;
         }
         yield return null;
 

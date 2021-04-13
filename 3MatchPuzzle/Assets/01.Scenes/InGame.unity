@@ -1097,6 +1097,8 @@ MonoBehaviour:
   Obj: {fileID: 0}
   MysticBlock:
   - {fileID: 1058850364909779242, guid: 737eaea53693cfe45bfe2a2ef9fbf1ae, type: 3}
+  - {fileID: 8025682871770751325, guid: bce1a0b08d7d87d43836d31c2d4b0ab9, type: 3}
+  - {fileID: 7441079515957067645, guid: a9b3b9e2b20871d4ea4f3ac3a88a1581, type: 3}
   Nomal_MysticBlock: {fileID: 4845855383188488582, guid: 9d77044fb3665ce4485c8856ec8a778d,
     type: 3}
 --- !u!1 &360351737

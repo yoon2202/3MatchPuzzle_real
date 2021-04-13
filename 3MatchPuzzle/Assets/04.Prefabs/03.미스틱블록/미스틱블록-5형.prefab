@@ -112,5 +112,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dotState: 0
-  MysticCrystal: {fileID: 5539569916795216273, guid: ff9c4e2d678fa4f44ac3dfbffb7d9f8d,
+  MysticCrystal: {fileID: 6985866980046593930, guid: 5298f55159fca0b4b82eb6878afad0bb,
     type: 3}

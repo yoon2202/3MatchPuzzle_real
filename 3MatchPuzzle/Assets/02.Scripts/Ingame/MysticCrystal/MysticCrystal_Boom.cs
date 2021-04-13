@@ -30,7 +30,43 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
 
         goalManager = FindObjectOfType<GoalManager>();
 
-        Queue<State> blocks = GetBoomDots_Lv1((int)transform.position.x, (int)transform.position.y);
+        Queue<State> blocks = new Queue<State>();
+
+        var column = (int)transform.position.x;
+        var row = (int)transform.position.y;
+
+        if (0 < column)
+        { blocks.Enqueue(GetDot(column - 1, row)); }
+        yield return null;
+
+        if (Board.Instance.width - 1 > column)
+        { blocks.Enqueue(GetDot(column + 1, row)); }
+        yield return null;
+
+        if (Board.Instance.height - 1 > row)
+        { blocks.Enqueue(GetDot(column, row + 1)); }
+        yield return null;
+
+        if (0 < row)
+        { blocks.Enqueue(GetDot(column, row - 1)); }
+        yield return null;
+
+        if (0 < column && Board.Instance.height - 1 > row)
+        { blocks.Enqueue(GetDot(column - 1, row + 1)); }
+        yield return null;
+
+        if (Board.Instance.width - 1 > column && Board.Instance.height - 1 > row)
+        { blocks.Enqueue(GetDot(column + 1, row + 1)); }
+        yield return null;
+
+        if (0 < row && 0 < column)
+        { blocks.Enqueue(GetDot(column - 1, row - 1)); }
+        yield return null;
+
+        if (0 < row && Board.Instance.width - 1 > column)
+        { blocks.Enqueue(GetDot(column + 1, row - 1)); }
+        yield return null;
+
 
         List<int> columnList = new List<int>();
 
@@ -66,59 +102,62 @@ public class MysticCrystal_Boom : MysticCrystal_Abstract
 
         columnList = columnList.Distinct().ToList();
 
-        foreach (int i in columnList)
+        for (int i = 0; i < columnList.Count; i++)
         {
-            if (Board.Instance.DecreaseRowArray[i] != null)
+            if (Board.Instance.DecreaseRowArray[columnList[i]] != null)
             {
-                Board.Instance.StopCoroutine(Board.Instance.DecreaseRowArray[i]);
+                Board.Instance.StopCoroutine(Board.Instance.DecreaseRowArray[columnList[i]]);
                 Debug.Log("코루틴 정지");
             }
 
-            Board.Instance.DecreaseRowArray[i] = Board.Instance.StartCoroutine(Board.Instance.DecreaseRowCo(i)); // 행 내리기
+            Board.Instance.DecreaseRowArray[columnList[i]] = Board.Instance.StartCoroutine(Board.Instance.DecreaseRowCo(columnList[i])); // 행 내리기
+            yield return null;
         }
 
         b_Effectprogress = false;
     }
 
 
-    Queue<State> GetBoomDots_Lv1(int column, int row)
-    {
-        Queue<State> dots = new Queue<State>();
+    //Queue<State> GetBoomDots_Lv1(int column, int row)
+    //{
+    //    Queue<State> dots = new Queue<State>();
 
-        if (0 < column) 
-        { GetDot(column - 1, row, dots); }
-        if (Board.Instance.width - 1 > column) 
-        { GetDot(column + 1, row, dots); }
-        if (Board.Instance.height - 1 > row) 
-        { GetDot(column, row + 1, dots); }
-        if (0 < row) 
-        { GetDot(column, row - 1, dots); }
-        if (0 < column && Board.Instance.height - 1 > row) 
-        { GetDot(column - 1, row + 1, dots); }
-        if (Board.Instance.width - 1 > column && Board.Instance.height - 1 > row)
-        {GetDot(column + 1, row + 1, dots); }
-        if (0 < row && 0 < column) 
-        { GetDot(column - 1, row - 1, dots); }
-        if (0 < row && Board.Instance.width - 1 > column) 
-        { GetDot(column + 1, row - 1, dots); }
+    //    if (0 < column) 
+    //    { GetDot(column - 1, row, dots); }
+    //    if (Board.Instance.width - 1 > column) 
+    //    { GetDot(column + 1, row, dots); }
+    //    if (Board.Instance.height - 1 > row) 
+    //    { GetDot(column, row + 1, dots); }
+    //    if (0 < row) 
+    //    { GetDot(column, row - 1, dots); }
+    //    if (0 < column && Board.Instance.height - 1 > row) 
+    //    { GetDot(column - 1, row + 1, dots); }
+    //    if (Board.Instance.width - 1 > column && Board.Instance.height - 1 > row)
+    //    {GetDot(column + 1, row + 1, dots); }
+    //    if (0 < row && 0 < column) 
+    //    { GetDot(column - 1, row - 1, dots); }
+    //    if (0 < row && Board.Instance.width - 1 > column) 
+    //    { GetDot(column + 1, row - 1, dots); }
 
-        return dots;
-    }
+    //    return dots;
+    //}
 
-    void GetDot(int column, int row, Queue<State> dots)
+    State GetDot(int column, int row)
     {
         if (Board.Instance.allDots[column, row] != null && Board.Instance.allDots[column, row].dotState == DotState.Possible)
         {
-            dots.Enqueue(Board.Instance.allDots[column, row]);
+           return Board.Instance.allDots[column, row];
         }
         else if (Board.Instance.MysticDots[column, row] != null && Board.Instance.MysticDots[column, row].dotState == DotState.Possible)
         {
-            dots.Enqueue(Board.Instance.MysticDots[column, row]);
+            return Board.Instance.MysticDots[column, row];
         }
         else if (Board.Instance.ObstructionDots[column, row] != null && Board.Instance.ObstructionDots[column, row].dotState == DotState.Possible)
         {
-            dots.Enqueue(Board.Instance.ObstructionDots[column, row]);
+            return Board.Instance.ObstructionDots[column, row];
         }
+
+        return null;
 
     }
 }

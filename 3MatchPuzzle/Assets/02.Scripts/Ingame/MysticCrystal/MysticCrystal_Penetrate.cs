@@ -7,9 +7,6 @@ public class MysticCrystal_Penetrate : MysticCrystal_Abstract
     private GoalManager goalManager;
 
     [SerializeField]
-    private GameObject PenetrateParticle;
-
-    [SerializeField]
     private GameObject PenetrateSkill;
 
     public override void Level_1()
@@ -28,76 +25,58 @@ public class MysticCrystal_Penetrate : MysticCrystal_Abstract
     IEnumerator Penetrate_Destroy()
     {
         b_Effectprogress = true;
+
+        var Row = (int)transform.position.y;
         yield return new WaitForEndOfFrame();
 
         goalManager = FindObjectOfType<GoalManager>();
 
-        Instantiate(PenetrateSkill, new Vector2(-1, row), Quaternion.identity);
+        Instantiate(PenetrateSkill, new Vector2(-1, Row), Quaternion.identity);
 
-        for (int i = 0; i < blocks.Count; i++)
+        for (int i = 0; i < Board.Instance.width; i++)
         {
-            State dot = blocks[i];
-
-            if (dot != null && dot.dotState == DotState.Possible)
-            {
-                Instantiate(PenetrateParticle, dot.transform.position, Quaternion.identity);
-
-                if (dot.GetComponent<Dot>() != null)
-                {
-                    ObjectPool.ReturnObject(dot.gameObject);
-                }
-                else if (dot.GetComponent<Obstruction_Abstract>() != null)
-                    dot.GetComponent<Obstruction_Abstract>().GetDamage(Damage);
-                else if (dot.GetComponent<Mystic_Abstract>() != null)
-                    dot.GetComponent<Mystic_Abstract>().Destroy_Mystic();
-
-
-                if (goalManager != null)
-                {
-                    goalManager.Update_CurrentGage(1);
-                    goalManager.Update_CurrentScore((int)scoreManager.GetScore(0.4f));
-                }
-            }
-        }
-
-        for(int i = 0; i < Board.Instance.width; i++)
-        { 
             if (Board.Instance.DecreaseRowArray[i] != null)
             {
                 Board.Instance.StopCoroutine(Board.Instance.DecreaseRowArray[i]);
                 Debug.Log("코루틴 정지");
             }
 
-            Board.Instance.DecreaseRowArray[i] = Board.Instance.StartCoroutine(Board.Instance.DecreaseRowCo(i)); // 행 내리기
+
+            if (Board.Instance.allDots[i, Row] != null && Board.Instance.allDots[i, Row].dotState == DotState.Possible)
+            {
+                if (Board.Instance.allDots[i, Row].gameObject.activeSelf)
+                {
+                    ObjectPool.ReturnObject(Board.Instance.allDots[i, Row].gameObject);
+                }
+            }
+            else if (Board.Instance.MysticDots[i, Row] != null && Board.Instance.MysticDots[i, Row].dotState == DotState.Possible)
+            {
+                Board.Instance.MysticDots[i, Row].GetComponent<Mystic_Abstract>().Destroy_Mystic();
+            }
+            else if (Board.Instance.ObstructionDots[i, Row] != null && Board.Instance.ObstructionDots[i, Row].dotState == DotState.Possible)
+            {
+                Board.Instance.ObstructionDots[i, Row].GetComponent<Obstruction_Abstract>().GetDamage(Damage);
+            }
+
+            if (goalManager != null)
+            {
+                goalManager.Update_CurrentGage(1);
+                goalManager.Update_CurrentScore((int)scoreManager.GetScore(0.4f));
+            }
+
+            yield return null;
         }
-    }
 
-
-
-
-    List<State> GetPenetrateDots_Lv1(int row)
-    {
-        List<State> dots = new List<State>();
+        yield return null;
 
         for (int i = 0; i < Board.Instance.width; i++)
         {
-            if (Board.Instance.allDots[i, row] != null)
-            {
-                dots.Add(Board.Instance.allDots[i, row]);
-            }
-            else if (Board.Instance.MysticDots[i, row] != null)
-            {
-                dots.Add(Board.Instance.MysticDots[i, row]);
-            }
-            else if (Board.Instance.ObstructionDots[i, row] != null)
-            {
-                dots.Add(Board.Instance.ObstructionDots[i, row]);
-            }
+            Board.Instance.DecreaseRowArray[i] = Board.Instance.StartCoroutine(Board.Instance.DecreaseRowCo(i)); // 행 내리기
+            yield return null;
         }
 
-        return dots;
+        b_Effectprogress = false;
+      
     }
-
-
 
 }
